@@ -188,6 +188,7 @@ public class DashboardController implements Initializable {
         setTimerText(0);
         setTimerStatus(FlakeLabel.BREAKING);
         setTimerContent("");
+        stopButton.setVisible(false);
     }
 
     private void setTimerContent(String s) {
