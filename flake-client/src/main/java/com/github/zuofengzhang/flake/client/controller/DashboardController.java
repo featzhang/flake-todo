@@ -2,15 +2,22 @@ package com.github.zuofengzhang.flake.client.controller;
 
 import com.github.zuofengzhang.flake.client.entity.TaskEntity;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
+import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
+import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.BorderPane;
+import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -18,6 +25,8 @@ import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+@Component
+@FxmlView("dashboard.fxml")
 public class DashboardController implements Initializable {
 
     @FXML
@@ -35,10 +44,6 @@ public class DashboardController implements Initializable {
     @FXML
     public ListView<TaskEntity> summaryList;
     @FXML
-    public TreeView<TaskEntity> dateTreeView;
-    @FXML
-    public DatePicker datePicker;
-    @FXML
     public TitledPane yesterdayTitledPane;
     @FXML
     public TitledPane todayPlanTitledPane;
@@ -48,17 +53,35 @@ public class DashboardController implements Initializable {
     public TitledPane todaySummaryTitledPane;
     @FXML
     public TextField mottoTextField;
+    @FXML
+    public BorderPane datePickerPane;
+    private DatePicker datePicker;
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             String text = newContentTextField.getText();
             if (StringUtils.isNotBlank(text)) {
+                // get selected dayId
+                LocalDate localDate = datePicker.getValue();
+                int dayId = DateUtils.dayId(localDate);
+                // get taskType
                 TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
                 int taskTypeId = taskType.getId();
-                titledPaneMap.get(taskTypeId).expandedProperty().set(true);
+                //
+                TaskEntity taskEntity = TaskEntity.builder()
+                        .dayId(dayId)
+                        .taskType(taskType)
+                        .title(text)
+                        .content(text)
+                        .createdTime(System.currentTimeMillis())
+                        .updateTime(System.currentTimeMillis())
+                        .build();
+                // add to ListView
                 ListView<TaskEntity> listView = listViewMap.get(taskTypeId);
-                TaskEntity taskEntity = TaskEntity.builder().taskType(taskType).title(text).content(text).createdTime(System.currentTimeMillis()).build();
                 listView.getItems().add(taskEntity);
+
+                // expand selected TitledPane
+                titledPaneMap.get(taskTypeId).expandedProperty().set(true);
             }
         }
     }
@@ -77,6 +100,12 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // datepicker
+        datePicker = new DatePicker(LocalDate.now());
+        DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
+        Node popupContent = datePickerSkin.getPopupContent();
+        datePickerPane.setCenter(popupContent);
+
         // type
         List<String> taskTypeNames = Arrays.stream(TaskType.values()).map(TaskType::getCname).collect(Collectors.toList());
         typeComboBox.getItems().addAll(taskTypeNames);

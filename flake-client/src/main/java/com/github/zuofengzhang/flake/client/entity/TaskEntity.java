@@ -18,4 +18,5 @@ public class TaskEntity implements Serializable {
     private long startTime;
     private long endTime;
     private boolean fullTomato;
+    private int dayId;
 }

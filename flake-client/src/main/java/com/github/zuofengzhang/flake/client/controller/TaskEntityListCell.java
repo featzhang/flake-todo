@@ -12,7 +12,7 @@ public class TaskEntityListCell extends ListCell<TaskEntity> {
     @Override
     protected void updateItem(TaskEntity taskEntityListCell, boolean b) {
         FXMLLoader loader = new FXMLLoader();
-        InputStream resource = this.getClass().getClassLoader().getResourceAsStream("fxml/taskEntityCell.fxml");
+        InputStream resource = this.getClass().getClassLoader().getResourceAsStream("com/github/zuofengzhang/flake/client/controller/task-cell.fxml");
         try {
             GridPane gridBagLayout = loader.load(resource);
             TaskEntityCellController controller = loader.getController();
