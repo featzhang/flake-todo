@@ -198,4 +198,8 @@ public class DashboardController implements Initializable {
     private Map<Integer, TitledPane> titledPaneMap;
 
     private Map<Integer, ListView<TaskDto>> listViewMap;
+
+    public void onAddMottoTextField(ActionEvent actionEvent) {
+
+    }
 }

@@ -3,6 +3,7 @@ package com.github.zuofengzhang.flake.client.controller;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
@@ -16,14 +17,22 @@ public class TaskCellController implements Initializable {
     @FXML
     private Label titleLabel;
 
+    @FXML
+    private CheckBox checkBox;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
 
     }
 
-    public void setData(TaskDto taskDtoListCell) {
-        if (taskDtoListCell != null) {
-            titleLabel.setText(taskDtoListCell.getTitle());
+    public void setData(TaskDto task) {
+        if (task != null) {
+            titleLabel.setText(task.getTitle());
+
+            checkBox.setSelected(task.isFullTomato());
+
+        } else {
+            checkBox.setVisible(false);
         }
     }
 }
