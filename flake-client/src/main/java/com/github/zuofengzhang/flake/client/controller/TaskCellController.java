@@ -22,15 +22,12 @@ public class TaskCellController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
     }
 
     public void setData(TaskDto task) {
         if (task != null) {
             titleLabel.setText(task.getTitle());
-
             checkBox.setSelected(task.isFullTomato());
-
         } else {
             checkBox.setVisible(false);
         }

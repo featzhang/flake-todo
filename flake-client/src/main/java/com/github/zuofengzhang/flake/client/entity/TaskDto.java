@@ -22,7 +22,6 @@ public class TaskDto implements Serializable {
     private int dayId;
 
     public static TaskDto parse(TaskDo taskDo) {
-        log.info("");
         return TaskDto.builder()
                 .taskId(taskDo.getTaskId())
                 .taskType(TaskType.findById(taskDo.getTypeId()))
@@ -37,7 +36,6 @@ public class TaskDto implements Serializable {
     }
 
     public TaskDo parse() {
-        log.info("");
         return TaskDo.builder()
                 .taskId(taskId)
                 .typeId(taskType.getCId())

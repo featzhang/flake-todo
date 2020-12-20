@@ -1,6 +1,6 @@
 package com.github.zuofengzhang.flake.client;
 
-import com.github.zuofengzhang.flake.client.constraints.Label;
+import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.controller.DashboardController;
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -49,7 +49,7 @@ public class FlackClientDashboard extends Application {
 //        ResourceBundle resourceBundle = ResourceBundle.getBundle("flake-client");
 //        BorderPane gridPane = fxmlLoader.load(url, resourceBundle);
         Scene scene = new Scene(gridPane);
-        stage.setTitle(Label.application_name);
+        stage.setTitle(FlakeLabel.application_name);
         stage.setScene(scene);
         stage.setWidth(830);
         stage.setHeight(850);

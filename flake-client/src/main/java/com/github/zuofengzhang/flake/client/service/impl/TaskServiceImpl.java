@@ -46,4 +46,9 @@ public class TaskServiceImpl implements TaskService {
         TaskDo taskDo = selectedItem.parse();
         return taskDao.updateById(taskDo);
     }
+
+    @Override
+    public TaskDto findById(int taskId) {
+        return TaskDto.parse(taskDao.selectById(taskId));
+    }
 }

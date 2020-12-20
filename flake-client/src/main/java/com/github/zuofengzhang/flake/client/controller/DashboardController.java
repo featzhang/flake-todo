@@ -1,14 +1,20 @@
 package com.github.zuofengzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
+import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
+import com.github.zuofengzhang.flake.client.entity.TimerActionType;
+import com.github.zuofengzhang.flake.client.entity.TimerStatus;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.DateUtils;
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
-import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.*;
@@ -16,6 +22,9 @@ import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
@@ -23,46 +32,43 @@ import org.springframework.stereotype.Component;
 import javax.annotation.Resource;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Component
 @FxmlView("dashboard.fxml")
+@Slf4j
 public class DashboardController implements Initializable {
 
+
+    public TitledPane titledPane;
+
+    public Button stopButton;
+    public Label timerStatsLabel;
+    public Label timerCounterLabel;
+    public ComboBox<String> typeComboBox;
+    public TextField newContentTextField;
+    public Button addButton;
+    public ListView<TaskDto> yesterdayList;
+    public ListView<TaskDto> todayPlanList;
+    public ListView<TaskDto> todayTomatoList;
+    public ListView<TaskDto> summaryList;
+    public TitledPane yesterdayTitledPane;
+    public TitledPane todayPlanTitledPane;
+    public TitledPane tomatoPotatoTitledPane;
+    public TitledPane todaySummaryTitledPane;
+    public TextField mottoTextField;
+    public BorderPane datePickerPane;
+    public Label workContentLabel;
     @Resource
     private TaskService taskService;
-    @FXML
-    public ComboBox<String> typeComboBox;
-    @FXML
-    public TextField newContentTextField;
-    @FXML
-    public Button addButton;
-    @FXML
-    public ListView<TaskDto> yesterdayList;
-    @FXML
-    public ListView<TaskDto> todayPlanList;
-    @FXML
-    public ListView<TaskDto> todayTomatoList;
-    @FXML
-    public ListView<TaskDto> summaryList;
-    @FXML
-    public TitledPane yesterdayTitledPane;
-    @FXML
-    public TitledPane todayPlanTitledPane;
-    @FXML
-    public TitledPane tomatoPotatoTitledPane;
-    @FXML
-    public TitledPane todaySummaryTitledPane;
-    @FXML
-    public TextField mottoTextField;
-    @FXML
-    public BorderPane datePickerPane;
     private DatePicker datePicker;
+    private int currentTaskId = -1;
+    //    private AudioClip mNotify;
+    private Map<Integer, TitledPane> titledPaneMap;
+    private Map<Integer, ListView<TaskDto>> listViewMap;
+    private Timeline timeline;
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -78,6 +84,7 @@ public class DashboardController implements Initializable {
             int dayId = DateUtils.dayId(localDate);
             // get taskType
             TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
+            assert taskType != null;
             int taskTypeId = taskType.getCId();
             //
             TaskDto taskDto = TaskDto.builder()
@@ -104,7 +111,6 @@ public class DashboardController implements Initializable {
         doAddNewTask();
     }
 
-    @FXML
     public void onMoveMenu(ActionEvent actionEvent) {
         MenuItem eventSource = (MenuItem) actionEvent.getTarget();
         int targetId = Integer.parseInt(eventSource.getId());
@@ -133,6 +139,9 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // init
+//        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
+
         // datepicker
         datePicker = new DatePicker(LocalDate.now());
         DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
@@ -145,7 +154,7 @@ public class DashboardController implements Initializable {
         typeComboBox.getSelectionModel().select(0);
         typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
             if (!s.equals(t1)) {
-                titledPaneMap.get(TaskType.findByCName(t1).getCId())
+                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId())
                         .expandedProperty().setValue(true);
             }
         });
@@ -164,22 +173,48 @@ public class DashboardController implements Initializable {
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // load data
         loadData();
-        // datepick action
+        // datePick action
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             if (oldValue == newValue) {
                 return;
             }
-            int newDayId = DateUtils.dayId(newValue);
+
             loadData();
         });
         // init view
         yesterdayTitledPane.expandedProperty().setValue(false);
         yesterdayTitledPane.expandedProperty().setValue(true);
+        // init timer
+        setTimerText(0);
+        setTimerStatus(FlakeLabel.BREAKING);
+        setTimerContent("");
+    }
+
+    private void setTimerContent(String s) {
+        this.workContentLabel.setText(s);
+    }
+
+    public void setTimerText(int remainingSeconds) {
+        int hours = (remainingSeconds / 60 / 60);
+        int minutes = (remainingSeconds / 60) % 60;
+        int seconds = remainingSeconds % 60;
+
+        //Show only minute and second if hour is not available
+        if (hours <= 0) {
+            setTimerText(String.format("%02d:%02d", minutes, seconds));
+        } else {
+            setTimerText(String.format("%02d:%02d:%02d", hours, minutes, seconds));
+        }
+    }
+
+    private void setTimerText(String s) {
+        timerCounterLabel.setText(s);
     }
 
     private void loadData() {
         // loadAllTask
         int dayId = DateUtils.dayId(datePicker.getValue());
+        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
 
         if (CollectionUtils.isNotEmpty(list)) {
@@ -195,11 +230,129 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private Map<Integer, TitledPane> titledPaneMap;
-
-    private Map<Integer, ListView<TaskDto>> listViewMap;
-
     public void onAddMottoTextField(ActionEvent actionEvent) {
+        mottoTextField.setText("");
+    }
 
+    public void initTimerAction(TimerActionType type) {
+
+        TimerStatus timerStatus = new TimerStatus(type, System.currentTimeMillis());
+
+        long userTime = FlakeSettings.timeInSeconds;
+        setTimerStatus(timerStatus.getType().getDisplayName());
+        if (timerStatus.getType() == TimerActionType.FOCUS) {
+            if (userTime > 0) {
+                timerStatus.setRemainingSeconds((int) userTime);
+            }
+        } else if (timerStatus.getType() == TimerActionType.BREAK) {
+        }
+        setTimerText(timerStatus.getRemainingSeconds());
+        timeline = new Timeline();
+        timeline.setCycleCount(timerStatus.getRemainingSeconds());
+        timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
+            timerStatus.countDown();
+            setTimerText(timerStatus.getRemainingSeconds());
+        }));
+
+        timeline.setOnFinished(event -> {
+//            mNotify.play();
+            doAddNewWorkLog(timerStatus);
+            currentTaskId = -1;
+            if (timerStatus.getType() == TimerActionType.FOCUS) {
+                takeBreakNotification();
+            }
+            initTimerAction(timerStatus.getType() == TimerActionType.FOCUS ?
+                    TimerActionType.BREAK : TimerActionType.FOCUS);
+            stopButton.setVisible(false);
+        });
+    }
+
+    private void doAddNewWorkLog(TimerStatus timerStatus) {
+        int taskId = currentTaskId;
+        log.info("add work log : {}", taskId);
+        TaskDto taskDto = taskService.findById(taskId);
+        TaskDto newTask = TaskDto.builder()
+                .title(taskDto.getTitle())
+                .content(taskDto.getContent())
+                .taskType(TaskType.TOMATO_POTATO)
+                .endTime(System.currentTimeMillis())
+                .startTime(timerStatus.getStartTime())
+                .dayId(taskDto.getDayId())
+                .fullTomato(true)
+                .build();
+        taskService.insert(newTask);
+        listViewMap.get(TaskType.TOMATO_POTATO.getCId()).getItems().add(newTask);
+    }
+
+    public void takeBreakNotification() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+
+        // Get the Stage.
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        // Add a custom icon.
+//        stage.getIcons().add(new Image(this.getClass().getResource("/images/icon.png").toString()));
+        alert.setTitle("Information Dialog");
+        alert.setHeaderText("Great! Now Take a Break");
+        alert.setContentText("You have worked 30 min long. Now you should take a at least 5 minutes break to relax yourself.");
+
+        alert.show();
+        //alert.showAndWait();
+        System.out.println("take a break notification");
+    }
+
+    private void setTimerStatus(String timeForABreak) {
+        timerStatsLabel.setText(timeForABreak);
+    }
+
+    public void onStartTimer(ActionEvent actionEvent) {
+        ContextMenu parentPopup = ((MenuItem) actionEvent.getTarget()).getParentPopup();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
+            return;
+        }
+        //
+        int newTaskId = selectedItem.getTaskId();
+        //
+        stopButton.setVisible(true);
+        //
+        if (currentTaskId == newTaskId) {
+            log.info("the same task is running");
+            return;
+        }
+        if (currentTaskId != -1) {
+            log.info("stop unfinished task: {}, start new task: {}", currentTaskId, newTaskId);
+            if (timeline.getStatus() == Animation.Status.RUNNING) {
+                log.info("stop timeLine..");
+                timeline.stop();
+                initTimerAction(TimerActionType.FOCUS);
+            }
+        } else {
+            initTimerAction(TimerActionType.FOCUS);
+        }
+
+        this.currentTaskId = newTaskId;
+        timeline.play();
+        stopButton.setVisible(true);
+        getTimerStatus();
+        setTimerContent(selectedItem.getTitle());
+    }
+
+    //debugging purpose
+    private Animation.Status getTimerStatus() {
+        Animation.Status mStatus = timeline.getStatus();
+        System.out.println(mStatus);
+        return mStatus;
+    }
+
+    public void onStopTimer(ActionEvent actionEvent) {
+        log.info("stop timer");
+        currentTaskId = -1;
+        timeline.stop();
+        stopButton.setVisible(false);
+        setTimerText(0);
+        getTimerStatus();
+        setTimerStatus(FlakeLabel.BREAKING);
+        setTimerContent("");
     }
 }
