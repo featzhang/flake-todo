@@ -1,6 +1,6 @@
 package com.github.zuofengzhang.flake.client.controller;
 
-import com.github.zuofengzhang.flake.client.entity.TaskEntity;
+import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -12,7 +12,7 @@ import java.util.ResourceBundle;
 
 @Component
 @FxmlView("task-cell.fxml")
-public class TaskEntityCellController implements Initializable {
+public class TaskCellController implements Initializable {
     @FXML
     private Label titleLabel;
 
@@ -21,9 +21,9 @@ public class TaskEntityCellController implements Initializable {
 
     }
 
-    public void setData(TaskEntity taskEntityListCell) {
-        if (taskEntityListCell != null) {
-            titleLabel.setText(taskEntityListCell.getTitle());
+    public void setData(TaskDto taskDtoListCell) {
+        if (taskDtoListCell != null) {
+            titleLabel.setText(taskDtoListCell.getTitle());
         }
     }
 }

@@ -10,19 +10,19 @@ public enum TaskType implements Serializable {
     TODAY_SUMMARY(4, ResourceBundle.getBundle("flake-client").getString("label_today_summary"));
 
     private final String cname;
-    private final int id;
+    private final int cid;
 
     TaskType(int id, String cname) {
         this.cname = cname;
-        this.id = id;
+        this.cid = id;
     }
 
     public String getCname() {
         return cname;
     }
 
-    public int getId() {
-        return id;
+    public int getCId() {
+        return cid;
     }
 
     public static TaskType findByCName(String cname) {
@@ -36,7 +36,7 @@ public enum TaskType implements Serializable {
 
     public static TaskType findById(int id) {
         for (TaskType taskType : TaskType.values()) {
-            if (taskType.getId() == (id)) {
+            if (taskType.getCId() == (id)) {
                 return taskType;
             }
         }
