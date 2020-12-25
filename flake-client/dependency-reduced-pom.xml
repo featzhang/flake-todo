@@ -11,7 +11,7 @@
         <artifactId>javafx-maven-plugin</artifactId>
         <version>0.0.5</version>
         <configuration>
-          <mainClass>com.tencent.arena.flink.ArenaDemo</mainClass>
+          <mainClass>com.github.zuofengzhang.flake.client.FlakeClientApplication</mainClass>
           <source>13</source>
           <target>13</target>
         </configuration>
@@ -37,7 +37,7 @@
             <configuration>
               <transformers>
                 <transformer>
-                  <mainClass>com.tencent.arena.flink.ArenaMain</mainClass>
+                  <mainClass>com.github.zuofengzhang.flake.client.FlakeClientApplication</mainClass>
                 </transformer>
               </transformers>
             </configuration>
