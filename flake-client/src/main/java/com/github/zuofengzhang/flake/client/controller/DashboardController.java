@@ -34,6 +34,7 @@ import javax.annotation.Resource;
 import java.net.URL;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -199,10 +200,10 @@ public class DashboardController implements Initializable {
         this.workContentLabel.setText(s);
     }
 
-    public void setTimerText(int remainingSeconds) {
-        int hours = (remainingSeconds / 60 / 60);
-        int minutes = (remainingSeconds / 60) % 60;
-        int seconds = remainingSeconds % 60;
+    public void setTimerText(long remainingSeconds) {
+        int hours = (int) (remainingSeconds / 60 / 60);
+        int minutes = (int) ((remainingSeconds / 60) % 60);
+        int seconds = (int) (remainingSeconds % 60);
 
         //Show only minute and second if hour is not available
         if (hours <= 0) {
@@ -243,17 +244,14 @@ public class DashboardController implements Initializable {
 
         TimerStatus timerStatus = new TimerStatus(type, System.currentTimeMillis());
 
-        long userTime = FlakeSettings.timeInSeconds;
         setTimerStatus(timerStatus.getType().getDisplayName());
         if (timerStatus.getType() == TimerActionType.FOCUS) {
-            if (userTime > 0) {
-                timerStatus.setRemainingSeconds((int) userTime);
-            }
+            timerStatus.setRemainingSeconds(FlakeSettings.getInstance().getFocusTimeInSeconds());
         } else if (timerStatus.getType() == TimerActionType.BREAK) {
         }
         setTimerText(timerStatus.getRemainingSeconds());
         timeline = new Timeline();
-        timeline.setCycleCount(timerStatus.getRemainingSeconds());
+        timeline.setCycleCount((int) timerStatus.getRemainingSeconds());
         timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
             timerStatus.countDown();
             setTimerText(timerStatus.getRemainingSeconds());
@@ -361,5 +359,15 @@ public class DashboardController implements Initializable {
         getTimerStatus();
         setTimerStatus(FlakeLabel.BREAKING);
         setTimerContent("");
+    }
+
+    public void onSettings(ActionEvent actionEvent) {
+        o.accept(actionEvent);
+    }
+
+    private Consumer<ActionEvent> o;
+
+    public void setOnSetting(Consumer<ActionEvent> o) {
+        this.o = o;
     }
 }

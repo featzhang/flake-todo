@@ -8,7 +8,6 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.Menu?>
-<?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.SeparatorMenuItem?>
@@ -179,7 +178,7 @@
             <top>
                 <ToolBar prefHeight="39.0" prefWidth="614.0" BorderPane.alignment="CENTER">
                     <items>
-                        <Button mnemonicParsing="false" text="Button" />
+                        <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0" />
                         <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="122.0" />
                         <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="550.0" promptText="%label_new_task" />
@@ -189,25 +188,4 @@
             </top>
         </BorderPane>
     </center>
-    <top>
-        <MenuBar BorderPane.alignment="CENTER">
-            <menus>
-                <Menu mnemonicParsing="false" text="File">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Close" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Edit">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="Delete" />
-                    </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Help">
-                    <items>
-                        <MenuItem mnemonicParsing="false" text="About" />
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-    </top>
 </BorderPane>

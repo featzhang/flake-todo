@@ -2,10 +2,12 @@ package com.github.zuofengzhang.flake.client;
 
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.controller.DashboardController;
+import com.github.zuofengzhang.flake.client.controller.SettingsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.slf4j.Logger;
@@ -23,31 +25,30 @@ public class FlackClientDashboard extends Application {
 
     @Override
     public void init() throws Exception {
-
         String[] args = getParameters().getRaw().toArray(new String[0]);
-
         this.applicationContext = new SpringApplicationBuilder()
                 .sources(FlakeClientApplication.class)
                 .run(args);
     }
 
+    private FxWeaver fxWeaver;
+    private ResourceBundle resourceBundle;
+    private Stage primaryStage;
+
     @Override
     public void start(Stage stage) throws Exception {
-        FxWeaver fxWeaver = applicationContext.getBean(FxWeaver.class);
-//        DashboardController dashboardController = fxWeaver.getBean(DashboardController.class);
-        ResourceBundle resourceBundle = ResourceBundle.getBundle("flake-client");
+        this.primaryStage = stage;
+        fxWeaver = applicationContext.getBean(FxWeaver.class);
+        resourceBundle = ResourceBundle.getBundle("flake-client");
 
         Parent gridPane = fxWeaver.loadView(DashboardController.class, resourceBundle);
+        DashboardController controller = fxWeaver.loadController(DashboardController.class, resourceBundle);
+        controller.setOnSetting(actionEvent -> onShowSetting());
         logger.info("start FlackClientDashboard...");
         if (gridPane == null) {
             logger.error("root is null");
+            return;
         }
-//        ClassLoader classLoader = this.getClass().getClassLoader();
-//        URL url = classLoader.getResource("fxml/dashboard.fxml");
-//        InputStream inputStream = classLoader.getResourceAsStream("fxml/dashboard.fxml");
-//        FXMLLoader fxmlLoader = new FXMLLoader();
-//        ResourceBundle resourceBundle = ResourceBundle.getBundle("flake-client");
-//        BorderPane gridPane = fxmlLoader.load(url, resourceBundle);
         Scene scene = new Scene(gridPane);
         stage.setTitle(FlakeLabel.application_name);
         stage.setScene(scene);
@@ -61,4 +62,15 @@ public class FlackClientDashboard extends Application {
         this.applicationContext.close();
         Platform.exit();
     }
+
+    private void onShowSetting() {
+        BorderPane borderPane = fxWeaver.loadView(SettingsController.class, resourceBundle);
+        Scene scene = new Scene(borderPane);
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        stage.initOwner(primaryStage);
+        stage.setScene(scene);
+        stage.show();
+    }
+
 }
