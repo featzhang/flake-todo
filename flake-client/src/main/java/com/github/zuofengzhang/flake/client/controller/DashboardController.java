@@ -1,6 +1,7 @@
 package com.github.zuofengzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.github.zuofengzhang.flake.client.FlackClientDashboard;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
@@ -17,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
@@ -83,6 +85,7 @@ public class DashboardController implements Initializable {
 
     private void doAddNewTask() {
         String text = newContentTextField.getText();
+        log.info("newContentTextField: {}", text);
         if (StringUtils.isNotBlank(text)) {
             // get selected dayId
             LocalDate localDate = datePicker.getValue();
@@ -108,7 +111,7 @@ public class DashboardController implements Initializable {
             // expand selected TitledPane
             titledPaneMap.get(taskTypeId).expandedProperty().set(true);
             //
-            newContentTextField.clear();
+//            newContentTextField.clear();
         }
     }
 
@@ -361,13 +364,23 @@ public class DashboardController implements Initializable {
         setTimerContent("");
     }
 
+    @Resource
+    private SettingsController settingsController;
+
     public void onSettings(ActionEvent actionEvent) {
-        o.accept(actionEvent);
+        Node node = (Node) actionEvent.getSource();
+        Scene scene1 = node.getScene();
+        Stage primaryStage = (Stage) scene1.getWindow();
+        BorderPane borderPane = FlackClientDashboard.fxWeaver.loadView(SettingsController.class, FlackClientDashboard.resourceBundle);
+        Scene scene = new Scene(borderPane);
+        Stage stage = new Stage();
+        stage.setResizable(false);
+        stage.initOwner(primaryStage);
+        stage.setScene(scene);
+        stage.show();
     }
 
     private Consumer<ActionEvent> o;
 
-    public void setOnSetting(Consumer<ActionEvent> o) {
-        this.o = o;
-    }
+
 }

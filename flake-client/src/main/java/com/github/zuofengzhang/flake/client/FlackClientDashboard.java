@@ -21,18 +21,18 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class FlackClientDashboard extends Application {
 
     private static final Logger logger = getLogger(FlackClientDashboard.class);
-    private ConfigurableApplicationContext applicationContext;
+    public static ConfigurableApplicationContext applicationContext;
 
     @Override
     public void init() throws Exception {
         String[] args = getParameters().getRaw().toArray(new String[0]);
-        this.applicationContext = new SpringApplicationBuilder()
+        applicationContext = new SpringApplicationBuilder()
                 .sources(FlakeClientApplication.class)
                 .run(args);
     }
 
-    private FxWeaver fxWeaver;
-    private ResourceBundle resourceBundle;
+    public static FxWeaver fxWeaver;
+    public static ResourceBundle resourceBundle;
     private Stage primaryStage;
 
     @Override
@@ -42,8 +42,8 @@ public class FlackClientDashboard extends Application {
         resourceBundle = ResourceBundle.getBundle("flake-client");
 
         Parent gridPane = fxWeaver.loadView(DashboardController.class, resourceBundle);
-        DashboardController controller = fxWeaver.loadController(DashboardController.class, resourceBundle);
-        controller.setOnSetting(actionEvent -> onShowSetting());
+//        DashboardController controller = fxWeaver.loadController(DashboardController.class, resourceBundle);
+//        controller.setOnSetting(actionEvent -> onShowSetting());
         logger.info("start FlackClientDashboard...");
         if (gridPane == null) {
             logger.error("root is null");
@@ -63,14 +63,6 @@ public class FlackClientDashboard extends Application {
         Platform.exit();
     }
 
-    private void onShowSetting() {
-        BorderPane borderPane = fxWeaver.loadView(SettingsController.class, resourceBundle);
-        Scene scene = new Scene(borderPane);
-        Stage stage = new Stage();
-        stage.setResizable(false);
-        stage.initOwner(primaryStage);
-        stage.setScene(scene);
-        stage.show();
-    }
+
 
 }

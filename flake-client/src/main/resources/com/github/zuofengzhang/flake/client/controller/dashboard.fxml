@@ -180,8 +180,8 @@
                     <items>
                         <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting" />
                         <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0" />
-                        <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="122.0" />
-                        <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="550.0" promptText="%label_new_task" />
+                        <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="94.0" />
+                        <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="524.0" promptText="%label_new_task" />
                         <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加" />
                     </items>
                 </ToolBar>
