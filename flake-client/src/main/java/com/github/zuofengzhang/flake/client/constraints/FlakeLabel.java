@@ -8,4 +8,5 @@ public class FlakeLabel {
     public static final String WORKING = ResourceUtil.label("label_working");
     public static final String FOCUS = ResourceUtil.label("label_focus");
     public static final String BREAKING = ResourceUtil.label("label_breaking");
+    public static final String TIME_TO_WEAK = ResourceUtil.label("label_time_to_weak");
 }

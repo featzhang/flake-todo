@@ -27,6 +27,7 @@ import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
+import org.controlsfx.control.Notifications;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -257,6 +258,7 @@ public class DashboardController implements Initializable {
 
         timeline.setOnFinished(event -> {
 //            mNotify.play();
+            Notifications.create().title(FlakeLabel.TIME_TO_WEAK).text("").hideAfter(Duration.minutes(5)).showWarning();
             doAddNewWorkLog(timerStatus);
             currentTaskId = -1;
             if (timerStatus.getType() == TimerActionType.FOCUS) {
@@ -282,6 +284,7 @@ public class DashboardController implements Initializable {
                 .fullTomato(true)
                 .build();
         taskService.insert(newTask);
+        // how get the newest id
         listViewMap.get(TaskType.TOMATO_POTATO.getCId()).getItems().add(newTask);
     }
 
