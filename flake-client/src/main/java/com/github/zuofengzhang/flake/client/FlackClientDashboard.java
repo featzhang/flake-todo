@@ -50,7 +50,7 @@ public class FlackClientDashboard extends Application {
         Scene scene = new Scene(gridPane);
         stage.setTitle(FlakeLabel.application_name);
         stage.setScene(scene);
-        stage.setWidth(830);
+        stage.setWidth(950);
         stage.setHeight(850);
         stage.show();
     }

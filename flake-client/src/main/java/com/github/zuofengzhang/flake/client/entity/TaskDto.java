@@ -10,16 +10,17 @@ import org.slf4j.LoggerFactory;
  */
 public class TaskDto {
     private static final Logger log = LoggerFactory.getLogger(TaskDto.class);
-    private SimpleIntegerProperty taskIdProperty = new SimpleIntegerProperty();
-    private SimpleIntegerProperty dayIdProperty = new SimpleIntegerProperty();
-    private SimpleLongProperty createdTimeProperty = new SimpleLongProperty();
-    private SimpleLongProperty updateTimeProperty = new SimpleLongProperty();
-    private SimpleLongProperty startTimeProperty = new SimpleLongProperty();
-    private SimpleLongProperty endTimeProperty = new SimpleLongProperty();
-    private SimpleStringProperty titleProperty = new SimpleStringProperty();
-    private SimpleStringProperty contentProperty = new SimpleStringProperty();
-    private SimpleBooleanProperty finishedProperty = new SimpleBooleanProperty(false);
-    private SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
+    private final SimpleIntegerProperty taskIdProperty = new SimpleIntegerProperty();
+    private final SimpleIntegerProperty dayIdProperty = new SimpleIntegerProperty();
+    private final SimpleLongProperty createdTimeProperty = new SimpleLongProperty();
+    private final SimpleLongProperty updateTimeProperty = new SimpleLongProperty();
+    private final SimpleLongProperty startTimeProperty = new SimpleLongProperty();
+    private final SimpleLongProperty endTimeProperty = new SimpleLongProperty();
+    private final SimpleStringProperty titleProperty = new SimpleStringProperty();
+    private final SimpleStringProperty contentProperty = new SimpleStringProperty();
+    private final SimpleBooleanProperty finishedProperty = new SimpleBooleanProperty(false);
+    private final SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
+    private final SimpleIntegerProperty importanceUrgencyAxisProperty = new SimpleIntegerProperty(0);
 
     public int getTaskIdProperty() {
         return taskIdProperty.get();
@@ -89,7 +90,7 @@ public class TaskDto {
         return finishedProperty.get();
     }
 
-    public SimpleBooleanProperty finishedPropertyProperty() {
+    public SimpleBooleanProperty finishedProperty() {
         return finishedProperty;
     }
 
@@ -116,7 +117,13 @@ public class TaskDto {
         this.contentProperty.set(builder.content);
         this.finishedProperty.set(builder.finished);
         this.taskTypeProperty.set(builder.taskType);
+        this.importanceUrgencyAxisProperty.set(builder.importanceUrgencyAxis);
     }
+
+    public int getIua() {
+        return importanceUrgencyAxisProperty.get();
+    }
+
 
     public void setTaskType(TaskType taskType) {
         this.taskTypeProperty.set(taskType);
@@ -159,11 +166,20 @@ public class TaskDto {
                 ", content=" + contentProperty.get() +
                 ", finished=" + finishedProperty.get() +
                 ", taskType=" + taskTypeProperty.get() +
+                ", iua=" + importanceUrgencyAxisProperty.get() +
                 '}';
     }
 
     public void setTaskId(int insert) {
         this.taskIdProperty.set(insert);
+    }
+
+    public void setIua(int targetIuaId) {
+        this.importanceUrgencyAxisProperty.set(targetIuaId);
+    }
+
+    public SimpleIntegerProperty iuaProperty() {
+        return importanceUrgencyAxisProperty;
     }
 
     public static class Builder {
@@ -177,6 +193,7 @@ public class TaskDto {
         private String content;
         private boolean finished;
         private TaskType taskType;
+        private int importanceUrgencyAxis;
 
         public Builder taskId(int taskId) {
             this.taskId = taskId;
@@ -230,6 +247,11 @@ public class TaskDto {
             return this;
         }
 
+        public Builder importanceUrgencyAxis(int finished) {
+            this.importanceUrgencyAxis = finished;
+            return this;
+        }
+
         public TaskDto build() {
             return new TaskDto(this);
         }
@@ -253,6 +275,7 @@ public class TaskDto {
                 .startTime(taskDo.getStartTime())
                 .endTime(taskDo.getEndTime())
                 .finished(taskDo.getFinished())
+                .importanceUrgencyAxis(taskDo.getImportanceUrgencyAxis())
                 .build();
     }
 
@@ -268,6 +291,7 @@ public class TaskDto {
                 .startTime(startTimeProperty.get())
                 .endTime(endTimeProperty.get())
                 .finished(finishedProperty.get())
+                .importanceUrgencyAxis(importanceUrgencyAxisProperty.get())
                 .build();
     }
 }

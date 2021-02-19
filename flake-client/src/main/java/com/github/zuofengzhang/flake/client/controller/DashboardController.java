@@ -115,15 +115,26 @@ public class DashboardController implements Initializable {
             ListView<TaskDto> listView = listViewMap.get(taskTypeId);
             listView.getItems().add(taskDto);
             // bind db action
-            taskDto.finishedPropertyProperty().addListener((observableValue, aBoolean, t1) -> {
-                log.debug("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
-                taskService.updateById(taskDto);
-            });
+            onDataChange(taskDto);
+
             // expand selected TitledPane
             titledPaneMap.get(taskTypeId).expandedProperty().set(true);
             //
 //            newContentTextField.clear();
         }
+    }
+
+
+    private void onDataChange(TaskDto taskDto) {
+        log.info("onDataChange: {}", taskDto.getTaskId());
+        taskDto.finishedProperty().addListener((observableValue, aBoolean, t1) -> {
+            log.info("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
+            taskService.updateById(taskDto);
+        });
+        taskDto.iuaProperty().addListener(((observableValue, number, t1) -> {
+            log.info("update iua value: {}->{}->{}: {}", observableValue, number, t1, taskDto);
+            taskService.updateById(taskDto);
+        }));
     }
 
     public void onAddButtonAction(ActionEvent actionEvent) {
@@ -243,11 +254,12 @@ public class DashboardController implements Initializable {
     }
 
     private void loadData() {
-        // loadAllTask
+        // loadDayTask
         int dayId = DateUtils.dayId(datePicker.getValue());
         titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
 
+        List<TaskDto> needObserver = new ArrayList<>();
         if (CollectionUtils.isNotEmpty(list)) {
             Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
 
@@ -255,15 +267,18 @@ public class DashboardController implements Initializable {
                 ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
                 items.clear();
                 List<TaskDto> dtos = entry.getValue();
-                dtos.forEach(taskDto -> taskDto.finishedPropertyProperty().addListener((observableValue, oldValue, newValue) -> taskService.updateById(taskDto)));
                 items.addAll(dtos);
+                needObserver.addAll(dtos);
             }
         } else {
             listViewMap.values().forEach(l -> l.getItems().clear());
         }
         // load all undone tasks
         List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
+        needObserver.addAll(undoneTasks);
         undoneList.getItems().addAll(undoneTasks);
+        //
+        needObserver.forEach(this::onDataChange);
 //        taskService.findAllTasksByDayId()
     }
 
@@ -409,4 +424,21 @@ public class DashboardController implements Initializable {
     }
 
 
+    public void onSetIuaMenu(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        RadioMenuItem menuItem = (RadioMenuItem) target;
+        ContextMenu parentPopup = menuItem.getParentPopup();
+        // undoneListView id is 0
+        String id = parentPopup.getId();
+        //
+        int targetIuaId = Integer.parseInt(menuItem.getId());
+        TaskDto selectedItem = undoneList.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            int iua = selectedItem.getIua();
+            if (targetIuaId != iua) {
+                selectedItem.setIua(targetIuaId);
+                log.info("set iua : {} -> {} ,{}", iua, targetIuaId, selectedItem);
+            }
+        }
+    }
 }

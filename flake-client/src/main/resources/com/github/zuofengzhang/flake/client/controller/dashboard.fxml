@@ -4,246 +4,239 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 <?import javafx.scene.text.Font?>
-<BorderPane xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1"
+<BorderPane prefHeight="788.0" prefWidth="932.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.211"
+            xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
     <center>
-        <BorderPane>
-            <center>
-                <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
-                          minWidth="-Infinity" prefHeight="749.0" prefWidth="815.0" vgap="5.0">
+        <GridPane hgap="5.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                  prefHeight="769.0" prefWidth="934.0" vgap="5.0">
 
-                    <columnConstraints>
-                        <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0"
-                                           prefWidth="273.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" prefWidth="468.0"/>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" prefWidth="64.0"/>
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints/>
-                        <RowConstraints maxHeight="301.0" minHeight="0.0" prefHeight="273.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="231.0" minHeight="9.0" prefHeight="54.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="454.0" minHeight="0.0" prefHeight="252.0" vgrow="SOMETIMES"/>
-                        <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="65.0" valignment="CENTER"
-                                        vgrow="ALWAYS"/>
-                        <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="42.0" valignment="CENTER"
-                                        vgrow="ALWAYS"/>
-                        <RowConstraints maxHeight="296.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES"/>
-                    </rowConstraints>
-                    <children>
-                        <Accordion depthTest="ENABLE" GridPane.columnIndex="1" GridPane.columnSpan="2"
-                                   GridPane.rowIndex="1" GridPane.rowSpan="5">
-                            <panes>
-                                <TitledPane id="1" fx:id="undoneTitledPane" animated="false"
-                                            text="%label_undone">
-                                    <content>
-                                        <ListView id="0" fx:id="undoneList" prefHeight="200.0" prefWidth="200.0">
-                                            <contextMenu>
-                                                <ContextMenu id="0">
-                                                    <items>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
-                                                                  text="%label_focus"/>
-                                                        <Menu mnemonicParsing="false" text="%menu_move_to">
-                                                            <items>
-                                                                <MenuItem id="2" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_plan"/>
-                                                                <MenuItem id="3" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_tomato_potato"/>
-                                                                <MenuItem id="4" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_summary"/>
-                                                            </items>
-                                                        </Menu>
-
-                                                        <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                                  text="%menu_delete"/>
-                                                    </items>
-                                                </ContextMenu>
-                                            </contextMenu>
-                                        </ListView>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false"
-                                            text="%label_yesterday_review">
-                                    <content>
-                                        <ListView id="1" fx:id="yesterdayList" prefHeight="200.0" prefWidth="200.0">
-                                            <contextMenu>
-                                                <ContextMenu id="1">
-                                                    <items>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
-                                                                  text="%label_focus"/>
-                                                        <Menu mnemonicParsing="false" text="%menu_move_to">
-                                                            <items>
-                                                                <MenuItem id="2" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_plan"/>
-                                                                <MenuItem id="3" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_tomato_potato"/>
-                                                                <MenuItem id="4" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_summary"/>
-                                                            </items>
-                                                        </Menu>
-
-                                                        <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                                  text="%menu_delete"/>
-                                                    </items>
-                                                </ContextMenu>
-                                            </contextMenu>
-                                        </ListView>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false"
-                                            text="%label_today_plan">
-                                    <content>
-                                        <ListView id="2" fx:id="todayPlanList" prefHeight="200.0" prefWidth="200.0">
-                                            <contextMenu>
-                                                <ContextMenu id="2">
-                                                    <items>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
-                                                                  text="%label_focus"/>
-
-                                                        <Menu mnemonicParsing="false" text="%menu_move_to">
-                                                            <items>
-                                                                <MenuItem id="1" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_yesterday_review"/>
-                                                                <MenuItem id="3" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_tomato_potato"/>
-                                                                <MenuItem id="4" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_summary"/>
-                                                            </items>
-                                                        </Menu>
-
-                                                        <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                                  text="%menu_delete"/>
-                                                    </items>
-                                                </ContextMenu>
-                                            </contextMenu>
-                                        </ListView>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false"
-                                            text="%label_tomato_potato">
-                                    <content>
-                                        <ListView id="3" fx:id="todayTomatoList" prefHeight="200.0" prefWidth="200.0">
-                                            <contextMenu>
-                                                <ContextMenu id="3">
-                                                    <items>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
-                                                                  text="%label_focus"/>
-                                                        <Menu mnemonicParsing="false" text="%menu_move_to">
-                                                            <items>
-                                                                <SeparatorMenuItem mnemonicParsing="false"/>
-                                                                <MenuItem id="1" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_yesterday_review"/>
-                                                                <MenuItem id="2" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_plan"/>
-                                                                <MenuItem id="4" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_summary"/>
-                                                            </items>
-                                                        </Menu>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                                  text="%menu_delete"/>
-                                                    </items>
-                                                </ContextMenu>
-                                            </contextMenu>
-                                        </ListView>
-                                    </content>
-                                </TitledPane>
-                                <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false"
-                                            text="%label_today_summary">
-                                    <content>
-                                        <ListView id="4" fx:id="summaryList" prefHeight="200.0" prefWidth="200.0">
-                                            <contextMenu>
-                                                <ContextMenu id="4">
-                                                    <items>
-
-
-                                                        <Menu mnemonicParsing="false" text="%menu_move_to">
-                                                            <items>
-                                                                <MenuItem id="1" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_yesterday_review"/>
-                                                                <MenuItem id="2" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_today_plan"/>
-                                                                <MenuItem id="3" mnemonicParsing="false"
-                                                                          onAction="#onMoveMenu"
-                                                                          text="%label_tomato_potato"/>
-                                                            </items>
-                                                        </Menu>
-                                                        <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                                  text="%menu_delete"/>
-                                                    </items>
-                                                </ContextMenu>
-                                            </contextMenu>
-                                        </ListView>
-                                    </content>
-                                </TitledPane>
-                            </panes>
-                        </Accordion>
-                        <TextField onAction="#onAddMottoTextField" promptText="%today_motto" GridPane.columnSpan="3"
-                                   GridPane.rowIndex="6"/>
-                        <TitledPane collapsible="false" text="%label_timer" GridPane.rowIndex="3">
+            <columnConstraints>
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="393.0" minWidth="10.0"
+                                   prefWidth="306.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" prefWidth="554.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="605.0" minWidth="10.0" prefWidth="64.0"/>
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints/>
+                <RowConstraints maxHeight="301.0" minHeight="0.0" prefHeight="273.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="231.0" minHeight="9.0" prefHeight="54.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="454.0" minHeight="0.0" prefHeight="252.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="65.0" valignment="CENTER"
+                                vgrow="ALWAYS"/>
+                <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="42.0" valignment="CENTER"
+                                vgrow="ALWAYS"/>
+                <RowConstraints maxHeight="296.0" minHeight="10.0" prefHeight="23.0" vgrow="SOMETIMES"/>
+            </rowConstraints>
+            <children>
+                <Accordion depthTest="ENABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1"
+                           GridPane.rowSpan="5">
+                    <panes>
+                        <TitledPane id="1" fx:id="undoneTitledPane" animated="false" text="%label_undone">
                             <content>
-                                <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
+                                <ListView id="0" fx:id="undoneList" prefHeight="200.0" prefWidth="200.0">
+                                    <contextMenu>
+                                        <ContextMenu id="0">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
+                                                          text="%label_focus"/>
+                                                <Menu mnemonicParsing="false" text="%menu_importance_urgency_axis">
+                                                    <items>
+                                                        <RadioMenuItem id="1" mnemonicParsing="false"
+                                                                       onAction="#onSetIuaMenu"
+                                                                       text="%label_importance_urgency">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="iua"/>
+                                                            </toggleGroup>
+                                                        </RadioMenuItem>
+                                                        <RadioMenuItem id="2" mnemonicParsing="false"
+                                                                       onAction="#onSetIuaMenu"
+                                                                       text="%label_importance_but_not_urgency"
+                                                                       toggleGroup="$iua"/>
+                                                        <RadioMenuItem id="3" mnemonicParsing="false"
+                                                                       onAction="#onSetIuaMenu"
+                                                                       toggleGroup="$iua"
+                                                                       text="%label_not_importance_but_urgency"/>
+                                                        <RadioMenuItem id="4" mnemonicParsing="false"
+                                                                       onAction="#onSetIuaMenu"
+                                                                       toggleGroup="$iua"
+                                                                       text="%label_not_importance_not_urgency"
+                                                                       selected="true"
+                                                        />
+                                                    </items>
+                                                </Menu>
+
+                                                <SeparatorMenuItem/>
+                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                          text="%menu_delete"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
+                            </content>
+                        </TitledPane>
+                        <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false" text="%label_yesterday_review">
+                            <content>
+                                <ListView id="1" fx:id="yesterdayList" prefHeight="200.0" prefWidth="200.0">
+                                    <contextMenu>
+                                        <ContextMenu id="1">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
+                                                          text="%label_focus"/>
+                                                <Menu mnemonicParsing="false" text="%menu_move_to">
+                                                    <items>
+                                                        <MenuItem id="2" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_plan"/>
+                                                        <MenuItem id="3" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_tomato_potato"/>
+                                                        <MenuItem id="4" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_summary"/>
+                                                    </items>
+                                                </Menu>
+
+                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                          text="%menu_delete"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
+                            </content>
+                        </TitledPane>
+                        <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false" text="%label_today_plan">
+                            <content>
+                                <ListView id="2" fx:id="todayPlanList" prefHeight="200.0" prefWidth="200.0">
+                                    <contextMenu>
+                                        <ContextMenu id="2">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
+                                                          text="%label_focus"/>
+
+                                                <Menu mnemonicParsing="false" text="%menu_move_to">
+                                                    <items>
+                                                        <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_yesterday_review"/>
+                                                        <MenuItem id="3" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_tomato_potato"/>
+                                                        <MenuItem id="4" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_summary"/>
+                                                    </items>
+                                                </Menu>
+
+                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                          text="%menu_delete"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
+                            </content>
+                        </TitledPane>
+                        <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false" text="%label_tomato_potato">
+                            <content>
+                                <ListView id="3" fx:id="todayTomatoList" prefHeight="200.0" prefWidth="200.0">
+                                    <contextMenu>
+                                        <ContextMenu id="3">
+                                            <items>
+                                                <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
+                                                          text="%label_focus"/>
+                                                <Menu mnemonicParsing="false" text="%menu_move_to">
+                                                    <items>
+                                                        <SeparatorMenuItem mnemonicParsing="false"/>
+                                                        <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_yesterday_review"/>
+                                                        <MenuItem id="2" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_plan"/>
+                                                        <MenuItem id="4" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_summary"/>
+                                                    </items>
+                                                </Menu>
+                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                          text="%menu_delete"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
+                            </content>
+                        </TitledPane>
+                        <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false" text="%label_today_summary">
+                            <content>
+                                <ListView id="4" fx:id="summaryList" prefHeight="200.0" prefWidth="200.0">
+                                    <contextMenu>
+                                        <ContextMenu id="4">
+                                            <items>
+
+
+                                                <Menu mnemonicParsing="false" text="%menu_move_to">
+                                                    <items>
+                                                        <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_yesterday_review"/>
+                                                        <MenuItem id="2" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_today_plan"/>
+                                                        <MenuItem id="3" mnemonicParsing="false" onAction="#onMoveMenu"
+                                                                  text="%label_tomato_potato"/>
+                                                    </items>
+                                                </Menu>
+                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                          text="%menu_delete"/>
+                                            </items>
+                                        </ContextMenu>
+                                    </contextMenu>
+                                </ListView>
+                            </content>
+                        </TitledPane>
+                    </panes>
+                </Accordion>
+                <TextField onAction="#onAddMottoTextField" promptText="%today_motto" GridPane.columnSpan="3"
+                           GridPane.rowIndex="6"/>
+                <TitledPane collapsible="false" text="%label_timer" GridPane.rowIndex="3">
+                    <content>
+                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="30.0">
+                            <children>
+                                <Label fx:id="timerStatsLabel" text="timer status">
+                                    <font>
+                                        <Font size="18.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="timerCounterLabel" text="Label" textFill="#2fa105">
+                                    <font>
+                                        <Font size="48.0"/>
+                                    </font>
+                                </Label>
+                                <Label fx:id="workContentLabel" text="Label" underline="true"/>
+                                <HBox alignment="CENTER" prefWidth="200.0" style="-fx-spacing: 20;">
                                     <children>
-                                        <Label fx:id="timerStatsLabel" text="timer status">
-                                            <font>
-                                                <Font size="18.0"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="timerCounterLabel" text="Label" textFill="#2fa105">
-                                            <font>
-                                                <Font size="48.0"/>
-                                            </font>
-                                        </Label>
-                                        <Label fx:id="workContentLabel" text="Label" underline="true"/>
-                                        <HBox alignment="CENTER" prefWidth="200.0" style="-fx-spacing: 20;">
-                                            <children>
-                                                <Button fx:id="stopButton" mnemonicParsing="false"
-                                                        onAction="#onStopTimer" text="%label_stop"/>
-                                            </children>
-                                        </HBox>
+                                        <Button fx:id="stopButton" mnemonicParsing="false" onAction="#onStopTimer"
+                                                text="%label_stop"/>
                                     </children>
-                                </VBox>
-                            </content>
-                        </TitledPane>
-                        <TitledPane fx:id="titledPane" collapsible="false" prefHeight="273.0" prefWidth="273.0"
-                                    GridPane.rowIndex="1">
-                            <content>
-                                <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
-                            </content>
-                        </TitledPane>
-                    </children>
-                    <opaqueInsets>
-                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
-                    </opaqueInsets>
-                    <padding>
-                        <Insets bottom="10.0"/>
-                    </padding>
-                </GridPane>
-            </center>
-            <top>
-                <ToolBar prefHeight="39.0" prefWidth="614.0" BorderPane.alignment="CENTER">
-                    <items>
-                        <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting"/>
-                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0"/>
-                        <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="94.0"/>
-                        <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0"
-                                   prefWidth="524.0" promptText="%label_new_task"/>
-                        <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加"/>
-                    </items>
-                </ToolBar>
-            </top>
-        </BorderPane>
+                                </HBox>
+                            </children>
+                        </VBox>
+                    </content>
+                </TitledPane>
+                <TitledPane fx:id="titledPane" collapsible="false" prefHeight="273.0" prefWidth="273.0"
+                            GridPane.rowIndex="1">
+                    <content>
+                        <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
+                    </content>
+                </TitledPane>
+            </children>
+            <opaqueInsets>
+                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+            </opaqueInsets>
+            <padding>
+                <Insets bottom="10.0"/>
+            </padding>
+        </GridPane>
     </center>
+    <top>
+        <ToolBar prefHeight="39.0" prefWidth="614.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting"/>
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0"/>
+                <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="94.0"/>
+                <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0"
+                           prefWidth="524.0" promptText="%label_new_task"/>
+                <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加"/>
+            </items>
+        </ToolBar>
+    </top>
 </BorderPane>
