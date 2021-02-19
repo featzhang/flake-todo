@@ -194,6 +194,8 @@ public class DashboardController implements Initializable {
         });
         //
         addButton.requestFocus();
+
+
         //
         List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList);
         listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
@@ -206,6 +208,17 @@ public class DashboardController implements Initializable {
         //
         titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
+        // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
+        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
+                .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
+                    int tpId = Integer.parseInt(tp.getId());
+                    if (newValue) {
+                        loadData(tpId);
+                    } else {
+                        clearData(tpId);
+                    }
+                }));
+
         // load data
         loadData();
         // datePick action
@@ -222,6 +235,38 @@ public class DashboardController implements Initializable {
         // init view
         yesterdayTitledPane.expandedProperty().setValue(false);
         yesterdayTitledPane.expandedProperty().setValue(true);
+    }
+
+    private void clearData(int taskType) {
+
+    }
+
+    private void loadData(int tpId) {
+        // loadDayTask
+        int dayId = DateUtils.dayId(datePicker.getValue());
+        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
+        List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
+
+        List<TaskDto> needObserver = new ArrayList<>();
+        if (CollectionUtils.isNotEmpty(list)) {
+            Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
+
+            for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
+                ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
+                items.clear();
+                List<TaskDto> dtos = entry.getValue();
+                items.addAll(dtos);
+                needObserver.addAll(dtos);
+            }
+        } else {
+            listViewMap.values().forEach(l -> l.getItems().clear());
+        }
+        // load all undone tasks
+        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
+        needObserver.addAll(undoneTasks);
+        undoneList.getItems().addAll(undoneTasks);
+        //
+        needObserver.forEach(this::onDataChange);
     }
 
     private void onDatePickerChanged(LocalDate oldValue, LocalDate newValue) {
