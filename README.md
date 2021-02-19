@@ -10,3 +10,8 @@ TODO - app build by JavaFX
 
 
 ![中文界面展示](docs/images/perview.png)
+
+## project todo
+
+- global focus and nap notify
+  

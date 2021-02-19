@@ -25,3 +25,9 @@ target
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 db
+.project
+.settings
+flake-client/.classpath
+flake-client/.project
+flake-client/.settings
+flake-client/.factorypath

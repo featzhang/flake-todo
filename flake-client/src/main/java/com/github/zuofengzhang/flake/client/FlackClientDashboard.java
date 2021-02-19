@@ -2,12 +2,10 @@ package com.github.zuofengzhang.flake.client;
 
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.controller.DashboardController;
-import com.github.zuofengzhang.flake.client.controller.SettingsController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
 import org.slf4j.Logger;
@@ -59,7 +57,7 @@ public class FlackClientDashboard extends Application {
 
     @Override
     public void stop() throws Exception {
-        this.applicationContext.close();
+        applicationContext.close();
         Platform.exit();
     }
 

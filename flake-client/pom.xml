@@ -119,6 +119,20 @@
             <groupId>org.controlsfx</groupId>
             <artifactId>controlsfx</artifactId>
             <version>11.0.3</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>javafx-controls</artifactId>
+                    <groupId>org.openjfx</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javafx-graphics</artifactId>
+                    <groupId>org.openjfx</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>javafx-base</artifactId>
+                    <groupId>org.openjfx</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!---->
         <dependency>

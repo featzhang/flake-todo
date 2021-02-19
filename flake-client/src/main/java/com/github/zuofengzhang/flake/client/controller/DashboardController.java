@@ -183,20 +183,26 @@ public class DashboardController implements Initializable {
         loadData();
         // datePick action
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            if (oldValue == newValue) {
-                return;
-            }
-
-            loadData();
+            onDatePickerChanged(oldValue, newValue);
         });
-        // init view
-        yesterdayTitledPane.expandedProperty().setValue(false);
-        yesterdayTitledPane.expandedProperty().setValue(true);
+
         // init timer
         setTimerText(0);
         setTimerStatus(FlakeLabel.BREAKING);
         setTimerContent("");
         stopButton.setVisible(false);
+
+        // init view
+        yesterdayTitledPane.expandedProperty().setValue(false);
+        yesterdayTitledPane.expandedProperty().setValue(true);
+    }
+
+    private void onDatePickerChanged(LocalDate oldValue, LocalDate newValue) {
+        if (oldValue == newValue) {
+            return;
+        }
+
+        loadData();
     }
 
     private void setTimerContent(String s) {
