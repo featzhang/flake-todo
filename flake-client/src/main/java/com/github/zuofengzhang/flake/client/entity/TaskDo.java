@@ -43,6 +43,6 @@ public class TaskDo implements Serializable {
      * 4. Not Important but Urgent Tasks
      * 0. default_value
      */
-    private int importanceUrgencyAxis;
-    private int dayId;
+    private Integer importanceUrgencyAxis;
+    private Integer dayId;
 }

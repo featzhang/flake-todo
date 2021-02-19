@@ -115,7 +115,6 @@ public class DashboardController implements Initializable {
             ListView<TaskDto> listView = listViewMap.get(taskTypeId);
             listView.getItems().add(taskDto);
             // bind db action
-
             taskDto.finishedPropertyProperty().addListener((observableValue, aBoolean, t1) -> {
                 log.debug("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
                 taskService.updateById(taskDto);
@@ -188,10 +187,11 @@ public class DashboardController implements Initializable {
         List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList);
         listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // listViewCellFactory
-        yesterdayList.setCellFactory(taskEntityListView -> new TaskCell());
-        todayPlanList.setCellFactory(taskEntityListView -> new TaskCell());
-        todayTomatoList.setCellFactory(taskEntityListView -> new TaskCell());
-        summaryList.setCellFactory(taskEntityListView -> new TaskCell());
+        yesterdayList.setCellFactory(t -> new TaskCell());
+        todayPlanList.setCellFactory(t -> new TaskCell());
+        todayTomatoList.setCellFactory(t -> new TaskCell());
+        summaryList.setCellFactory(t -> new TaskCell());
+        undoneList.setCellFactory(t -> new TaskCell());
         //
         titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
@@ -263,7 +263,7 @@ public class DashboardController implements Initializable {
         }
         // load all undone tasks
         List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-
+        undoneList.getItems().addAll(undoneTasks);
 //        taskService.findAllTasksByDayId()
     }
 

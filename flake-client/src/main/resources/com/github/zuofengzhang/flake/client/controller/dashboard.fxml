@@ -36,9 +36,9 @@
                                 <TitledPane id="1" fx:id="undoneTitledPane" animated="false"
                                             text="%label_undone">
                                     <content>
-                                        <ListView id="1" fx:id="undoneList" prefHeight="200.0" prefWidth="200.0">
+                                        <ListView id="0" fx:id="undoneList" prefHeight="200.0" prefWidth="200.0">
                                             <contextMenu>
-                                                <ContextMenu id="1">
+                                                <ContextMenu id="0">
                                                     <items>
                                                         <MenuItem mnemonicParsing="false" onAction="#onStartTimer"
                                                                   text="%label_focus"/>
