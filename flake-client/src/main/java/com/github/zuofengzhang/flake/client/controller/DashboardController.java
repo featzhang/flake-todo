@@ -68,14 +68,21 @@ public class DashboardController implements Initializable {
     public TextField mottoTextField;
     public BorderPane datePickerPane;
     public Label workContentLabel;
+    public TitledPane undoneTitledPane;
+    public ListView<TaskDto> undoneList;
     @Resource
     private TaskService taskService;
     private DatePicker datePicker;
     private int currentTaskId = -1;
+    //
     //    private AudioClip mNotify;
+    //
     private Map<Integer, TitledPane> titledPaneMap;
     private Map<Integer, ListView<TaskDto>> listViewMap;
     private Timeline timeline;
+    @Resource
+    private SettingsController settingsController;
+    private Consumer<ActionEvent> o;
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -157,7 +164,11 @@ public class DashboardController implements Initializable {
         datePickerPane.setCenter(popupContent);
 
         // type
-        List<String> taskTypeNames = Arrays.stream(TaskType.values()).map(TaskType::getCname).collect(Collectors.toList());
+        List<String> taskTypeNames
+                = Arrays
+                .stream(TaskType.values())
+                .map(TaskType::getCname)
+                .collect(Collectors.toList());
         typeComboBox.getItems().addAll(taskTypeNames);
         typeComboBox.getSelectionModel().select(0);
         typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
@@ -243,6 +254,8 @@ public class DashboardController implements Initializable {
         } else {
             listViewMap.values().forEach(l -> l.getItems().clear());
         }
+        // load all undone tasks
+//        taskService.findAllTasksByDayId()
     }
 
     public void onAddMottoTextField(ActionEvent actionEvent) {
@@ -298,6 +311,9 @@ public class DashboardController implements Initializable {
         listViewMap.get(TaskType.TOMATO_POTATO.getCId()).getItems().add(newTask);
     }
 
+    /**
+     * 休息结束
+     */
     public void takeBreakNotification() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
 
@@ -312,10 +328,6 @@ public class DashboardController implements Initializable {
         alert.show();
         //alert.showAndWait();
         System.out.println("take a break notification");
-    }
-
-    private void setTimerStatus(String timeForABreak) {
-        timerStatsLabel.setText(timeForABreak);
     }
 
     public void onStartTimer(ActionEvent actionEvent) {
@@ -359,6 +371,10 @@ public class DashboardController implements Initializable {
         return mStatus;
     }
 
+    private void setTimerStatus(String timeForABreak) {
+        timerStatsLabel.setText(timeForABreak);
+    }
+
     public void onStopTimer(ActionEvent actionEvent) {
         log.info("stop timer");
         currentTaskId = -1;
@@ -369,9 +385,6 @@ public class DashboardController implements Initializable {
         setTimerStatus(FlakeLabel.BREAKING);
         setTimerContent("");
     }
-
-    @Resource
-    private SettingsController settingsController;
 
     public void onSettings(ActionEvent actionEvent) {
         Node node = (Node) actionEvent.getSource();
@@ -385,8 +398,6 @@ public class DashboardController implements Initializable {
         stage.setScene(scene);
         stage.show();
     }
-
-    private Consumer<ActionEvent> o;
 
 
 }

@@ -26,6 +26,7 @@ public class TaskDo implements Serializable {
     private Long updateTime;
     private Long startTime;
     private Long endTime;
+    private Boolean finished;
     /**
      *
      */
