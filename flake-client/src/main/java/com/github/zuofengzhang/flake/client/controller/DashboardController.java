@@ -257,7 +257,7 @@ public class DashboardController implements Initializable {
                         @Override
                         public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
                             log.info("changed : {},{},{}: {}", observableValue.getValue(), aBoolean, t1, taskDto);
-
+                            taskService.updateById(taskDto);
                         }
                     });
                 });
