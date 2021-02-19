@@ -13,6 +13,8 @@ import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -249,7 +251,17 @@ public class DashboardController implements Initializable {
             for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
                 ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
                 items.clear();
-                items.addAll(entry.getValue());
+                List<TaskDto> dtos = entry.getValue();
+                dtos.forEach(taskDto -> {
+                    taskDto.finishedPropertyProperty().addListener(new ChangeListener<Boolean>() {
+                        @Override
+                        public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
+                            log.info("changed : {},{},{}: {}", observableValue.getValue(), aBoolean, t1, taskDto);
+
+                        }
+                    });
+                });
+                items.addAll(dtos);
             }
         } else {
             listViewMap.values().forEach(l -> l.getItems().clear());

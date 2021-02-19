@@ -27,7 +27,8 @@ public class TaskCellController implements Initializable {
     public void setData(TaskDto task) {
         if (task != null) {
             titleLabel.setText(task.getTitle());
-            checkBox.setSelected(task.isFullTomato());
+            checkBox.setSelected(task.isFinished());
+            task.finishedPropertyProperty().bind(checkBox.selectedProperty());
         } else {
             checkBox.setVisible(false);
         }
