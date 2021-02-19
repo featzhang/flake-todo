@@ -162,6 +162,10 @@ public class TaskDto {
                 '}';
     }
 
+    public void setTaskId(int insert) {
+        this.taskIdProperty.set(insert);
+    }
+
     public static class Builder {
         private int taskId;
         private int dayId;

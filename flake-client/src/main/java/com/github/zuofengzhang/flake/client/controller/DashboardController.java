@@ -13,8 +13,6 @@ import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -112,11 +110,16 @@ public class DashboardController implements Initializable {
                     .createdTime(System.currentTimeMillis())
                     .updateTime(System.currentTimeMillis())
                     .build();
+            taskService.insert(taskDto);
             // add to ListView
             ListView<TaskDto> listView = listViewMap.get(taskTypeId);
             listView.getItems().add(taskDto);
-            taskService.insert(taskDto);
+            // bind db action
 
+            taskDto.finishedPropertyProperty().addListener((observableValue, aBoolean, t1) -> {
+                log.debug("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
+                taskService.updateById(taskDto);
+            });
             // expand selected TitledPane
             titledPaneMap.get(taskTypeId).expandedProperty().set(true);
             //
@@ -252,21 +255,15 @@ public class DashboardController implements Initializable {
                 ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
                 items.clear();
                 List<TaskDto> dtos = entry.getValue();
-                dtos.forEach(taskDto -> {
-                    taskDto.finishedPropertyProperty().addListener(new ChangeListener<Boolean>() {
-                        @Override
-                        public void changed(ObservableValue<? extends Boolean> observableValue, Boolean aBoolean, Boolean t1) {
-                            log.info("changed : {},{},{}: {}", observableValue.getValue(), aBoolean, t1, taskDto);
-                            taskService.updateById(taskDto);
-                        }
-                    });
-                });
+                dtos.forEach(taskDto -> taskDto.finishedPropertyProperty().addListener((observableValue, oldValue, newValue) -> taskService.updateById(taskDto)));
                 items.addAll(dtos);
             }
         } else {
             listViewMap.values().forEach(l -> l.getItems().clear());
         }
         // load all undone tasks
+        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
+
 //        taskService.findAllTasksByDayId()
     }
 

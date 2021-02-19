@@ -16,4 +16,6 @@ public interface TaskService {
     int updateById(TaskDto selectedItem);
 
     TaskDto findById(int taskId);
+
+    List<TaskDto> findAllUndoneTasks();
 }

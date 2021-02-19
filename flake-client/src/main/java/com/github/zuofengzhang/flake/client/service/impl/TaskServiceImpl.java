@@ -12,6 +12,9 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * @author zhangzuofeng1
+ */
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService {
@@ -25,7 +28,14 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> findAllTasksByDayId(int dayId) {
-        return taskDao.selectList(new QueryWrapper<>(TaskDo.builder().dayId(dayId).build())).stream().map(TaskDto::parse).collect(Collectors.toList());
+        return taskDao
+                .selectList(
+                        new QueryWrapper<>(TaskDo.builder().dayId(dayId).build())
+                                .orderByDesc("priority_order", "update_time")
+                )
+                .stream()
+                .map(TaskDto::parse)
+                .collect(Collectors.toList());
     }
 
 
@@ -34,7 +44,10 @@ public class TaskServiceImpl implements TaskService {
         log.info("insert into {}", taskDto);
         TaskDo taskDo = taskDto.parse();
         log.info("insert into {}", taskDo);
-        return taskDao.insert(taskDo);
+        int insert = taskDao.insert(taskDo);
+        // reset id value to DTO
+        taskDto.setTaskId(taskDo.getTaskId());
+        return insert;
     }
 
     @Override
@@ -51,5 +64,17 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskDto findById(int taskId) {
         return TaskDto.parse(taskDao.selectById(taskId));
+    }
+
+    @Override
+    public List<TaskDto> findAllUndoneTasks() {
+        return taskDao
+                .selectList(
+                        new QueryWrapper<>(TaskDo.builder().finished(false).build())
+                                .orderByDesc("priority_order", "update_time")
+                )
+                .stream()
+                .map(TaskDto::parse)
+                .collect(Collectors.toList());
     }
 }
