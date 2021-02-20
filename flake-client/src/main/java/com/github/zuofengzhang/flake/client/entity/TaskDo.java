@@ -45,4 +45,7 @@ public class TaskDo implements Serializable {
      */
     private Integer importanceUrgencyAxis;
     private Integer dayId;
+    private String attachment;
+
+
 }

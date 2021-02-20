@@ -1,7 +1,6 @@
 package com.github.zuofengzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.github.zuofengzhang.flake.client.FlackClientDashboard;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
@@ -24,10 +23,14 @@ import javafx.scene.control.*;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import lombok.extern.slf4j.Slf4j;
+import net.rgielen.fxweaver.core.FxControllerAndView;
+import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.Notifications;
@@ -86,6 +89,10 @@ public class DashboardController implements Initializable {
     private SettingsController settingsController;
     private Consumer<ActionEvent> o;
 
+    @Resource
+    private FxWeaver fxWeaver;
+
+
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
             doAddNewTask();
@@ -133,14 +140,26 @@ public class DashboardController implements Initializable {
 
     private void onTaskDataChange(TaskDto taskDto) {
         log.info("onDataChange: {}", taskDto.getTaskId());
-        taskDto.finishedProperty().addListener((observableValue, aBoolean, t1) -> {
-            log.info("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
+        taskDto.finishedProperty().addListener((observableValue, s, t1) -> {
+            log.info("update finished status:  @{},{}->{}", taskDto.getTaskId(), s, t1);
             taskService.updateById(taskDto);
         });
-        taskDto.iuaProperty().addListener(((observableValue, number, t1) -> {
-            log.info("update iua value: {}->{}->{}: {}", observableValue, number, t1, taskDto);
+        taskDto.iuaProperty().addListener(((observableValue, s, t1) -> {
+            log.info("update iua value:  @{},{}->{}", taskDto.getTaskId(), s, t1);
             taskService.updateById(taskDto);
         }));
+        taskDto.attachmentProperty().addListener((observableValue, s, t1) -> {
+            log.info("update attachment: @{},{}->{}", taskDto.getTaskId(), s, t1);
+            taskService.updateById(taskDto);
+        });
+        taskDto.titleProperty().addListener((observableValue, s, t1) -> {
+            log.info("update title: @{},{}->{}", taskDto.getTaskId(), s, t1);
+            taskService.updateById(taskDto);
+        });
+        taskDto.contentProperty().addListener((observableValue, s, t1) -> {
+            log.info("update content: @{},{}->{}", taskDto.getTaskId(), s, t1);
+            taskService.updateById(taskDto);
+        });
     }
 
     public void onAddButtonAction(ActionEvent actionEvent) {
@@ -157,7 +176,7 @@ public class DashboardController implements Initializable {
         selectedItem.setTaskType(TaskType.findById(targetId));
         if (taskService.updateById(selectedItem) > 0) {
             listView.getItems().remove(selectedItem);
-            listViewMap.get(targetId).getItems().add(selectedItem);
+//            listViewMap.get(targetId).getItems().add(selectedItem);
         }
     }
 
@@ -204,7 +223,7 @@ public class DashboardController implements Initializable {
 
 
         //
-        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList);
+        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList, undoneList);
         listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // listViewCellFactory
         yesterdayList.setCellFactory(t -> new TaskCell());
@@ -493,7 +512,7 @@ public class DashboardController implements Initializable {
         Node node = (Node) actionEvent.getSource();
         Scene scene1 = node.getScene();
         Stage primaryStage = (Stage) scene1.getWindow();
-        BorderPane borderPane = FlackClientDashboard.fxWeaver.loadView(SettingsController.class, FlackClientDashboard.resourceBundle);
+        BorderPane borderPane = fxWeaver.loadView(SettingsController.class, resourceBundle);
         Scene scene = new Scene(borderPane);
         Stage stage = new Stage();
         stage.setResizable(false);
@@ -517,6 +536,34 @@ public class DashboardController implements Initializable {
             if (targetIuaId != iua) {
                 selectedItem.setIua(targetIuaId);
                 log.info("set iua : {} -> {} ,{}", iua, targetIuaId, selectedItem);
+            }
+        }
+    }
+
+    @Resource
+    private ResourceBundle resourceBundle;
+
+    public void onTaskClicked(MouseEvent mouseEvent) {
+        EventTarget target = mouseEvent.getTarget();
+        TitledPane expandedPane = according.getExpandedPane();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(expandedPane.getId()));
+        TaskDto selectedTask = listView.getSelectionModel().getSelectedItem();
+        if (selectedTask != null) {
+            if (mouseEvent.getClickCount() == 2) {
+                Node node = (Node) mouseEvent.getSource();
+                Scene nodeScene = node.getScene();
+                Stage primaryStage = (Stage) nodeScene.getWindow();
+                FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver.load(TaskDetailController.class, resourceBundle);
+                GridPane borderPane = controllerAndView.getView().get();
+                TaskDetailController controller = controllerAndView.getController();
+                controller.setData(selectedTask);
+                Scene scene = new Scene(borderPane);
+                Stage stage = new Stage();
+                stage.setResizable(true);
+                stage.initOwner(primaryStage);
+                stage.setTitle(FlakeLabel.TASK_EDIT);
+                stage.setScene(scene);
+                stage.show();
             }
         }
     }

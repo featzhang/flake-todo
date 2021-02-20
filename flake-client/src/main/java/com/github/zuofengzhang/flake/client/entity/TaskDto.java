@@ -21,12 +21,13 @@ public class TaskDto {
     private final SimpleBooleanProperty finishedProperty = new SimpleBooleanProperty(false);
     private final SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
     private final SimpleIntegerProperty importanceUrgencyAxisProperty = new SimpleIntegerProperty(0);
+    private final SimpleStringProperty attachmentProperty = new SimpleStringProperty();
 
     public int getTaskIdProperty() {
         return taskIdProperty.get();
     }
 
-    public SimpleIntegerProperty taskIdPropertyProperty() {
+    public SimpleIntegerProperty taskIdProperty() {
         return taskIdProperty;
     }
 
@@ -34,7 +35,7 @@ public class TaskDto {
         return dayIdProperty.get();
     }
 
-    public SimpleIntegerProperty dayIdPropertyProperty() {
+    public SimpleIntegerProperty dayIdProperty() {
         return dayIdProperty;
     }
 
@@ -42,7 +43,7 @@ public class TaskDto {
         return createdTimeProperty.get();
     }
 
-    public SimpleLongProperty createdTimePropertyProperty() {
+    public SimpleLongProperty createdTimeProperty() {
         return createdTimeProperty;
     }
 
@@ -50,7 +51,7 @@ public class TaskDto {
         return updateTimeProperty.get();
     }
 
-    public SimpleLongProperty updateTimePropertyProperty() {
+    public SimpleLongProperty updateTimeProperty() {
         return updateTimeProperty;
     }
 
@@ -58,7 +59,7 @@ public class TaskDto {
         return startTimeProperty.get();
     }
 
-    public SimpleLongProperty startTimePropertyProperty() {
+    public SimpleLongProperty startTimeProperty() {
         return startTimeProperty;
     }
 
@@ -66,7 +67,7 @@ public class TaskDto {
         return endTimeProperty.get();
     }
 
-    public SimpleLongProperty endTimePropertyProperty() {
+    public SimpleLongProperty endTimeProperty() {
         return endTimeProperty;
     }
 
@@ -74,31 +75,25 @@ public class TaskDto {
         return titleProperty.get();
     }
 
-    public SimpleStringProperty titlePropertyProperty() {
+    public SimpleStringProperty titleProperty() {
         return titleProperty;
     }
 
-    public String getContentProperty() {
+    public String getContent() {
         return contentProperty.get();
     }
 
-    public SimpleStringProperty contentPropertyProperty() {
+    public SimpleStringProperty contentProperty() {
         return contentProperty;
     }
 
-    public boolean isFinishedProperty() {
-        return finishedProperty.get();
-    }
 
     public SimpleBooleanProperty finishedProperty() {
         return finishedProperty;
     }
 
-    public TaskType getTaskTypeProperty() {
-        return taskTypeProperty.get();
-    }
 
-    public SimpleObjectProperty<TaskType> taskTypePropertyProperty() {
+    public SimpleObjectProperty<TaskType> taskTypeProperty() {
         return taskTypeProperty;
     }
 
@@ -118,6 +113,7 @@ public class TaskDto {
         this.finishedProperty.set(builder.finished);
         this.taskTypeProperty.set(builder.taskType);
         this.importanceUrgencyAxisProperty.set(builder.importanceUrgencyAxis);
+        this.attachmentProperty.set(builder.attachment);
     }
 
     public int getIua() {
@@ -141,9 +137,6 @@ public class TaskDto {
         return titleProperty.get();
     }
 
-    public String getContent() {
-        return contentProperty.get();
-    }
 
     public int getDayId() {
         return dayIdProperty.get();
@@ -167,6 +160,7 @@ public class TaskDto {
                 ", finished=" + finishedProperty.get() +
                 ", taskType=" + taskTypeProperty.get() +
                 ", iua=" + importanceUrgencyAxisProperty.get() +
+                ", attachment=" + attachmentProperty.get() +
                 '}';
     }
 
@@ -182,6 +176,30 @@ public class TaskDto {
         return importanceUrgencyAxisProperty;
     }
 
+    public Long getCreatedTime() {
+        return createdTimeProperty.get();
+    }
+
+    public long getUpdateTime() {
+        return updateTimeProperty.get();
+    }
+
+    public long getEndTime() {
+        return endTimeProperty.get();
+    }
+
+    public SimpleStringProperty attachmentProperty() {
+        return attachmentProperty;
+    }
+
+    public String getAttachment() {
+        return attachmentProperty.get();
+    }
+
+    public void setContent(String text) {
+        this.contentProperty.set(text);
+    }
+
     public static class Builder {
         private int taskId;
         private int dayId;
@@ -194,6 +212,7 @@ public class TaskDto {
         private boolean finished;
         private TaskType taskType;
         private int importanceUrgencyAxis;
+        private String attachment;
 
         public Builder taskId(int taskId) {
             this.taskId = taskId;
@@ -252,6 +271,11 @@ public class TaskDto {
             return this;
         }
 
+        public Builder attachment(String finished) {
+            this.attachment = finished;
+            return this;
+        }
+
         public TaskDto build() {
             return new TaskDto(this);
         }
@@ -276,6 +300,7 @@ public class TaskDto {
                 .endTime(taskDo.getEndTime())
                 .finished(taskDo.getFinished())
                 .importanceUrgencyAxis(taskDo.getImportanceUrgencyAxis())
+                .attachment(taskDo.getAttachment())
                 .build();
     }
 
@@ -292,6 +317,7 @@ public class TaskDto {
                 .endTime(endTimeProperty.get())
                 .finished(finishedProperty.get())
                 .importanceUrgencyAxis(importanceUrgencyAxisProperty.get())
+                .attachment(attachmentProperty.get())
                 .build();
     }
 }
