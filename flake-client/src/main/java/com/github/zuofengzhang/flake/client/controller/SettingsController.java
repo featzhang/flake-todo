@@ -6,8 +6,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Slider;
 import javafx.stage.Stage;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
@@ -18,8 +19,8 @@ import java.util.ResourceBundle;
  */
 @Component
 @FxmlView("settings.fxml")
-@Slf4j
 public class SettingsController implements Initializable {
+    private static final Logger log = LoggerFactory.getLogger(SettingsController.class);
     public Slider focusTimeSlider;
 
     public Slider restTimeSlider;

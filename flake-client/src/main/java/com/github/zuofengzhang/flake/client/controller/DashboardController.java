@@ -31,6 +31,8 @@ import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
 import org.controlsfx.control.Notifications;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -46,9 +48,9 @@ import java.util.stream.Stream;
  */
 @Component
 @FxmlView("dashboard.fxml")
-@Slf4j
 public class DashboardController implements Initializable {
 
+    private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
 
     public TitledPane titledPane;
 

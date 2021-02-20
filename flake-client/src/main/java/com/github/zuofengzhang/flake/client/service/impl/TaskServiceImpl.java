@@ -6,7 +6,8 @@ import com.github.zuofengzhang.flake.client.entity.TaskDo;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
 import com.github.zuofengzhang.flake.client.service.TaskService;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
@@ -17,8 +18,8 @@ import java.util.stream.Collectors;
  * @author zhangzuofeng1
  */
 @Service
-@Slf4j
 public class TaskServiceImpl implements TaskService {
+    private static final Logger log = LoggerFactory.getLogger(TaskServiceImpl.class);
     @Resource
     private TaskDao taskDao;
 
@@ -39,17 +40,17 @@ public class TaskServiceImpl implements TaskService {
                 .collect(Collectors.toList());
     }
 
-    
+
     @Override
-    public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType){
+    public List<TaskDto> findTasksByDayIdAndType(int dayId, TaskType taskType) {
         return taskDao
-        .selectList(
-            new QueryWrapper<>(TaskDo.builder().dayId(dayId).typeId(taskType.getCId()).build())
-            .orderByDesc("priority_order", "update_time")
-            )
-        .stream()
-        .map(TaskDto::parse)
-        .collect(Collectors.toList());
+                .selectList(
+                        new QueryWrapper<>(TaskDo.builder().dayId(dayId).typeId(taskType.getCId()).build())
+                                .orderByDesc("priority_order", "update_time")
+                )
+                .stream()
+                .map(TaskDto::parse)
+                .collect(Collectors.toList());
     }
 
 
