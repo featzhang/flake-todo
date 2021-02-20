@@ -13,6 +13,7 @@ import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -51,6 +52,7 @@ public class DashboardController implements Initializable {
 
     public TitledPane titledPane;
 
+    public Accordion according;
     public Button stopButton;
     public Label timerStatsLabel;
     public Label timerCounterLabel;
@@ -109,23 +111,27 @@ public class DashboardController implements Initializable {
                     .content(text)
                     .createdTime(System.currentTimeMillis())
                     .updateTime(System.currentTimeMillis())
+                    .importanceUrgencyAxis(4)
+                    .finished(false)
                     .build();
             taskService.insert(taskDto);
-            // add to ListView
-            ListView<TaskDto> listView = listViewMap.get(taskTypeId);
-            listView.getItems().add(taskDto);
             // bind db action
-            onDataChange(taskDto);
+            onTaskDataChange(taskDto);
 
             // expand selected TitledPane
-            titledPaneMap.get(taskTypeId).expandedProperty().set(true);
+            BooleanProperty expandedProperty = titledPaneMap.get(taskTypeId).expandedProperty();
+            if (expandedProperty.get()) {
+                clearTitledPaneData(taskTypeId);
+                loadTitledPaneData(taskTypeId);
+            }
+            expandedProperty.set(true);
             //
 //            newContentTextField.clear();
         }
     }
 
 
-    private void onDataChange(TaskDto taskDto) {
+    private void onTaskDataChange(TaskDto taskDto) {
         log.info("onDataChange: {}", taskDto.getTaskId());
         taskDto.finishedProperty().addListener((observableValue, aBoolean, t1) -> {
             log.info("update finished status: {}->{}->{}: {}", observableValue, aBoolean, t1, taskDto);
@@ -169,6 +175,7 @@ public class DashboardController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        // init UI & events
         // init
 //        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
 
@@ -209,18 +216,18 @@ public class DashboardController implements Initializable {
         titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
-        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
+        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, undoneTitledPane)
                 .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
                     int tpId = Integer.parseInt(tp.getId());
                     if (newValue) {
-                        loadData(tpId);
+                        loadTitledPaneData(tpId);
                     } else {
-                        clearData(tpId);
+                        clearTitledPaneData(tpId);
                     }
                 }));
 
         // load data
-        loadData();
+//        loadData();
         // datePick action
         datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
             onDatePickerChanged(oldValue, newValue);
@@ -233,40 +240,64 @@ public class DashboardController implements Initializable {
         stopButton.setVisible(false);
 
         // init view
-        yesterdayTitledPane.expandedProperty().setValue(false);
-        yesterdayTitledPane.expandedProperty().setValue(true);
+        // expanded undoneTitledPane
+        according.setExpandedPane(undoneTitledPane);
+
+        // loadData
+        loadTitledPaneData(Integer.parseInt(undoneTitledPane.getId()));
     }
 
-    private void clearData(int taskType) {
-
+    private void clearTitledPaneData(int titledPaneId) {
+        TaskType taskType = TaskType.findById(titledPaneId);
+        // undone
+        if (taskType == null) {
+            undoneList.getItems().forEach(task -> {
+                task.finishedProperty().unbind();
+                task.iuaProperty().unbind();
+            });
+            undoneList.getItems().clear();
+        } else {
+            // loadDayTask
+            ListView<TaskDto> listView = listViewMap.get(titledPaneId);
+            ObservableList<TaskDto> items = listView.getItems();
+            items.forEach(task -> {
+                task.finishedProperty().unbind();
+                task.iuaProperty().unbind();
+            });
+            items.clear();
+        }
     }
 
-    private void loadData(int tpId) {
-        // loadDayTask
+    private void loadTitledPaneData(int titledPaneId) {
+        TaskType taskType = TaskType.findById(titledPaneId);
         int dayId = DateUtils.dayId(datePicker.getValue());
         titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
-        List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
-
-        List<TaskDto> needObserver = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(list)) {
-            Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
-
-            for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
-                ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
-                items.clear();
-                List<TaskDto> dtos = entry.getValue();
-                items.addAll(dtos);
-                needObserver.addAll(dtos);
+        // undone
+        if (taskType == null) {
+            List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
+//            undoneList.getItems().forEach(task -> {
+//                task.finishedProperty().unbind();
+//                task.iuaProperty().unbind();
+//            });
+//            undoneList.getItems().clear();
+            if (!CollectionUtils.isEmpty(undoneTasks)) {
+                undoneTasks.forEach(this::onTaskDataChange);
+                undoneList.getItems().addAll(undoneTasks);
             }
         } else {
-            listViewMap.values().forEach(l -> l.getItems().clear());
+            // loadDayTask
+
+            List<TaskDto> tasks = taskService.findTasksByDayIdAndType(dayId, taskType);
+            ListView<TaskDto> listView = listViewMap.get(titledPaneId);
+            ObservableList<TaskDto> items = listView.getItems();
+//            items.forEach(task -> {
+//                task.finishedProperty().unbind();
+//                task.iuaProperty().unbind();
+//            });
+//            items.clear();
+            tasks.forEach(this::onTaskDataChange);
+            items.addAll(tasks);
         }
-        // load all undone tasks
-        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-        needObserver.addAll(undoneTasks);
-        undoneList.getItems().addAll(undoneTasks);
-        //
-        needObserver.forEach(this::onDataChange);
     }
 
     private void onDatePickerChanged(LocalDate oldValue, LocalDate newValue) {
@@ -274,7 +305,10 @@ public class DashboardController implements Initializable {
             return;
         }
 
-        loadData();
+        int titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
+        clearTitledPaneData(titledPaneId);
+        loadTitledPaneData(titledPaneId);
+//        loadData();
     }
 
     private void setTimerContent(String s) {
@@ -298,34 +332,34 @@ public class DashboardController implements Initializable {
         timerCounterLabel.setText(s);
     }
 
-    private void loadData() {
-        // loadDayTask
-        int dayId = DateUtils.dayId(datePicker.getValue());
-        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
-        List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
-
-        List<TaskDto> needObserver = new ArrayList<>();
-        if (CollectionUtils.isNotEmpty(list)) {
-            Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
-
-            for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
-                ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
-                items.clear();
-                List<TaskDto> dtos = entry.getValue();
-                items.addAll(dtos);
-                needObserver.addAll(dtos);
-            }
-        } else {
-            listViewMap.values().forEach(l -> l.getItems().clear());
-        }
-        // load all undone tasks
-        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-        needObserver.addAll(undoneTasks);
-        undoneList.getItems().addAll(undoneTasks);
-        //
-        needObserver.forEach(this::onDataChange);
-//        taskService.findAllTasksByDayId()
-    }
+//    private void loadData() {
+//        // loadDayTask
+//        int dayId = DateUtils.dayId(datePicker.getValue());
+//        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
+//        List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
+//
+//        List<TaskDto> needObserver = new ArrayList<>();
+//        if (CollectionUtils.isNotEmpty(list)) {
+//            Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
+//
+//            for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
+//                ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
+//                items.clear();
+//                List<TaskDto> dtos = entry.getValue();
+//                items.addAll(dtos);
+//                needObserver.addAll(dtos);
+//            }
+//        } else {
+//            listViewMap.values().forEach(l -> l.getItems().clear());
+//        }
+//        // load all undone tasks
+//        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
+//        needObserver.addAll(undoneTasks);
+//        undoneList.getItems().addAll(undoneTasks);
+//        //
+//        needObserver.forEach(this::onDataChange);
+////        taskService.findAllTasksByDayId()
+//    }
 
     public void onAddMottoTextField(ActionEvent actionEvent) {
         mottoTextField.setText("");

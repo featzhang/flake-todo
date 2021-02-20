@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.zuofengzhang.flake.client.dao.TaskDao;
 import com.github.zuofengzhang.flake.client.entity.TaskDo;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
+import com.github.zuofengzhang.flake.client.entity.TaskType;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,19 @@ public class TaskServiceImpl implements TaskService {
                 .stream()
                 .map(TaskDto::parse)
                 .collect(Collectors.toList());
+    }
+
+    
+    @Override
+    public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType){
+        return taskDao
+        .selectList(
+            new QueryWrapper<>(TaskDo.builder().dayId(dayId).typeId(taskType.getCId()).build())
+            .orderByDesc("priority_order", "update_time")
+            )
+        .stream()
+        .map(TaskDto::parse)
+        .collect(Collectors.toList());
     }
 
 

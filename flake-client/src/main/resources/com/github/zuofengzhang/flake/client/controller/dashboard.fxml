@@ -30,9 +30,9 @@
             </rowConstraints>
             <children>
                 <Accordion depthTest="ENABLE" GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.rowIndex="1"
-                           GridPane.rowSpan="5">
+                           GridPane.rowSpan="5" fx:id="according">
                     <panes>
-                        <TitledPane id="1" fx:id="undoneTitledPane" animated="false" text="%label_undone">
+                        <TitledPane id="0" fx:id="undoneTitledPane" animated="false" text="%label_undone">
                             <content>
                                 <ListView id="0" fx:id="undoneList" prefHeight="200.0" prefWidth="200.0">
                                     <contextMenu>
@@ -93,6 +93,7 @@
                                                                   text="%label_today_summary"/>
                                                     </items>
                                                 </Menu>
+                                                <SeparatorMenuItem/>
 
                                                 <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
                                                           text="%menu_delete"/>
@@ -121,6 +122,7 @@
                                                                   text="%label_today_summary"/>
                                                     </items>
                                                 </Menu>
+                                                <SeparatorMenuItem/>
 
                                                 <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
                                                           text="%menu_delete"/>
@@ -149,6 +151,8 @@
                                                                   text="%label_today_summary"/>
                                                     </items>
                                                 </Menu>
+                                                <SeparatorMenuItem/>
+
                                                 <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
                                                           text="%menu_delete"/>
                                             </items>
@@ -175,6 +179,8 @@
                                                                   text="%label_tomato_potato"/>
                                                     </items>
                                                 </Menu>
+                                                <SeparatorMenuItem/>
+
                                                 <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
                                                           text="%menu_delete"/>
                                             </items>

@@ -1,6 +1,7 @@
 package com.github.zuofengzhang.flake.client.service;
 
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
+import com.github.zuofengzhang.flake.client.entity.TaskType;
 
 import java.util.List;
 
@@ -18,4 +19,6 @@ public interface TaskService {
     TaskDto findById(int taskId);
 
     List<TaskDto> findAllUndoneTasks();
+
+    public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType);
 }
