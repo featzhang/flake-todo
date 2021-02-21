@@ -8,7 +8,6 @@ TODO - app build by JavaFX
 - MyBatis-plus 3.4.1
 - Sqlite 3
 
-
 ![中文界面展示](docs/images/perview.png)
 
 ## project todo
@@ -18,3 +17,4 @@ TODO - app build by JavaFX
 - [x] task edit
 - [x] logic delete
 - [ ] sort by priority
+- [ ] db check after launch

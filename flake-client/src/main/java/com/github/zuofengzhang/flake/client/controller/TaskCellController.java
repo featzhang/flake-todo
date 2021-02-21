@@ -35,16 +35,20 @@ public class TaskCellController implements Initializable {
 
     public void setData(TaskDto task) {
         if (task != null) {
+            // title
             titleLabel.setText(task.getTitle());
+            titleLabel.textProperty().bind(task.titleProperty());
+
             StoreStatus storeStatus = task.getStoreStatus();
             if (storeStatus == StoreStatus.YES) {
                 titleLabel.setStyle("-fx-underline: false;");
             } else {
                 titleLabel.setStyle("-fx-underline: true;-fx-background-color: lightgray");
             }
+            // checkbox
             checkBox.setSelected(task.isFinished());
             task.finishedProperty().bind(checkBox.selectedProperty());
-
+            // iua
             int iua = task.getIua();
 
             setIuaValue(iua);
