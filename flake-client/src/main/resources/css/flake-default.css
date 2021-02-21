@@ -1,6 +1,6 @@
 .root {
     -fx-font-family: "Songti SC";
-    -fx-background-color: lightgray;
+    /*-fx-background-color: lightgray;*/
 }
 
 .menu-item {
