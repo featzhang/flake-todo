@@ -542,6 +542,7 @@ public class DashboardController implements Initializable {
             if (targetIuaId != iua) {
                 selectedItem.setIua(targetIuaId);
                 log.info("set iua : {} -> {} ,{}", iua, targetIuaId, selectedItem);
+                reloadCurrentTitlePane();
             }
         }
     }
@@ -587,11 +588,41 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveTopMenu(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        MenuItem menuItem = (MenuItem) target;
+        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            taskService.moveOrderTop(selectedItem);
+            reloadCurrentTitlePane();
+//            listView.getItems().remove(selectedItem);
+        }
     }
 
     public void onOrderMoveUpMenu(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        MenuItem menuItem = (MenuItem) target;
+        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            taskService.moveOrderUp(selectedItem);
+            reloadCurrentTitlePane();
+//            listView.getItems().remove(selectedItem);
+        }
     }
 
     public void onOrderMoveDownMenu(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        MenuItem menuItem = (MenuItem) target;
+        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            taskService.moveOrderDown(selectedItem);
+            reloadCurrentTitlePane();
+//            listView.getItems().remove(selectedItem);
+        }
     }
 }

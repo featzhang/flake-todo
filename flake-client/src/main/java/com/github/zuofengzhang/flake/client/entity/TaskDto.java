@@ -21,6 +21,7 @@ public class TaskDto {
     private final SimpleBooleanProperty finishedProperty = new SimpleBooleanProperty(false);
     private final SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
     private final SimpleIntegerProperty importanceUrgencyAxisProperty = new SimpleIntegerProperty(0);
+    private final SimpleLongProperty priorityOrderProperty = new SimpleLongProperty(0);
     private final SimpleStringProperty attachmentProperty = new SimpleStringProperty();
     private final SimpleObjectProperty<StoreStatus> storeStatusProperty = new SimpleObjectProperty<>(StoreStatus.YES);
 
@@ -107,6 +108,7 @@ public class TaskDto {
         this.importanceUrgencyAxisProperty.set(builder.importanceUrgencyAxis);
         this.attachmentProperty.set(builder.attachment);
         this.storeStatusProperty.set(builder.storeStatus);
+        this.priorityOrderProperty.set(builder.priorityOrder);
     }
 
     public int getIua() {
@@ -154,6 +156,7 @@ public class TaskDto {
                 ", taskType=" + taskTypeProperty.get() +
                 ", iua=" + importanceUrgencyAxisProperty.get() +
                 ", attachment=" + attachmentProperty.get() +
+                ", priorityOrder=" + priorityOrderProperty.get() +
                 '}';
     }
 
@@ -193,6 +196,14 @@ public class TaskDto {
         this.contentProperty.set(text);
     }
 
+    public void setPriorityOrder(long l) {
+        this.priorityOrderProperty.set(l);
+    }
+
+    public long getPriorityOrder() {
+        return priorityOrderProperty.get();
+    }
+
     public static class Builder {
         private int taskId;
         private int dayId;
@@ -207,6 +218,7 @@ public class TaskDto {
         private int importanceUrgencyAxis;
         private String attachment;
         private StoreStatus storeStatus;
+        private long priorityOrder;
 
         public Builder taskId(int taskId) {
             this.taskId = taskId;
@@ -284,6 +296,11 @@ public class TaskDto {
             this.finished = b;
             return this;
         }
+
+        public Builder priorityOrder(Long priorityOrder) {
+            this.priorityOrder = priorityOrder;
+            return this;
+        }
     }
 
     public static TaskDto parse(TaskDo taskDo) {
@@ -301,6 +318,7 @@ public class TaskDto {
                 .importanceUrgencyAxis(taskDo.getImportanceUrgencyAxis())
                 .attachment(taskDo.getAttachment())
                 .storeStatus(StoreStatus.findByCode(taskDo.getStoreStatus()))
+                .priorityOrder(taskDo.getPriorityOrder())
                 .build();
     }
 
@@ -319,6 +337,7 @@ public class TaskDto {
                 .importanceUrgencyAxis(importanceUrgencyAxisProperty.get())
                 .attachment(attachmentProperty.get())
                 .storeStatus(storeStatusProperty.get().getCode())
+                .priorityOrder(priorityOrderProperty.get())
                 .build();
     }
 }

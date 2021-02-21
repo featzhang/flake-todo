@@ -16,6 +16,6 @@ TODO - app build by JavaFX
 - [x] undone list
 - [x] task edit
 - [x] logic delete
-- [ ] sort by priority
+- [x] sort by priority
 - [ ] db check after launch
 - [ ] context menu of LiveView rebuild

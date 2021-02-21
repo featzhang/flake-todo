@@ -23,4 +23,10 @@ public interface TaskService {
     List<TaskDto> findAllUndoneTasks();
 
     public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType);
+
+    void moveOrderTop(TaskDto selectedItem);
+
+    void moveOrderUp(TaskDto selectedItem);
+
+    void moveOrderDown(TaskDto selectedItem);
 }

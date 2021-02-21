@@ -24,18 +24,19 @@ public class TaskServiceImpl implements TaskService {
 
     private final FlakeSettings settings = FlakeSettings.getInstance();
     @Resource
-    private TaskDao taskDao;
+    private TaskDao dao;
 
     @Override
     public List<TaskDto> findAllTasks() {
-        return taskDao.selectList(new QueryWrapper<>()).stream().map(TaskDto::parse).collect(Collectors.toList());
+        return dao.selectList(new QueryWrapper<>()).stream().map(TaskDto::parse).collect(Collectors.toList());
     }
 
     @Override
     public List<TaskDto> findAllTasksByDayId(int dayId) {
-        return taskDao
+        return dao
                 .selectList(
                         new QueryWrapper<>(TaskDo.builder().dayId(dayId).build())
+                                .orderByAsc("importance_urgency_axis")
                                 .orderByDesc("priority_order", "update_time")
                 )
                 .stream()
@@ -51,27 +52,55 @@ public class TaskServiceImpl implements TaskService {
             builder.storeStatus(StoreStatus.YES.getCode());
         }
         TaskDo aDo = builder.build();
-        return taskDao
+        return dao
                 .selectList(
                         new QueryWrapper<>(
                                 aDo
                         )
-                                .orderByDesc("priority_order", "update_time")
+                                .orderByAsc("importance_urgency_axis")
+                                .orderByDesc("priority_order",  "update_time")
                 )
                 .stream()
                 .map(TaskDto::parse)
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void moveOrderTop(TaskDto task) {
+        TaskDo taskDo = dao.selectOne(new QueryWrapper<TaskDo>().orderByDesc("priority_order").last("limit 1"));
+        Long priorityOrder = taskDo.getPriorityOrder();
+        task.setPriorityOrder(priorityOrder + 10);
+        updateById(task);
+    }
 
     @Override
-    public int insert(TaskDto taskDto) {
-        log.info("insert into {}", taskDto);
-        TaskDo taskDo = taskDto.parse();
+    public void moveOrderUp(TaskDto task) {
+        long priorityOrder = task.getPriorityOrder();
+        TaskDo lastBiggest = dao.selectOne(new QueryWrapper<TaskDo>().gt("priority_order", priorityOrder).orderByAsc("priority_order").last("limit 1"));
+        Long priorityOrder1 = lastBiggest.getPriorityOrder();
+        task.setPriorityOrder(priorityOrder1 + 1);
+
+        updateById(task);
+    }
+
+    @Override
+    public void moveOrderDown(TaskDto task) {
+        long priorityOrder = task.getPriorityOrder();
+        TaskDo lastBiggest = dao.selectOne(new QueryWrapper<TaskDo>().lt("priority_order", priorityOrder).orderByDesc("priority_order").last("limit 1"));
+        Long priorityOrder1 = lastBiggest.getPriorityOrder();
+        task.setPriorityOrder(priorityOrder1 - 1);
+        updateById(task);
+    }
+
+
+    @Override
+    public int insert(TaskDto task) {
+        log.info("insert into {}", task);
+        TaskDo taskDo = task.parse();
         log.info("insert into {}", taskDo);
-        int insert = taskDao.insert(taskDo);
+        int insert = dao.insert(taskDo);
         // reset id value to DTO
-        taskDto.setTaskId(taskDo.getTaskId());
+        task.setTaskId(taskDo.getTaskId());
         return insert;
     }
 
@@ -84,20 +113,20 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void restoreById(TaskDto task){
+    public void restoreById(TaskDto task) {
         task.setStoreStatus(StoreStatus.YES);
         updateById(task);
     }
 
     @Override
-    public int updateById(TaskDto selectedItem) {
-        TaskDo taskDo = selectedItem.parse();
-        return taskDao.updateById(taskDo);
+    public int updateById(TaskDto task) {
+        TaskDo taskDo = task.parse();
+        return dao.updateById(taskDo);
     }
 
     @Override
     public TaskDto findById(int taskId) {
-        return TaskDto.parse(taskDao.selectById(taskId));
+        return TaskDto.parse(dao.selectById(taskId));
     }
 
     @Override
@@ -107,11 +136,10 @@ public class TaskServiceImpl implements TaskService {
             builder.storeStatus(StoreStatus.YES.getCode());
         }
         TaskDo aDo = builder.build();
-        return taskDao
+        return dao
                 .selectList(
-                        new QueryWrapper<>(
-                                aDo
-                        )
+                        new QueryWrapper<>(aDo)
+                                .orderByAsc("importance_urgency_axis")
                                 .orderByDesc("priority_order", "update_time")
                 )
                 .stream()
