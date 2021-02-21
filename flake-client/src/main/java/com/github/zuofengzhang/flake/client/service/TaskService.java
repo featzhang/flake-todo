@@ -12,7 +12,7 @@ public interface TaskService {
 
     int insert(TaskDto taskDto);
 
-    void deleteById(int taskId);
+    void deleteById(TaskDto task);
 
     int updateById(TaskDto selectedItem);
 

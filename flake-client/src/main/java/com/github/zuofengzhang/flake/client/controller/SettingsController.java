@@ -4,6 +4,7 @@ import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.Slider;
 import javafx.stage.Stage;
 import lombok.extern.slf4j.Slf4j;
@@ -23,14 +24,17 @@ public class SettingsController implements Initializable {
     public Slider focusTimeSlider;
 
     public Slider restTimeSlider;
+    public CheckBox showDeletedCheckBox;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         long focusTimeInSeconds = settings.getFocusTimeInSeconds();
         long napTimeInSeconds = settings.getNapTimeInSeconds();
+        boolean showDeletedTask = settings.getShowDeletedTask();
         log.info("get: {}=>{}", focusTimeInSeconds, napTimeInSeconds);
         focusTimeSlider.setValue(focusTimeInSeconds);
         restTimeSlider.setValue(napTimeInSeconds);
+        showDeletedCheckBox.setSelected(showDeletedTask);
     }
 
     public void onCancel(ActionEvent actionEvent) {
@@ -46,6 +50,7 @@ public class SettingsController implements Initializable {
         double restTimeSliderValue = restTimeSlider.getValue();
         settings.setNapTimeInSecs((long) restTimeSliderValue);
         settings.setFocusTimeInSecs((long) focusTimeSliderValue);
+        settings.setShowDeletedTask(showDeletedCheckBox.isSelected());
         log.info("set {}=>{}", focusTimeSliderValue, restTimeSliderValue);
         Node source = (Node) actionEvent.getSource();
         Stage stage = (Stage) source.getScene().getWindow();

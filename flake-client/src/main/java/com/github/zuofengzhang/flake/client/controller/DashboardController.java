@@ -3,10 +3,7 @@ package com.github.zuofengzhang.flake.client.controller;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
-import com.github.zuofengzhang.flake.client.entity.TaskDto;
-import com.github.zuofengzhang.flake.client.entity.TaskType;
-import com.github.zuofengzhang.flake.client.entity.TimerActionType;
-import com.github.zuofengzhang.flake.client.entity.TimerStatus;
+import com.github.zuofengzhang.flake.client.entity.*;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.animation.Animation;
@@ -26,9 +23,9 @@ import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -122,6 +119,7 @@ public class DashboardController implements Initializable {
                     .updateTime(System.currentTimeMillis())
                     .importanceUrgencyAxis(4)
                     .finished(false)
+                    .storeStatus(StoreStatus.YES)
                     .build();
             taskService.insert(taskDto);
             // bind db action
@@ -130,8 +128,7 @@ public class DashboardController implements Initializable {
             // expand selected TitledPane
             BooleanProperty expandedProperty = titledPaneMap.get(taskTypeId).expandedProperty();
             if (expandedProperty.get()) {
-                clearTitledPaneData(taskTypeId);
-                loadTitledPaneData(taskTypeId);
+                reloadCurrentTitlePane();
             }
             expandedProperty.set(true);
             //
@@ -189,7 +186,7 @@ public class DashboardController implements Initializable {
         ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
-            taskService.deleteById(selectedItem.getTaskId());
+            taskService.deleteById(selectedItem);
             listView.getItems().remove(selectedItem);
         }
     }
@@ -326,9 +323,7 @@ public class DashboardController implements Initializable {
             return;
         }
 
-        int titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
-        clearTitledPaneData(titledPaneId);
-        loadTitledPaneData(titledPaneId);
+        reloadCurrentTitlePane();
 //        loadData();
     }
 
@@ -519,8 +514,17 @@ public class DashboardController implements Initializable {
         Stage stage = new Stage();
         stage.setResizable(false);
         stage.initOwner(primaryStage);
+        stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
-        stage.show();
+        stage.showAndWait();
+
+        reloadCurrentTitlePane();
+    }
+
+    private void reloadCurrentTitlePane() {
+        int titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
+        clearTitledPaneData(titledPaneId);
+        loadTitledPaneData(titledPaneId);
     }
 
 

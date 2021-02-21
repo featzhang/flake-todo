@@ -1,7 +1,9 @@
 package com.github.zuofengzhang.flake.client.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.dao.TaskDao;
+import com.github.zuofengzhang.flake.client.entity.StoreStatus;
 import com.github.zuofengzhang.flake.client.entity.TaskDo;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
@@ -19,6 +21,8 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class TaskServiceImpl implements TaskService {
+
+    private final FlakeSettings settings = FlakeSettings.getInstance();
     @Resource
     private TaskDao taskDao;
 
@@ -39,17 +43,24 @@ public class TaskServiceImpl implements TaskService {
                 .collect(Collectors.toList());
     }
 
-    
+
     @Override
-    public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType){
+    public List<TaskDto> findTasksByDayIdAndType(int dayId, TaskType taskType) {
+        TaskDo.TaskDoBuilder builder = TaskDo.builder().dayId(dayId).typeId(taskType.getCId());
+        if (!settings.getShowDeletedTask()) {
+            builder.storeStatus(StoreStatus.YES.getCode());
+        }
+        TaskDo aDo = builder.build();
         return taskDao
-        .selectList(
-            new QueryWrapper<>(TaskDo.builder().dayId(dayId).typeId(taskType.getCId()).build())
-            .orderByDesc("priority_order", "update_time")
-            )
-        .stream()
-        .map(TaskDto::parse)
-        .collect(Collectors.toList());
+                .selectList(
+                        new QueryWrapper<>(
+                                aDo
+                        )
+                                .orderByDesc("priority_order", "update_time")
+                )
+                .stream()
+                .map(TaskDto::parse)
+                .collect(Collectors.toList());
     }
 
 
@@ -65,8 +76,11 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public void deleteById(int taskId) {
-        taskDao.deleteById(taskId);
+    public void deleteById(TaskDto task) {
+//        taskDao.deleteById(taskId);
+        // logic deletes
+        task.setStoreStatus(StoreStatus.NO);
+        updateById(task);
     }
 
     @Override
@@ -82,9 +96,16 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> findAllUndoneTasks() {
+        TaskDo.TaskDoBuilder builder = TaskDo.builder().finished(false);
+        if (!settings.getShowDeletedTask()) {
+            builder.storeStatus(StoreStatus.YES.getCode());
+        }
+        TaskDo aDo = builder.build();
         return taskDao
                 .selectList(
-                        new QueryWrapper<>(TaskDo.builder().finished(false).build())
+                        new QueryWrapper<>(
+                                aDo
+                        )
                                 .orderByDesc("priority_order", "update_time")
                 )
                 .stream()

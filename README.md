@@ -13,5 +13,8 @@ TODO - app build by JavaFX
 
 ## project todo
 
-- global focus and nap notify
-  
+- [x] global focus and nap notify
+- [x] undone list
+- [x] task edit
+- [x] logic delete
+- [ ] sort by priority

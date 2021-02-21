@@ -1,54 +1,77 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.Slider?>
-<?import javafx.scene.control.Tab?>
-<?import javafx.scene.control.TabPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.RowConstraints?>
-
-<BorderPane xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.zuofengzhang.flake.client.controller.SettingsController">
-   <center>
-      <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
-        <tabs>
-          <Tab text="%label.common" />
-          <Tab text="%label_tomato_clock">
-               <content>
-                  <GridPane>
-                    <columnConstraints>
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="37.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="118.0" />
-                        <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="10.0" prefWidth="358.0" />
-                      <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                    </columnConstraints>
-                    <rowConstraints>
-                        <RowConstraints maxHeight="119.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="202.0" minHeight="0.0" prefHeight="141.0" vgrow="SOMETIMES" />
-                      <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="140.0" vgrow="SOMETIMES" />
-                        <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES" />
-                    </rowConstraints>
-                     <children>
-                        <Label text="%label_focus_time" GridPane.columnIndex="1" GridPane.rowIndex="1" />
-                        <Slider fx:id="focusTimeSlider" blockIncrement="20.0" majorTickUnit="5.0" max="60.0" min="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1" />
-                        <Label text="%label_nap_time" GridPane.columnIndex="1" GridPane.rowIndex="2" />
-                        <Slider fx:id="restTimeSlider" majorTickUnit="1.0" max="20.0" min="5.0" minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true" value="5.0" GridPane.columnIndex="2" GridPane.rowIndex="2" />
-                     </children>
-                  </GridPane>
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
-   </center>
-   <bottom>
-      <HBox alignment="CENTER" prefHeight="46.0" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button alignment="CENTER" mnemonicParsing="false" onAction="#onCancel" text="%label_cancel" textAlignment="CENTER" HBox.hgrow="ALWAYS" />
-            <Button mnemonicParsing="false" onAction="#onSure" text="%label_sure" />
-         </children>
-      </HBox>
-   </bottom>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<BorderPane xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.github.zuofengzhang.flake.client.controller.SettingsController">
+    <center>
+        <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
+                 prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
+            <tabs>
+                <Tab text="%label.common">
+                    <content>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                                <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES"/>
+                            </rowConstraints>
+                            <padding>
+                                <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+                            </padding>
+                            <children>
+                                <CheckBox fx:id="showDeletedCheckBox" mnemonicParsing="false"
+                                          text="%label_show_deleted"/>
+                            </children>
+                        </GridPane>
+                    </content>
+                </Tab>
+                <Tab text="%label_tomato_clock">
+                    <content>
+                        <GridPane>
+                            <columnConstraints>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0" prefWidth="37.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="10.0"
+                                                   prefWidth="118.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" maxWidth="358.0" minWidth="10.0"
+                                                   prefWidth="358.0"/>
+                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0"/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints maxHeight="119.0" minHeight="10.0" prefHeight="39.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="202.0" minHeight="0.0" prefHeight="141.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="140.0"
+                                                vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES"/>
+                            </rowConstraints>
+                            <children>
+                                <Label text="%label_focus_time" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Slider fx:id="focusTimeSlider" blockIncrement="20.0" majorTickUnit="5.0" max="60.0"
+                                        min="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true"
+                                        value="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
+                                <Label text="%label_nap_time" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                <Slider fx:id="restTimeSlider" majorTickUnit="1.0" max="20.0" min="5.0"
+                                        minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true"
+                                        value="5.0" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
+                            </children>
+                        </GridPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    <bottom>
+        <HBox alignment="CENTER" prefHeight="46.0" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
+            <children>
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onCancel" text="%label_cancel"
+                        textAlignment="CENTER" HBox.hgrow="ALWAYS"/>
+                <Button mnemonicParsing="false" onAction="#onSure" text="%label_sure"/>
+            </children>
+        </HBox>
+    </bottom>
 </BorderPane>

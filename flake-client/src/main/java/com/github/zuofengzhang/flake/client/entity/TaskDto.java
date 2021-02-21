@@ -22,58 +22,38 @@ public class TaskDto {
     private final SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
     private final SimpleIntegerProperty importanceUrgencyAxisProperty = new SimpleIntegerProperty(0);
     private final SimpleStringProperty attachmentProperty = new SimpleStringProperty();
+    private final SimpleObjectProperty<StoreStatus> storeStatusProperty = new SimpleObjectProperty<>(StoreStatus.YES);
 
-    public int getTaskIdProperty() {
-        return taskIdProperty.get();
-    }
 
     public SimpleIntegerProperty taskIdProperty() {
         return taskIdProperty;
     }
 
-    public int getDayIdProperty() {
-        return dayIdProperty.get();
-    }
 
     public SimpleIntegerProperty dayIdProperty() {
         return dayIdProperty;
     }
 
-    public long getCreatedTimeProperty() {
-        return createdTimeProperty.get();
-    }
 
     public SimpleLongProperty createdTimeProperty() {
         return createdTimeProperty;
     }
 
-    public long getUpdateTimeProperty() {
-        return updateTimeProperty.get();
-    }
 
     public SimpleLongProperty updateTimeProperty() {
         return updateTimeProperty;
     }
 
-    public long getStartTimeProperty() {
-        return startTimeProperty.get();
-    }
 
     public SimpleLongProperty startTimeProperty() {
         return startTimeProperty;
     }
 
-    public long getEndTimeProperty() {
-        return endTimeProperty.get();
-    }
 
     public SimpleLongProperty endTimeProperty() {
         return endTimeProperty;
     }
 
-    public String getTitleProperty() {
-        return titleProperty.get();
-    }
 
     public SimpleStringProperty titleProperty() {
         return titleProperty;
@@ -97,6 +77,18 @@ public class TaskDto {
         return taskTypeProperty;
     }
 
+    public SimpleObjectProperty<StoreStatus> storeStatusProperty() {
+        return storeStatusProperty;
+    }
+
+    public StoreStatus getStoreStatus() {
+        return storeStatusProperty.get();
+    }
+
+    public void setStoreStatus(StoreStatus storeStatus) {
+        this.storeStatusProperty.set(storeStatus);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
@@ -114,6 +106,7 @@ public class TaskDto {
         this.taskTypeProperty.set(builder.taskType);
         this.importanceUrgencyAxisProperty.set(builder.importanceUrgencyAxis);
         this.attachmentProperty.set(builder.attachment);
+        this.storeStatusProperty.set(builder.storeStatus);
     }
 
     public int getIua() {
@@ -213,6 +206,7 @@ public class TaskDto {
         private TaskType taskType;
         private int importanceUrgencyAxis;
         private String attachment;
+        private StoreStatus storeStatus;
 
         public Builder taskId(int taskId) {
             this.taskId = taskId;
@@ -276,6 +270,11 @@ public class TaskDto {
             return this;
         }
 
+        public Builder storeStatus(StoreStatus storeStatus) {
+            this.storeStatus = storeStatus;
+            return this;
+        }
+
         public TaskDto build() {
             return new TaskDto(this);
         }
@@ -301,6 +300,7 @@ public class TaskDto {
                 .finished(taskDo.getFinished())
                 .importanceUrgencyAxis(taskDo.getImportanceUrgencyAxis())
                 .attachment(taskDo.getAttachment())
+                .storeStatus(StoreStatus.findByCode(taskDo.getStoreStatus()))
                 .build();
     }
 
@@ -318,6 +318,7 @@ public class TaskDto {
                 .finished(finishedProperty.get())
                 .importanceUrgencyAxis(importanceUrgencyAxisProperty.get())
                 .attachment(attachmentProperty.get())
+                .storeStatus(storeStatusProperty.get().getCode())
                 .build();
     }
 }

@@ -1,5 +1,6 @@
 package com.github.zuofengzhang.flake.client.controller;
 
+import com.github.zuofengzhang.flake.client.entity.StoreStatus;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.utils.ImageHolder;
 import javafx.fxml.FXML;
@@ -35,6 +36,12 @@ public class TaskCellController implements Initializable {
     public void setData(TaskDto task) {
         if (task != null) {
             titleLabel.setText(task.getTitle());
+            StoreStatus storeStatus = task.getStoreStatus();
+            if (storeStatus == StoreStatus.YES) {
+                titleLabel.setStyle("-fx-underline: false;");
+            } else {
+                titleLabel.setStyle("-fx-underline: true;-fx-background-color: lightgray");
+            }
             checkBox.setSelected(task.isFinished());
             task.finishedProperty().bind(checkBox.selectedProperty());
 
