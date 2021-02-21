@@ -182,7 +182,7 @@ public class DashboardController implements Initializable {
     public void onDeleteMenu(ActionEvent actionEvent) {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentPopup();
+        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
         ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
@@ -572,5 +572,26 @@ public class DashboardController implements Initializable {
                 stage.show();
             }
         }
+    }
+
+    public void onUndeleteMenu(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        MenuItem menuItem = (MenuItem) target;
+        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem != null) {
+            taskService.restoreById(selectedItem);
+//            listView.getItems().remove(selectedItem);
+        }
+    }
+
+    public void onOrderMoveTopMenu(ActionEvent actionEvent) {
+    }
+
+    public void onOrderMoveUpMenu(ActionEvent actionEvent) {
+    }
+
+    public void onOrderMoveDownMenu(ActionEvent actionEvent) {
     }
 }

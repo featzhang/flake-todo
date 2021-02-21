@@ -14,6 +14,8 @@ public interface TaskService {
 
     void deleteById(TaskDto task);
 
+    void restoreById(TaskDto task);
+
     int updateById(TaskDto selectedItem);
 
     TaskDto findById(int taskId);

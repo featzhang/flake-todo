@@ -68,9 +68,25 @@
                                                     </items>
                                                 </Menu>
 
+
                                                 <SeparatorMenuItem/>
-                                                <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
-                                                          text="%menu_delete"/>
+                                                <Menu text="%menu_order">
+                                                    <MenuItem mnemonicParsing="false" onAction="#onOrderMoveTopMenu"
+                                                              text="%menu_move_top"/>
+                                                    <MenuItem mnemonicParsing="false" onAction="#onOrderMoveUpMenu"
+                                                              text="%menu_move_up"/>
+                                                    <MenuItem mnemonicParsing="false" onAction="#onOrderMoveDownMenu"
+                                                              text="%menu_move_down"/>
+                                                </Menu>
+                                                <SeparatorMenuItem/>
+                                                <Menu text="%menu_delete_undelete" id="0">
+                                                    <MenuItem mnemonicParsing="false" onAction="#onDeleteMenu"
+                                                              text="%menu_delete"/>
+                                                    <SeparatorMenuItem/>
+                                                    <MenuItem mnemonicParsing="false" onAction="#onUndeleteMenu"
+                                                              text="%menu_undelete"/>
+                                                </Menu>
+
                                             </items>
                                         </ContextMenu>
                                     </contextMenu>

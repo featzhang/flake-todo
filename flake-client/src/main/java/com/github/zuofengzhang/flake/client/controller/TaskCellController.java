@@ -45,6 +45,14 @@ public class TaskCellController implements Initializable {
             } else {
                 titleLabel.setStyle("-fx-underline: true;-fx-background-color: lightgray");
             }
+
+            task.storeStatusProperty().addListener((observableValue, storeStatus1, t1) -> {
+                if (t1 == StoreStatus.YES) {
+                    titleLabel.setStyle("-fx-underline: false;");
+                } else {
+                    titleLabel.setStyle("-fx-underline: true;-fx-background-color: lightgray");
+                }
+            });
             // checkbox
             checkBox.setSelected(task.isFinished());
             task.finishedProperty().bind(checkBox.selectedProperty());

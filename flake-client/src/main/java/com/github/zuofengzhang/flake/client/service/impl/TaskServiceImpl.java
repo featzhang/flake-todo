@@ -84,6 +84,12 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
+    public void restoreById(TaskDto task){
+        task.setStoreStatus(StoreStatus.YES);
+        updateById(task);
+    }
+
+    @Override
     public int updateById(TaskDto selectedItem) {
         TaskDo taskDo = selectedItem.parse();
         return taskDao.updateById(taskDo);
