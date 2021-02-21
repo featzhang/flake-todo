@@ -86,7 +86,8 @@ public class TaskDetailController implements Initializable {
     }
 
     public void onOpenAttachmentMenu(ActionEvent actionEvent) {
-
+        String selectedItem = attachmentListView.getSelectionModel().getSelectedItem();
+        doOpenFile(selectedItem);
     }
 
 
@@ -97,19 +98,23 @@ public class TaskDetailController implements Initializable {
         if (mouseEvent.getClickCount() == 2) {
             String selectedItem = attachmentListView.getSelectionModel().getSelectedItem();
 
+            doOpenFile(selectedItem);
+        }
+    }
+
+    private void doOpenFile(String selectedItem) {
+        try {
+            Desktop.getDesktop().open(new File(selectedItem));
+        } catch (IOException | RuntimeException e) {
+            logger.error("", e);
             try {
-                Desktop.getDesktop().open(new File(selectedItem));
-            } catch (IOException | RuntimeException e) {
-                logger.error("", e);
-                try {
-                    ProcessBuilder processBuilder = new ProcessBuilder();
-                    processBuilder.command("open", selectedItem);
-                    Process process = processBuilder.start();
-                    int waitFor = process.waitFor();
-                    logger.info("waitFor: {}", waitFor);
-                } catch (IOException | InterruptedException ioException) {
-                    logger.error("", ioException);
-                }
+                ProcessBuilder processBuilder = new ProcessBuilder();
+                processBuilder.command("open", selectedItem);
+                Process process = processBuilder.start();
+                int waitFor = process.waitFor();
+                logger.info("waitFor: {}", waitFor);
+            } catch (IOException | InterruptedException ioException) {
+                logger.error("", ioException);
             }
         }
     }

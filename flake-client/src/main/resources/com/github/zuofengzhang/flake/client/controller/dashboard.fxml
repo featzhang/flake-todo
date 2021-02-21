@@ -31,6 +31,7 @@
             <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="260.0" minWidth="10.0" prefWidth="260.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="662.0" />
+            <ColumnConstraints />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints />
@@ -213,10 +214,13 @@
             <items>
                 <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting" />
                 <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0" />
-                <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="115.0" />
-                <TextField fx:id="newContentTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="630.0" promptText="%label_new_task" />
+                <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="154.0" />
+                <TextField fx:id="newContentTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="590.0" promptText="%label_new_task" />
                 <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加" />
             </items>
         </ToolBar>
     </top>
+   <padding>
+      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
+   </padding>
 </BorderPane>

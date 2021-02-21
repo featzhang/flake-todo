@@ -1,0 +1,13 @@
+.root {
+    -fx-font-family: "Songti SC";
+    -fx-background-color: lightgray;
+}
+
+.menu-item {
+    -fx-font-family: "Songti SC";
+    -fx-font-size: 13px;
+}
+
+.button {
+    -fx-font-family: "Songti TC";
+}
