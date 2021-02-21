@@ -205,7 +205,7 @@ public class DashboardController implements Initializable {
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.deleteById(selectedItem);
-            listView.getItems().remove(selectedItem);
+            reloadCurrentTitlePane();
         }
     }
 
@@ -725,6 +725,7 @@ public class DashboardController implements Initializable {
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.restoreById(selectedItem);
+            reloadCurrentTitlePane();
 //            listView.getItems().remove(selectedItem);
         }
     }
