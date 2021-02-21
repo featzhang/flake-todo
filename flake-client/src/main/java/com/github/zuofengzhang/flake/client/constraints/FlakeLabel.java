@@ -13,4 +13,8 @@ public class FlakeLabel {
     public static final String CREATE = ResourceUtil.label("label_create");
     public static final String LAST_UPDATE = ResourceUtil.label("label_last_update");
     public static final String FINISH = ResourceUtil.label("label_finish");
+
+    public static String label(String s) {
+        return ResourceUtil.label(s);
+    }
 }

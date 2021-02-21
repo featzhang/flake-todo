@@ -12,6 +12,7 @@ import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -25,6 +26,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
@@ -42,6 +44,8 @@ import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+
+import static com.github.zuofengzhang.flake.client.constraints.FlakeLabel.label;
 
 /**
  * @author zhangzuofeng1
@@ -74,6 +78,7 @@ public class DashboardController implements Initializable {
     public Label workContentLabel;
     public TitledPane undoneTitledPane;
     public ListView<TaskDto> undoneList;
+    public BorderPane rootPane;
     @Resource
     private TaskService taskService;
     private DatePicker datePicker;
@@ -90,6 +95,18 @@ public class DashboardController implements Initializable {
 
     @Resource
     private FxWeaver fxWeaver;
+    private MenuItem moveToYesterdayReviewMenuItem;
+    private MenuItem moveToTodayPlanMenuItem;
+    private MenuItem moveToTomatoPotatoPlanMenuItem;
+    private MenuItem moveToTodaySummaryMenuItem;
+    private RadioMenuItem iua1MenuItem;
+    private RadioMenuItem iua2MenuItem;
+    private RadioMenuItem iua3MenuItem;
+    private RadioMenuItem iua4MenuItem;
+    private ContextMenu liveViewContextMenu;
+    private Menu moveToMenu;
+    private MenuItem undeletedMenuItem;
+    private MenuItem deleteMenuItem;
 
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
@@ -169,7 +186,7 @@ public class DashboardController implements Initializable {
         MenuItem eventSource = (MenuItem) actionEvent.getTarget();
         int targetId = Integer.parseInt(eventSource.getId());
         ContextMenu popup = eventSource.getParentMenu().getParentPopup();
-        int sourceId = Integer.parseInt(popup.getId());
+        int sourceId = Integer.parseInt(according.getExpandedPane().getId());
         ListView<TaskDto> listView = listViewMap.get(sourceId);
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         selectedItem.setTaskType(TaskType.findById(targetId));
@@ -183,7 +200,8 @@ public class DashboardController implements Initializable {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
         ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.deleteById(selectedItem);
@@ -263,6 +281,129 @@ public class DashboardController implements Initializable {
 
         // loadData
         loadTitledPaneData(Integer.parseInt(undoneTitledPane.getId()));
+        //
+        buildListViewContextMenu();
+        //
+
+        yesterdayList.setContextMenu(liveViewContextMenu);
+        todayPlanList.setContextMenu(liveViewContextMenu);
+        todayTomatoList.setContextMenu(liveViewContextMenu);
+        summaryList.setContextMenu(liveViewContextMenu);
+        undoneList.setContextMenu(liveViewContextMenu);
+        liveViewContextMenu.setOnShowing(this::onCommonListClick);
+    }
+
+
+    private void onCommonListClick(WindowEvent mouseEvent) {
+        initListContextMenu();
+        int titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
+        ListView<TaskDto> listView = listViewMap.get(titledPaneId);
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        if (selectedItem == null) {
+            return;
+        }
+        undeletedMenuItem.setVisible(selectedItem.getStoreStatus() == StoreStatus.NO);
+        deleteMenuItem.setVisible(selectedItem.getStoreStatus() == StoreStatus.YES);
+        if (listView == undoneList) {
+            moveToMenu.setVisible(false);
+        } else {
+            TaskType taskType = TaskType.findById(titledPaneId);
+            switch (taskType) {
+                case TODAY_PLAN:
+                    moveToTodayPlanMenuItem.setVisible(false);
+                    break;
+                case TODAY_SUMMARY:
+                    moveToTodaySummaryMenuItem.setVisible(false);
+                    break;
+                case TOMATO_POTATO:
+                    moveToTomatoPotatoPlanMenuItem.setVisible(false);
+                    break;
+                case YESTERDAY_REVIEW:
+                    moveToYesterdayReviewMenuItem.setVisible(false);
+                    break;
+            }
+        }
+
+        int iua = selectedItem.getIua();
+        switch (iua) {
+            case 1:
+                iua1MenuItem.setSelected(true);
+                break;
+            case 2:
+                iua2MenuItem.setSelected(true);
+                break;
+            case 3:
+                iua3MenuItem.setSelected(true);
+                break;
+            case 4:
+            default:
+                iua4MenuItem.setSelected(true);
+                break;
+        }
+    }
+
+
+    private void initListContextMenu() {
+        moveToTodaySummaryMenuItem.setVisible(true);
+        moveToTodayPlanMenuItem.setVisible(true);
+        moveToYesterdayReviewMenuItem.setVisible(true);
+        moveToTomatoPotatoPlanMenuItem.setVisible(true);
+        moveToMenu.setVisible(true);
+    }
+
+    private void buildListViewContextMenu() {
+        liveViewContextMenu = new ContextMenu();
+        // focus
+        MenuItem focusMenuItem = new MenuItem(label("label_focus"));
+        focusMenuItem.setOnAction(this::onStartTimer);
+        // move_to
+        // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
+        //                                                                  text="%label_yesterday_review"/>
+        moveToMenu = new Menu(label("menu_move_to"));
+        moveToYesterdayReviewMenuItem = createMenuItem("1", "label_yesterday_review", this::onMoveMenu);
+        moveToTodayPlanMenuItem = createMenuItem("2", "label_today_plan", this::onMoveMenu);
+        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", "label_tomato_potato", this::onMoveMenu);
+        moveToTodaySummaryMenuItem = createMenuItem("4", "label_today_summary", this::onMoveMenu);
+        moveToMenu.getItems().addAll(moveToYesterdayReviewMenuItem, moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
+        // menu_importance_urgency_axis
+        Menu iuaMenu = new Menu(label("menu_importance_urgency_axis"));
+        ToggleGroup toggleGroup = new ToggleGroup();
+        iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu);
+        iua2MenuItem = createRadioMenuItem("2", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu);
+        iua3MenuItem = createRadioMenuItem("3", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu);
+        iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu);
+        iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
+        // menu_order
+        Menu orderMenu = new Menu(label("menu_order"));
+        MenuItem moveOrderTopMenuItem = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu);
+        MenuItem moveOrderUpMenuItem = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu);
+        MenuItem moveOrderDownMenuItem = createMenuItem("0", "menu_move_down", this::onOrderMoveDownMenu);
+        orderMenu.getItems().addAll(moveOrderTopMenuItem, moveOrderUpMenuItem, moveOrderDownMenuItem);
+
+        // delete or undeleted
+        Menu deleteOrUndeletedMenu = new Menu(label("menu_delete_undelete"));
+        deleteMenuItem = createMenuItem("0", "menu_delete", this::onDeleteMenu);
+        undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu);
+        deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
+
+
+        liveViewContextMenu.getItems().addAll(focusMenuItem, moveToMenu, iuaMenu, orderMenu, deleteOrUndeletedMenu);
+
+    }
+
+    private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu) {
+        RadioMenuItem item = new RadioMenuItem(label(label));
+        item.setId(id);
+        item.setToggleGroup(toggleGroup);
+        item.setOnAction(onMoveMenu);
+        return item;
+    }
+
+    private MenuItem createMenuItem(String id, String label_today_plan, EventHandler<ActionEvent> onMoveMenu) {
+        MenuItem moveToTodayPlanMenuItem = new MenuItem(label(label_today_plan));
+        moveToTodayPlanMenuItem.setId(id);
+        moveToTodayPlanMenuItem.setOnAction(onMoveMenu);
+        return moveToTodayPlanMenuItem;
     }
 
     private void clearTitledPaneData(int titledPaneId) {
@@ -451,7 +592,7 @@ public class DashboardController implements Initializable {
 
     public void onStartTimer(ActionEvent actionEvent) {
         ContextMenu parentPopup = ((MenuItem) actionEvent.getTarget()).getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
             return;
@@ -579,7 +720,8 @@ public class DashboardController implements Initializable {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
         ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.restoreById(selectedItem);
@@ -591,7 +733,7 @@ public class DashboardController implements Initializable {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
         ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.moveOrderTop(selectedItem);
@@ -604,7 +746,7 @@ public class DashboardController implements Initializable {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
         ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.moveOrderUp(selectedItem);
@@ -617,7 +759,8 @@ public class DashboardController implements Initializable {
         EventTarget target = actionEvent.getTarget();
         MenuItem menuItem = (MenuItem) target;
         ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(parentPopup.getId()));
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.moveOrderDown(selectedItem);
