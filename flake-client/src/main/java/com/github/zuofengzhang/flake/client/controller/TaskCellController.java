@@ -3,20 +3,26 @@ package com.github.zuofengzhang.flake.client.controller;
 import com.github.zuofengzhang.flake.client.entity.StoreStatus;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.utils.ImageHolder;
+import com.github.zuofengzhang.flake.client.utils.TextUtils;
+import com.google.common.base.Joiner;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
+import javafx.util.Pair;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 
 import java.net.URL;
+import java.util.List;
 import java.util.ResourceBundle;
 
 @Component
 @FxmlView("task-cell.fxml")
 public class TaskCellController implements Initializable {
+    @FXML
+    public Label tagLabel;
     @FXML
     private Label titleLabel;
 
@@ -36,8 +42,11 @@ public class TaskCellController implements Initializable {
     public void setData(TaskDto task) {
         if (task != null) {
             // title
-            titleLabel.setText(task.getTitle());
-            titleLabel.textProperty().bind(task.titleProperty());
+            String title = task.getTitle();
+            setTitleAndTag(title);
+            task.titleProperty().addListener((observableValue, s, t1) -> {
+                setTitleAndTag(t1);
+            });
 
             StoreStatus storeStatus = task.getStoreStatus();
             if (storeStatus == StoreStatus.YES) {
@@ -70,6 +79,20 @@ public class TaskCellController implements Initializable {
             checkBox.setVisible(false);
             titleLabel.setText("");
             iuaImageView.setImage(null);
+        }
+    }
+
+    private void setTitleAndTag(String t1) {
+        Pair<List<String>, String> pair = TextUtils.splitTags(t1);
+        titleLabel.setText(pair.getValue());
+        if (!pair.getKey().isEmpty()) {
+            tagLabel.setVisible(true);
+            String join = Joiner.on(", ").join(pair.getKey());
+            tagLabel.setText(join);
+            tagLabel.setStyle("-fx-border-color: red;-fx-border-radius: 5%");
+        } else {
+            tagLabel.setVisible(false);
+            tagLabel.setText("");
         }
     }
 

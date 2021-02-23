@@ -32,8 +32,8 @@ public class SettingsController implements Initializable {
         long napTimeInSeconds = settings.getNapTimeInSeconds();
         boolean showDeletedTask = settings.getShowDeletedTask();
         log.info("get: {}=>{}", focusTimeInSeconds, napTimeInSeconds);
-        focusTimeSlider.setValue(focusTimeInSeconds);
-        restTimeSlider.setValue(napTimeInSeconds);
+        focusTimeSlider.setValue(focusTimeInSeconds/60);
+        restTimeSlider.setValue(napTimeInSeconds/60);
         showDeletedCheckBox.setSelected(showDeletedTask);
     }
 
@@ -48,8 +48,8 @@ public class SettingsController implements Initializable {
     public void onSure(ActionEvent actionEvent) {
         double focusTimeSliderValue = focusTimeSlider.getValue();
         double restTimeSliderValue = restTimeSlider.getValue();
-        settings.setNapTimeInSecs((long) restTimeSliderValue);
-        settings.setFocusTimeInSecs((long) focusTimeSliderValue);
+        settings.setNapTimeInSecs((long) restTimeSliderValue*60);
+        settings.setFocusTimeInSecs((long) focusTimeSliderValue*60);
         settings.setShowDeletedTask(showDeletedCheckBox.isSelected());
         log.info("set {}=>{}", focusTimeSliderValue, restTimeSliderValue);
         Node source = (Node) actionEvent.getSource();

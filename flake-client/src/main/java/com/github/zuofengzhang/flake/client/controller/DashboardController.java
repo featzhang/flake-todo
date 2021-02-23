@@ -20,6 +20,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
@@ -355,35 +356,36 @@ public class DashboardController implements Initializable {
         liveViewContextMenu = new ContextMenu();
         // focus
         MenuItem focusMenuItem = new MenuItem(label("label_focus"));
+        focusMenuItem.setAccelerator(KeyCombination.keyCombination("Meta+F"));
         focusMenuItem.setOnAction(this::onStartTimer);
         // move_to
         // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
         //                                                                  text="%label_yesterday_review"/>
         moveToMenu = new Menu(label("menu_move_to"));
-        moveToYesterdayReviewMenuItem = createMenuItem("1", "label_yesterday_review", this::onMoveMenu);
-        moveToTodayPlanMenuItem = createMenuItem("2", "label_today_plan", this::onMoveMenu);
-        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", "label_tomato_potato", this::onMoveMenu);
-        moveToTodaySummaryMenuItem = createMenuItem("4", "label_today_summary", this::onMoveMenu);
+        moveToYesterdayReviewMenuItem = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTodayPlanMenuItem = createMenuItem("2", "label_today_plan", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
+        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", "label_tomato_potato", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+3"));
+        moveToTodaySummaryMenuItem = createMenuItem("4", "label_today_summary", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+4"));
         moveToMenu.getItems().addAll(moveToYesterdayReviewMenuItem, moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
         // menu_importance_urgency_axis
         Menu iuaMenu = new Menu(label("menu_importance_urgency_axis"));
         ToggleGroup toggleGroup = new ToggleGroup();
-        iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu);
-        iua2MenuItem = createRadioMenuItem("2", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu);
-        iua3MenuItem = createRadioMenuItem("3", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu);
-        iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu);
+        iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
+        iua2MenuItem = createRadioMenuItem("2", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
+        iua3MenuItem = createRadioMenuItem("3", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
+        iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
         iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
         // menu_order
         Menu orderMenu = new Menu(label("menu_order"));
-        MenuItem moveOrderTopMenuItem = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu);
-        MenuItem moveOrderUpMenuItem = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu);
-        MenuItem moveOrderDownMenuItem = createMenuItem("0", "menu_move_down", this::onOrderMoveDownMenu);
+        MenuItem moveOrderTopMenuItem = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
+        MenuItem moveOrderUpMenuItem = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
+        MenuItem moveOrderDownMenuItem = createMenuItem("0", "menu_move_down", this::onOrderMoveDownMenu, KeyCombination.keyCombination("Meta+J"));
         orderMenu.getItems().addAll(moveOrderTopMenuItem, moveOrderUpMenuItem, moveOrderDownMenuItem);
 
         // delete or undeleted
         Menu deleteOrUndeletedMenu = new Menu(label("menu_delete_undelete"));
-        deleteMenuItem = createMenuItem("0", "menu_delete", this::onDeleteMenu);
-        undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu);
+        deleteMenuItem = createMenuItem("0", "menu_delete", this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
+        undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
 
@@ -391,18 +393,20 @@ public class DashboardController implements Initializable {
 
     }
 
-    private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu) {
+    private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
         RadioMenuItem item = new RadioMenuItem(label(label));
         item.setId(id);
         item.setToggleGroup(toggleGroup);
         item.setOnAction(onMoveMenu);
+        item.setAccelerator(keyCombination);
         return item;
     }
 
-    private MenuItem createMenuItem(String id, String label_today_plan, EventHandler<ActionEvent> onMoveMenu) {
+    private MenuItem createMenuItem(String id, String label_today_plan, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
         MenuItem moveToTodayPlanMenuItem = new MenuItem(label(label_today_plan));
         moveToTodayPlanMenuItem.setId(id);
         moveToTodayPlanMenuItem.setOnAction(onMoveMenu);
+        moveToTodayPlanMenuItem.setAccelerator(keyCombination);
         return moveToTodayPlanMenuItem;
     }
 

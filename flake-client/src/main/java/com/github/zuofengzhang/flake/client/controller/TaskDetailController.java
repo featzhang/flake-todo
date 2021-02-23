@@ -12,6 +12,8 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.input.Clipboard;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
@@ -183,6 +185,22 @@ public class TaskDetailController implements Initializable {
                 Window window = scene.getWindow();
                 window.hide();
             }
+        }
+    }
+
+    public void onPasteAttachmentMenu(ActionEvent actionEvent) {
+        Clipboard clipboard = Clipboard.getSystemClipboard();
+        if (clipboard.hasUrl() || clipboard.hasString()) {
+            String url = clipboard.getString();
+            attachmentListView.getItems().add(url);
+        } else if (clipboard.hasFiles()) {
+            for (File file : clipboard.getFiles()) {
+                attachmentListView.getItems().add(file.getAbsolutePath());
+            }
+        } else if (clipboard.hasImage()) {
+            Image image = clipboard.getImage();
+            String url = image.getUrl();
+            attachmentListView.getItems().add(url);
         }
     }
 }
