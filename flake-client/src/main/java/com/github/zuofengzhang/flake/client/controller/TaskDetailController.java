@@ -55,10 +55,6 @@ public class TaskDetailController implements Initializable {
     @FXML
     public TitledPane historyTitlePane;
     @FXML
-    public Button sureButton;
-    @FXML
-    public Button cancelButton;
-    @FXML
     public ListView<String> attachmentListView;
     @FXML
     public ListView<String> historyListView;
@@ -193,14 +189,17 @@ public class TaskDetailController implements Initializable {
         if (clipboard.hasUrl() || clipboard.hasString()) {
             String url = clipboard.getString();
             attachmentListView.getItems().add(url);
+            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else if (clipboard.hasFiles()) {
             for (File file : clipboard.getFiles()) {
                 attachmentListView.getItems().add(file.getAbsolutePath());
             }
+            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else if (clipboard.hasImage()) {
             Image image = clipboard.getImage();
             String url = image.getUrl();
             attachmentListView.getItems().add(url);
+            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         }
     }
 }

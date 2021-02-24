@@ -6,6 +6,7 @@ import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.*;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.DateUtils;
+import com.github.zuofengzhang.flake.client.utils.OSValidator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -17,6 +18,11 @@ import javafx.event.EventTarget;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
+import javafx.scene.control.TextField;
 import javafx.scene.control.*;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.input.KeyCode;
@@ -39,8 +45,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -371,8 +381,8 @@ public class DashboardController implements Initializable {
         Menu iuaMenu = new Menu(label("menu_importance_urgency_axis"));
         ToggleGroup toggleGroup = new ToggleGroup();
         iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
-        iua2MenuItem = createRadioMenuItem("2", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
-        iua3MenuItem = createRadioMenuItem("3", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
+        iua2MenuItem = createRadioMenuItem("2", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
+        iua3MenuItem = createRadioMenuItem("3", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
         iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
         iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
         // menu_order
@@ -388,9 +398,49 @@ public class DashboardController implements Initializable {
         undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
+        // tools
+        Menu toolMenu = new Menu(label("menu_tools"));
+        MenuItem menuSearch = createMenuItem("1", "menu_search", this::onSearchTaskMenu, KeyCombination.keyCombination("Meta+Alt+F"));
+        toolMenu.getItems().add(menuSearch);
 
-        liveViewContextMenu.getItems().addAll(focusMenuItem, moveToMenu, iuaMenu, orderMenu, deleteOrUndeletedMenu);
 
+        liveViewContextMenu.getItems().addAll(focusMenuItem, moveToMenu, iuaMenu, orderMenu, deleteOrUndeletedMenu, new SeparatorMenuItem(), toolMenu);
+
+    }
+
+    private void onSearchTaskMenu(ActionEvent actionEvent) {
+        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        String title = selectedItem.getTitle();
+        String url = "http://www.bing.com/search?q=" + title;
+        if (Desktop.isDesktopSupported()) {
+            try {
+                URI uri = new URI(url);
+                Desktop.getDesktop().browse(uri);
+            } catch (Exception e) {
+                log.error("", e);
+            }
+        } else {
+            if (OSValidator.IS_MAC) {
+                ProcessBuilder processBuilder = new ProcessBuilder();
+                processBuilder.command("open", url);
+                try {
+                    processBuilder.start();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else if (OSValidator.IS_WINDOWS) {
+                ProcessBuilder processBuilder = new ProcessBuilder();
+                processBuilder.command("start", "", url);
+                try {
+                    Process start = processBuilder.start();
+                    int i = start.waitFor();
+                    log.info("execute result: {}", i);
+                } catch (IOException | InterruptedException e) {
+                    log.error("", e);
+                }
+            }
+        }
     }
 
     private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
