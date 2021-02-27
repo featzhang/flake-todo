@@ -8,7 +8,7 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.text.Font?>
 
-<GridPane xmlns="http://javafx.com/javafx/8.0.211" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.zuofengzhang.flake.client.controller.TaskCellController">
+<GridPane xmlns="http://javafx.com/javafx/8.0.281" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.zuofengzhang.flake.client.controller.TaskCellController">
     <columnConstraints>
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="111.0" minWidth="17.0" prefWidth="31.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" />
@@ -27,7 +27,7 @@
         </Label>
         <CheckBox fx:id="checkBox" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER" />
         <ImageView fx:id="iuaImageView" fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-      <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minWidth="1.0" text="L" textFill="#e10b0b" GridPane.columnIndex="1">
+      <Label fx:id="tagLabel" minWidth="1.0" text="L" textFill="#e10b0b" GridPane.columnIndex="1">
          <font>
             <Font size="16.0" />
          </font></Label>

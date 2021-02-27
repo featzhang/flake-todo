@@ -1,7 +1,7 @@
 package com.github.zuofengzhang.flake.client;
 
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
-import com.github.zuofengzhang.flake.client.controller.DashboardController;
+import com.github.zuofengzhang.flake.client.controller.DashboardV2Controller;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import net.rgielen.fxweaver.core.FxWeaver;
@@ -36,7 +36,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     public void onApplicationEvent(StageReadyEvent event) {
         Stage stage = event.stage;
         stage.setTitle(FlakeLabel.application_name);
-        Scene scene = new Scene(fxWeaver.loadView(DashboardController.class, resourceBundle), 950, 850);
+        Scene scene = new Scene(fxWeaver.loadView(DashboardV2Controller.class, resourceBundle), 950, 850);
         String externalForm = this.getClass().getClassLoader().getResource("css/flake-default.css").toExternalForm();
         logger.info("load css: {}", externalForm);
         scene.getStylesheets().add(externalForm);

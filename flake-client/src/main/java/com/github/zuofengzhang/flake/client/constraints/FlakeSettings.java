@@ -8,50 +8,59 @@ import java.util.prefs.Preferences;
  */
 public class FlakeSettings {
 
-    private static final String FOCUS_TIME_IN_SECS = "focus.time.in.secs";
-    private static final String NAP_TIME_IN_SECS = "nap.time.in.secs";
-    private static final long DEFAULT_FOCUS_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
-    private static final long DEFAULT_NAP_TIME_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
-    private static boolean show_deleted_task = false;
+	private static final String FOCUS_TIME_IN_SECS = "focus.time.in.secs";
+	private static final String NAP_TIME_IN_SECS = "nap.time.in.secs";
+	private static final long DEFAULT_FOCUS_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
+	private static final long DEFAULT_NAP_TIME_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
+	private boolean show_deleted_task = false;
+	private boolean show_completed_task = false;
 
-    private static final FlakeSettings SETTINGS;
+	private static final FlakeSettings SETTINGS;
 
-    static {
-        SETTINGS = new FlakeSettings();
-    }
+	static {
+		SETTINGS = new FlakeSettings();
+	}
 
-    public static FlakeSettings getInstance() {
-        return SETTINGS;
-    }
+	public static FlakeSettings getInstance() {
+		return SETTINGS;
+	}
 
-    private final Preferences preferences;
+	private final Preferences preferences;
 
-    private FlakeSettings() {
-        this.preferences = Preferences.userNodeForPackage(FlakeSettings.class);
-    }
+	private FlakeSettings() {
+		this.preferences = Preferences.userNodeForPackage(FlakeSettings.class);
+	}
 
-    public long getFocusTimeInSeconds() {
-        return preferences.getLong(FOCUS_TIME_IN_SECS, DEFAULT_FOCUS_IN_SECONDS);
-    }
+	public long getFocusTimeInSeconds() {
+		return preferences.getLong(FOCUS_TIME_IN_SECS, DEFAULT_FOCUS_IN_SECONDS);
+	}
 
-    public void setFocusTimeInSecs(long s) {
-        this.preferences.putLong(FOCUS_TIME_IN_SECS, s);
-    }
+	public void setFocusTimeInSecs(long s) {
+		this.preferences.putLong(FOCUS_TIME_IN_SECS, s);
+	}
 
-    public long getNapTimeInSeconds() {
-        return preferences.getLong(NAP_TIME_IN_SECS, DEFAULT_NAP_TIME_IN_SECONDS);
-    }
+	public long getNapTimeInSeconds() {
+		return preferences.getLong(NAP_TIME_IN_SECS, DEFAULT_NAP_TIME_IN_SECONDS);
+	}
 
-    public void setNapTimeInSecs(long s) {
-        this.preferences.putLong(NAP_TIME_IN_SECS, s);
-    }
+	public void setNapTimeInSecs(long s) {
+		this.preferences.putLong(NAP_TIME_IN_SECS, s);
+	}
 
-    public void setShowDeletedTask(boolean showDeletedTask) {
-        show_deleted_task = showDeletedTask;
-    }
+	public void setShowDeletedTask(boolean showDeletedTask) {
+		show_deleted_task = showDeletedTask;
+	}
 
-    public boolean getShowDeletedTask() {
-        return show_deleted_task;
-    }
+	public boolean getShowDeletedTask() {
+		return show_deleted_task;
+	}
+
+	public boolean getShowCompletedTask() {
+		return show_completed_task;
+	}
+
+	public void setShowCompletedTask(boolean showCompletedTask) {
+		this.show_completed_task = showCompletedTask;
+	}
 
 }

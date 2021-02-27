@@ -77,7 +77,8 @@ public class TaskCellController implements Initializable {
 
         } else {
             checkBox.setVisible(false);
-            titleLabel.setText("");
+            titleLabel.setText(null);
+            tagLabel.setText(null);
             iuaImageView.setImage(null);
         }
     }

@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.Font?>
+<BorderPane fx:id="rootPane" prefHeight="813.0" prefWidth="932.0" BorderPane.alignment="CENTER"
+            xmlns="http://javafx.com/javafx/8.0.281" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardV2Controller">
+    <center>
+        <TabPane fx:id="tabPane">
+            <tabs>
+                <Tab fx:id="todayTab" closable="false" text="%label_today">
+                    <content>
+                        <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                  minHeight="-Infinity" minWidth="-Infinity" prefHeight="718.0" prefWidth="932.0"
+                                  vgap="5.0">
+
+                            <columnConstraints>
+                                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="260.0" minWidth="10.0"
+                                                   prefWidth="260.0"/>
+                                <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES"
+                                                   maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="662.0"/>
+                                <ColumnConstraints/>
+                            </columnConstraints>
+                            <rowConstraints>
+                                <RowConstraints/>
+                                <RowConstraints maxHeight="506.0" minHeight="0.0" prefHeight="276.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="291.0" minHeight="9.0" prefHeight="19.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="517.0" minHeight="0.0" prefHeight="269.0" vgrow="SOMETIMES"/>
+                                <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="121.0"
+                                                valignment="CENTER" vgrow="NEVER"/>
+                                <RowConstraints maxHeight="296.0" minHeight="10.0" prefHeight="25.0" vgrow="SOMETIMES"/>
+                            </rowConstraints>
+                            <children>
+                                <Accordion fx:id="according" depthTest="ENABLE" maxHeight="1.7976931348623157E308"
+                                           maxWidth="1.7976931348623157E308" prefHeight="674.0" prefWidth="667.0"
+                                           GridPane.columnIndex="1" GridPane.columnSpan="2" GridPane.hgrow="ALWAYS"
+                                           GridPane.rowIndex="1" GridPane.rowSpan="4" GridPane.vgrow="ALWAYS">
+                                    <panes>
+                                        <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false"
+                                                    text="%label_yesterday_review">
+                                            <content>
+                                                <ListView id="1" fx:id="yesterdayList" onMouseClicked="#onTaskClicked"
+                                                          prefHeight="200.0" prefWidth="200.0">
+
+                                                </ListView>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false"
+                                                    text="%label_today_plan">
+                                            <content>
+                                                <ListView id="2" fx:id="todayPlanList" onMouseClicked="#onTaskClicked"
+                                                          prefHeight="200.0" prefWidth="200.0">
+
+                                                </ListView>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false"
+                                                    text="%label_tomato_potato">
+                                            <content>
+                                                <ListView id="3" fx:id="todayTomatoList" onMouseClicked="#onTaskClicked"
+                                                          prefHeight="200.0" prefWidth="200.0">
+
+                                                </ListView>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false"
+                                                    text="%label_today_summary">
+                                            <content>
+                                                <ListView id="4" fx:id="summaryList" onMouseClicked="#onTaskClicked"
+                                                          prefHeight="200.0" prefWidth="200.0">
+
+                                                </ListView>
+                                            </content>
+                                        </TitledPane>
+                                    </panes>
+                                </Accordion>
+                                <TextField fx:id="mottoTextField" onAction="#onAddMottoTextField"
+                                           promptText="%today_motto" GridPane.columnSpan="3" GridPane.rowIndex="5"/>
+                                <TitledPane collapsible="false" text="%label_timer" GridPane.rowIndex="3">
+                                    <content>
+                                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0"
+                                              spacing="30.0">
+                                            <children>
+                                                <Label fx:id="timerStatsLabel" text="timer status">
+                                                    <font>
+                                                        <Font size="18.0"/>
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="timerCounterLabel" text="Label" textFill="#2fa105">
+                                                    <font>
+                                                        <Font size="48.0"/>
+                                                    </font>
+                                                </Label>
+                                                <Label fx:id="workContentLabel" text="Label" underline="true"/>
+                                                <HBox alignment="CENTER" prefWidth="200.0" style="-fx-spacing: 20;">
+                                                    <children>
+                                                        <Button fx:id="stopButton" mnemonicParsing="false"
+                                                                onAction="#onStopTimer" text="%label_stop"/>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </VBox>
+                                    </content>
+                                </TitledPane>
+                                <TitledPane fx:id="titledPane" collapsible="false" prefHeight="273.0" prefWidth="273.0"
+                                            GridPane.rowIndex="1">
+                                    <content>
+                                        <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
+                                    </content>
+                                </TitledPane>
+                            </children>
+                            <opaqueInsets>
+                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
+                            </opaqueInsets>
+                            <padding>
+                                <Insets bottom="10.0"/>
+                            </padding>
+                        </GridPane>
+                    </content>
+                </Tab>
+                <Tab fx:id="taskTab" closable="false" text="%label_task">
+                    <content>
+                        <BorderPane>
+                            <center>
+                                <ListView id="0" fx:id="undoneList" onMouseClicked="#onTaskClicked" prefHeight="200.0"
+                                          prefWidth="200.0">
+
+                                </ListView>
+                            </center>
+                            <bottom>
+                                <ToolBar prefHeight="40.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                                    <items>
+                                        <CheckBox fx:id="showDeletedCheckBox" mnemonicParsing="false"
+                                                  onAction="#onShowDeletedTask" text="%label_show_deleted"/>
+                                        <CheckBox fx:id="showCompletedCheckBox" mnemonicParsing="false"
+                                                  onAction="#onShowCompletedTask" text="%label_show_completed"/>
+                                    </items>
+                                </ToolBar>
+                            </bottom>
+                        </BorderPane>
+                    </content>
+                </Tab>
+            </tabs>
+        </TabPane>
+    </center>
+    <top>
+        <ToolBar maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="614.0" BorderPane.alignment="CENTER">
+            <items>
+                <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting"/>
+                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0"/>
+                <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="154.0"/>
+                <TextField fx:id="newContentTextField" maxHeight="1.7976931348623157E308"
+                           maxWidth="1.7976931348623157E308" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0"
+                           prefWidth="590.0" promptText="%label_new_task"/>
+                <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加"/>
+            </items>
+        </ToolBar>
+    </top>
+    <padding>
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+    </padding>
+</BorderPane>

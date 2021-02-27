@@ -1,36 +1,33 @@
 package com.github.zuofengzhang.flake.client.entity;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
-import lombok.Builder;
 import lombok.Data;
-import lombok.extern.slf4j.Slf4j;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
- * @author zhangzuofeng
+ * @author averyzhang
+ * @date 2021/2/26
  */
 @Data
-@Builder
-@Slf4j
-@TableName("task")
-public class TaskDo implements Serializable {
+public class TaskWithDailyDo implements Serializable {
     @TableId(type = IdType.AUTO)
-    private Integer taskId;
-    private String title;
-    private String content;
-    private Integer typeId;
-    private Long createTime;
-    private Long updateTime;
-    private Long startTime;
-    private Long endTime;
-    private Boolean finished;
+    private Integer           taskId;
+    private String            title;
+    private String            content;
+    private Integer           typeId;
+    private Long              createTime;
+    private Long              updateTime;
+    private Long              startTime;
+    private Long              endTime;
+    private Boolean           finished;
     /**
      *
      */
-    private Long priorityOrder;
+    private Long              priorityOrder;
     /**
      * <url>https://corporatefinanceinstitute.com/resources/uncategorized/eisenhower-matrix/<url/>
      * The Eisenhower Matrix – also known as the Eisenhower Decision Matrix, the Eisenhower Important/Urgent Matrix,
@@ -43,10 +40,10 @@ public class TaskDo implements Serializable {
      * 4. Not Important but Urgent Tasks
      * 0. default_value
      */
-    private Integer importanceUrgencyAxis;
-    private Integer dayId;
-    private String attachment;
-    private Integer storeStatus;
-
-
+    private Integer           importanceUrgencyAxis;
+    private Integer           dayId;
+    private String            attachment;
+    private Integer           storeStatus;
+    @TableField(exist = false)
+    private List<DailyTaskDo> dailyTasks;
 }

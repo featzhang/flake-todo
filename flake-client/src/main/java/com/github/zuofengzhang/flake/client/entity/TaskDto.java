@@ -24,6 +24,7 @@ public class TaskDto {
     private final SimpleLongProperty priorityOrderProperty = new SimpleLongProperty(0);
     private final SimpleStringProperty attachmentProperty = new SimpleStringProperty();
     private final SimpleObjectProperty<StoreStatus> storeStatusProperty = new SimpleObjectProperty<>(StoreStatus.YES);
+    private Long startTime;
 
 
     public SimpleIntegerProperty taskIdProperty() {
@@ -202,6 +203,14 @@ public class TaskDto {
 
     public long getPriorityOrder() {
         return priorityOrderProperty.get();
+    }
+
+    public Long getStartTime() {
+        return startTime;
+    }
+
+    public void setStartTime(Long startTime) {
+        this.startTime = startTime;
     }
 
     public static class Builder {
