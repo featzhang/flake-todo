@@ -28,6 +28,10 @@ public enum TaskType implements Serializable {
         return cid;
     }
 
+    public int getCode() {
+        return cid;
+    }
+
     public static TaskType findByCName(String cname) {
         for (TaskType taskType : TaskType.values()) {
             if (taskType.getCname().equals(cname)) {

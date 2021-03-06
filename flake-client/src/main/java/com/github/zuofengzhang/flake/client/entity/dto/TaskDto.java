@@ -1,9 +1,16 @@
-package com.github.zuofengzhang.flake.client.entity;
+package com.github.zuofengzhang.flake.client.entity.dto;
 
-import javafx.beans.property.*;
+import com.github.zuofengzhang.flake.client.entity.StoreStatus;
+import com.github.zuofengzhang.flake.client.entity.dos.TaskDo;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleLongProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 /**
  * @author zhangzuofeng1
@@ -11,7 +18,6 @@ import org.slf4j.LoggerFactory;
 public class TaskDto {
     private static final Logger log = LoggerFactory.getLogger(TaskDto.class);
     private final SimpleIntegerProperty taskIdProperty = new SimpleIntegerProperty();
-    private final SimpleIntegerProperty dayIdProperty = new SimpleIntegerProperty();
     private final SimpleLongProperty createdTimeProperty = new SimpleLongProperty();
     private final SimpleLongProperty updateTimeProperty = new SimpleLongProperty();
     private final SimpleLongProperty startTimeProperty = new SimpleLongProperty();
@@ -19,46 +25,38 @@ public class TaskDto {
     private final SimpleStringProperty titleProperty = new SimpleStringProperty();
     private final SimpleStringProperty contentProperty = new SimpleStringProperty();
     private final SimpleBooleanProperty finishedProperty = new SimpleBooleanProperty(false);
-    private final SimpleObjectProperty<TaskType> taskTypeProperty = new SimpleObjectProperty<>();
-    private final SimpleIntegerProperty importanceUrgencyAxisProperty = new SimpleIntegerProperty(0);
-    private final SimpleLongProperty priorityOrderProperty = new SimpleLongProperty(0);
-    private final SimpleStringProperty attachmentProperty = new SimpleStringProperty();
+    private final SimpleIntegerProperty iuaProperty = new SimpleIntegerProperty(0);
+    private final SimpleIntegerProperty taskOrderProperty  = new SimpleIntegerProperty(0);
+    private final SimpleStringProperty  attachmentProperty = new SimpleStringProperty();
     private final SimpleObjectProperty<StoreStatus> storeStatusProperty = new SimpleObjectProperty<>(StoreStatus.YES);
     private Long startTime;
-
 
     public SimpleIntegerProperty taskIdProperty() {
         return taskIdProperty;
     }
 
-
-    public SimpleIntegerProperty dayIdProperty() {
-        return dayIdProperty;
-    }
-
-
     public SimpleLongProperty createdTimeProperty() {
         return createdTimeProperty;
     }
-
 
     public SimpleLongProperty updateTimeProperty() {
         return updateTimeProperty;
     }
 
-
     public SimpleLongProperty startTimeProperty() {
         return startTimeProperty;
     }
-
 
     public SimpleLongProperty endTimeProperty() {
         return endTimeProperty;
     }
 
-
     public SimpleStringProperty titleProperty() {
         return titleProperty;
+    }
+
+    public SimpleIntegerProperty taskOrderProperty() {
+        return taskOrderProperty;
     }
 
     public String getContent() {
@@ -69,14 +67,8 @@ public class TaskDto {
         return contentProperty;
     }
 
-
     public SimpleBooleanProperty finishedProperty() {
         return finishedProperty;
-    }
-
-
-    public SimpleObjectProperty<TaskType> taskTypeProperty() {
-        return taskTypeProperty;
     }
 
     public SimpleObjectProperty<StoreStatus> storeStatusProperty() {
@@ -91,13 +83,20 @@ public class TaskDto {
         this.storeStatusProperty.set(storeStatus);
     }
 
+    public int getTaskOrder() {
+        return this.taskOrderProperty.get();
+    }
+
+    public void setTaskOrder(int taskOrder) {
+        this.taskOrderProperty.set(taskOrder);
+    }
+
     public static Builder builder() {
         return new Builder();
     }
 
     private TaskDto(Builder builder) {
         this.taskIdProperty.set(builder.taskId);
-        this.dayIdProperty.set(builder.dayId);
         this.createdTimeProperty.set(builder.createdTime);
         this.updateTimeProperty.set(builder.updateTime);
         this.startTimeProperty.set(builder.startTime);
@@ -105,37 +104,21 @@ public class TaskDto {
         this.titleProperty.set(builder.title);
         this.contentProperty.set(builder.content);
         this.finishedProperty.set(builder.finished);
-        this.taskTypeProperty.set(builder.taskType);
-        this.importanceUrgencyAxisProperty.set(builder.importanceUrgencyAxis);
         this.attachmentProperty.set(builder.attachment);
         this.storeStatusProperty.set(builder.storeStatus);
-        this.priorityOrderProperty.set(builder.priorityOrder);
+        this.taskOrderProperty.set(builder.taskOrder);
     }
 
     public int getIua() {
-        return importanceUrgencyAxisProperty.get();
-    }
-
-
-    public void setTaskType(TaskType taskType) {
-        this.taskTypeProperty.set(taskType);
+        return iuaProperty.get();
     }
 
     public int getTaskId() {
         return taskIdProperty.get();
     }
 
-    public TaskType getTaskType() {
-        return taskTypeProperty.get();
-    }
-
     public String getTitle() {
         return titleProperty.get();
-    }
-
-
-    public int getDayId() {
-        return dayIdProperty.get();
     }
 
     public boolean isFinished() {
@@ -144,21 +127,11 @@ public class TaskDto {
 
     @Override
     public String toString() {
-        return "TaskDto{" +
-                "taskId=" + taskIdProperty.get() +
-                ", dayId=" + dayIdProperty.get() +
-                ", createdTime=" + createdTimeProperty.get() +
-                ", updateTime=" + updateTimeProperty.get() +
-                ", startTime=" + startTimeProperty.get() +
-                ", endTime=" + endTimeProperty.get() +
-                ", title=" + titleProperty.get() +
-                ", content=" + contentProperty.get() +
-                ", finished=" + finishedProperty.get() +
-                ", taskType=" + taskTypeProperty.get() +
-                ", iua=" + importanceUrgencyAxisProperty.get() +
-                ", attachment=" + attachmentProperty.get() +
-                ", priorityOrder=" + priorityOrderProperty.get() +
-                '}';
+        return "TaskDto{" + "taskId=" + taskIdProperty.get() + ", createdTime=" + createdTimeProperty.get()
+                + ", updateTime=" + updateTimeProperty.get() + ", startTime=" + startTimeProperty.get() + ", endTime="
+                + endTimeProperty.get() + ", title=" + titleProperty.get() + ", content=" + contentProperty.get()
+                + ", finished=" + finishedProperty.get() + ", iua=" + iuaProperty.get() + ", attachment="
+                + attachmentProperty.get() + ", priorityOrder=" + taskOrderProperty.get() + '}';
     }
 
     public void setTaskId(int insert) {
@@ -166,11 +139,11 @@ public class TaskDto {
     }
 
     public void setIua(int targetIuaId) {
-        this.importanceUrgencyAxisProperty.set(targetIuaId);
+        this.iuaProperty.set(targetIuaId);
     }
 
     public SimpleIntegerProperty iuaProperty() {
-        return importanceUrgencyAxisProperty;
+        return iuaProperty;
     }
 
     public Long getCreatedTime() {
@@ -197,12 +170,9 @@ public class TaskDto {
         this.contentProperty.set(text);
     }
 
-    public void setPriorityOrder(long l) {
-        this.priorityOrderProperty.set(l);
-    }
 
     public long getPriorityOrder() {
-        return priorityOrderProperty.get();
+        return taskOrderProperty.get();
     }
 
     public Long getStartTime() {
@@ -214,8 +184,8 @@ public class TaskDto {
     }
 
     public static class Builder {
+        private int taskOrder;
         private int taskId;
-        private int dayId;
         private long createdTime;
         private long updateTime;
         private long startTime;
@@ -223,19 +193,11 @@ public class TaskDto {
         private String title;
         private String content;
         private boolean finished;
-        private TaskType taskType;
-        private int importanceUrgencyAxis;
         private String attachment;
         private StoreStatus storeStatus;
-        private long priorityOrder;
 
         public Builder taskId(int taskId) {
             this.taskId = taskId;
-            return this;
-        }
-
-        public Builder taskType(TaskType taskType) {
-            this.taskType = taskType;
             return this;
         }
 
@@ -246,11 +208,6 @@ public class TaskDto {
 
         public Builder title(String title) {
             this.title = title;
-            return this;
-        }
-
-        public Builder dayId(int dayId) {
-            this.dayId = dayId;
             return this;
         }
 
@@ -281,11 +238,6 @@ public class TaskDto {
             return this;
         }
 
-        public Builder importanceUrgencyAxis(int finished) {
-            this.importanceUrgencyAxis = finished;
-            return this;
-        }
-
         public Builder attachment(String finished) {
             this.attachment = finished;
             return this;
@@ -296,57 +248,29 @@ public class TaskDto {
             return this;
         }
 
+        public Builder taskOrder(int storeStatus) {
+            this.taskOrder = storeStatus;
+            return this;
+        }
+
         public TaskDto build() {
             return new TaskDto(this);
         }
 
-        public Builder fullTomato(boolean b) {
-            // FIXME
-            this.finished = b;
-            return this;
-        }
-
-        public Builder priorityOrder(Long priorityOrder) {
-            this.priorityOrder = priorityOrder;
-            return this;
-        }
     }
 
     public static TaskDto parse(TaskDo taskDo) {
-        return TaskDto.builder()
-                .taskId(taskDo.getTaskId())
-                .taskType(TaskType.findById(taskDo.getTypeId()))
-                .content(taskDo.getContent())
-                .title(taskDo.getTitle())
-                .dayId(taskDo.getDayId())
-                .createdTime(taskDo.getCreateTime())
-                .updateTime(taskDo.getUpdateTime())
-                .startTime(taskDo.getStartTime())
-                .endTime(taskDo.getEndTime())
-                .finished(taskDo.getFinished())
-                .importanceUrgencyAxis(taskDo.getImportanceUrgencyAxis())
-                .attachment(taskDo.getAttachment())
-                .storeStatus(StoreStatus.findByCode(taskDo.getStoreStatus()))
-                .priorityOrder(taskDo.getPriorityOrder())
-                .build();
+        return TaskDto.builder().taskId(taskDo.getTaskId()).content(taskDo.getContent()).title(taskDo.getTitle())
+                .createdTime(taskDo.getCreateTime()).updateTime(taskDo.getUpdateTime()).startTime(taskDo.getStartTime())
+                .endTime(taskDo.getEndTime()).finished(taskDo.getFinished()).attachment(taskDo.getAttachment())
+                .storeStatus(StoreStatus.findByCode(taskDo.getStoreStatus())).taskOrder(taskDo.getTaskOrder()).build();
     }
 
     public TaskDo parse() {
-        return TaskDo.builder()
-                .taskId(taskIdProperty.get())
-                .typeId(taskTypeProperty.get().getCId())
-                .content(contentProperty.get())
-                .title(titleProperty.get())
-                .dayId(dayIdProperty.get())
-                .createTime(createdTimeProperty.get())
-                .updateTime(updateTimeProperty.get())
-                .startTime(startTimeProperty.get())
-                .endTime(endTimeProperty.get())
-                .finished(finishedProperty.get())
-                .importanceUrgencyAxis(importanceUrgencyAxisProperty.get())
-                .attachment(attachmentProperty.get())
-                .storeStatus(storeStatusProperty.get().getCode())
-                .priorityOrder(priorityOrderProperty.get())
-                .build();
+        return TaskDo.builder().taskId(taskIdProperty.get()).content(contentProperty.get()).title(titleProperty.get())
+                .createTime(createdTimeProperty.get()).updateTime(updateTimeProperty.get())
+                .startTime(startTimeProperty.get()).endTime(endTimeProperty.get()).finished(finishedProperty.get())
+                .attachment(attachmentProperty.get()).storeStatus(storeStatusProperty.get().getCode())
+                .taskOrder(taskOrderProperty.get()).build();
     }
 }

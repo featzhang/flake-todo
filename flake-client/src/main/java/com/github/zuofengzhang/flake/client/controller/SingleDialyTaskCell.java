@@ -1,24 +1,26 @@
 package com.github.zuofengzhang.flake.client.controller;
 
-import com.github.zuofengzhang.flake.client.entity.dto.TaskDto;
+import java.io.IOException;
+import java.io.InputStream;
+
+import com.github.zuofengzhang.flake.client.entity.dto.SingleDailyTaskDto;
+
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.ListCell;
 import javafx.scene.layout.GridPane;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
  * @author zhangzuofeng1
  */
-public class TaskCell extends ListCell<TaskDto> {
+public class SingleDialyTaskCell extends ListCell<SingleDailyTaskDto> {
     @Override
-    protected void updateItem(TaskDto taskDtoListCell, boolean b) {
+    protected void updateItem(SingleDailyTaskDto taskDtoListCell, boolean b) {
         FXMLLoader loader = new FXMLLoader();
-        InputStream resource = this.getClass().getClassLoader().getResourceAsStream("com/github/zuofengzhang/flake/client/controller/task-cell.fxml");
+        InputStream resource = this.getClass().getClassLoader()
+                .getResourceAsStream("com/github/zuofengzhang/flake/client/controller/single_daily_task_cell.fxml");
         try {
             GridPane gridBagLayout = loader.load(resource);
-            TaskCellController controller = loader.getController();
+            SingleDailyTaskCellController controller = loader.getController();
             controller.setData(taskDtoListCell);
             setGraphic(gridBagLayout);
         } catch (IOException e) {

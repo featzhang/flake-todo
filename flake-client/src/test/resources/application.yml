@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:../db/flake-client.db
+    username:
+    password:
+    driver-class-name: org.sqlite.JDBC
+
+mybatis:
+  mapper-locations: classpath:mapper/*Mapper.xml
+  type-aliases-package: com.github.zuofengzhang.flake.client.entity
+  table:
+    auto: update

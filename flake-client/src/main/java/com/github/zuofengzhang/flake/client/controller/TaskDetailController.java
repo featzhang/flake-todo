@@ -1,13 +1,12 @@
 package com.github.zuofengzhang.flake.client.controller;
 
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
-import com.github.zuofengzhang.flake.client.entity.TaskDto;
+import com.github.zuofengzhang.flake.client.entity.dto.TaskDto;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;

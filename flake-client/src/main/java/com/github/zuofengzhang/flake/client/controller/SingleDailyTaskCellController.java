@@ -1,10 +1,17 @@
 package com.github.zuofengzhang.flake.client.controller;
 
+import java.net.URL;
+import java.util.List;
+import java.util.ResourceBundle;
+
 import com.github.zuofengzhang.flake.client.entity.StoreStatus;
-import com.github.zuofengzhang.flake.client.entity.dto.TaskDto;
+import com.github.zuofengzhang.flake.client.entity.dto.SingleDailyTaskDto;
 import com.github.zuofengzhang.flake.client.utils.ImageHolder;
 import com.github.zuofengzhang.flake.client.utils.TextUtils;
 import com.google.common.base.Joiner;
+
+import org.springframework.stereotype.Component;
+
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.CheckBox;
@@ -12,15 +19,10 @@ import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.util.Pair;
 import net.rgielen.fxweaver.core.FxmlView;
-import org.springframework.stereotype.Component;
-
-import java.net.URL;
-import java.util.List;
-import java.util.ResourceBundle;
 
 @Component
-@FxmlView("task-cell.fxml")
-public class TaskCellController implements Initializable {
+@FxmlView("task-cell-v2.fxml")
+public class SingleDailyTaskCellController implements Initializable {
     @FXML
     public Label tagLabel;
     @FXML
@@ -32,14 +34,13 @@ public class TaskCellController implements Initializable {
     @FXML
     private ImageView iuaImageView;
 
-
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
     }
 
     private final ImageHolder imageHolder = ImageHolder.getInstance();
 
-    public void setData(TaskDto task) {
+    public void setData(SingleDailyTaskDto task) {
         if (task != null) {
             // title
             String title = task.getTitle();
@@ -63,7 +64,7 @@ public class TaskCellController implements Initializable {
                 }
             });
             // checkbox
-            checkBox.setSelected(task.isFinished());
+            checkBox.setSelected(task.getFinished());
             task.finishedProperty().bind(checkBox.selectedProperty());
             // iua
             int iua = task.getIua();
@@ -71,7 +72,6 @@ public class TaskCellController implements Initializable {
             setIuaValue(iua);
 
             task.iuaProperty().addListener((observableValue, number, t1) -> {
-                System.out.println();
                 setIuaValue(t1.intValue());
             });
 
