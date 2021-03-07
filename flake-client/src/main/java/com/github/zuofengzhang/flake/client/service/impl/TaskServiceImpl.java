@@ -98,23 +98,41 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void moveOrderDown(DailyTaskDto task) {
-        final long priorityOrder = task.getDailyOrder();
-        final DailyTaskDo lastBiggest = dailyTaskDao.selectOne(new QueryWrapper<>(DailyTaskDo.builder().dayId(task.getDayId()).typeId(task.getTaskType().getCode()).build()).lt("daily_order", priorityOrder)
-                .orderByDesc("daily_order").last("limit 1"));
-        final int priorityOrder1 = lastBiggest.getDailyOrder();
+        final int priorityOrder = task.getDailyOrder();
+        final DailyTaskDo lastBiggest = dailyTaskDao
+                .selectOne(new QueryWrapper<>(DailyTaskDo.builder().dayId(task.getDayId()).typeId(task.getTaskType().getCode()).build())
+                        .lt("daily_order", priorityOrder)
+                        .orderByDesc("daily_order").last("limit 1")
+                );
+        final int priorityOrder1 = lastBiggest == null ? priorityOrder : lastBiggest.getDailyOrder();
         task.setDailyOrder(priorityOrder1 - 1);
         updateById(task);
     }
 
     @Override
     public void moveOrderUp(DailyTaskDto task) {
-        final long priorityOrder = task.getDailyOrder();
-        final DailyTaskDo lastBiggest = dailyTaskDao.selectOne(new QueryWrapper<>(DailyTaskDo.builder().dayId(task.getDayId()).typeId(task.getTaskType().getCode()).build()).gt("daily_order", priorityOrder)
-                .orderByAsc("daily_order").last("limit 1"));
-        final int priorityOrder1 = lastBiggest.getDailyOrder();
+        final int priorityOrder = task.getDailyOrder();
+        final DailyTaskDo lastBiggest = dailyTaskDao.selectOne(new QueryWrapper<>(DailyTaskDo.builder().dayId(task.getDayId()).typeId(task.getTaskType().getCode()).build())
+                .gt("daily_order", priorityOrder)
+                .orderByAsc("daily_order")
+                .last("limit 1"));
+        final int priorityOrder1 = lastBiggest == null ? priorityOrder : lastBiggest.getDailyOrder();
         logger.info("this.order: {} biggest order : {}", priorityOrder, priorityOrder1);
         task.setDailyOrder(priorityOrder1 + 1);
         updateById(task);
+    }
+
+    @Override
+    public List<TaskDetailDto> findAllUndoneTaskDetails() {
+        QueryWrapper<TaskDetailDto> queryWrapper = new QueryWrapper<>();
+        if (!settings.getShowDeletedTask()) {
+            queryWrapper = queryWrapper.eq("store_status", 1);
+        }
+        if (!settings.getShowCompletedTask()) {
+            queryWrapper = queryWrapper.eq("finished", 0);
+        }
+        queryWrapper = queryWrapper.orderByDesc("task_order", "update_time");
+        return taskDetailDao.getList(queryWrapper);
     }
 
     @Override

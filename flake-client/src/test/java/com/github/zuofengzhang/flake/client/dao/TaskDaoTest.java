@@ -8,6 +8,7 @@ package com.github.zuofengzhang.flake.client.dao;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.github.zuofengzhang.flake.client.entity.dos.DailyTaskDo;
 import com.github.zuofengzhang.flake.client.entity.dos.SingleDailyTaskDo;
+import com.github.zuofengzhang.flake.client.entity.dto.DailyTaskDto;
 import com.github.zuofengzhang.flake.client.entity.dto.TaskDetailDto;
 import org.junit.Assert;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class TaskDaoTest {
         System.out.println(list.size());
         for (TaskDetailDto taskDetailDto : list) {
             System.out.println(taskDetailDto.getTaskId() + ":\t" + taskDetailDto.getTitle());
-            List<DailyTaskDo> dailyTasks = taskDetailDto.getDailyTasks();
+            List<DailyTaskDto> dailyTasks = taskDetailDto.getDailyTasks();
             dailyTasks.forEach(System.out::println);
         }
     }

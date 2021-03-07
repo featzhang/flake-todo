@@ -56,4 +56,6 @@ public interface TaskService {
     void moveOrderDown(DailyTaskDto toDailyTaskDto);
 
     void moveOrderUp(DailyTaskDto toDailyTaskDto);
+
+    List<TaskDetailDto> findAllUndoneTaskDetails();
 }

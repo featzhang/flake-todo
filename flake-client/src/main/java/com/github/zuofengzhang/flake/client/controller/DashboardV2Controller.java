@@ -1,5 +1,6 @@
 package com.github.zuofengzhang.flake.client.controller;
 
+import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.StoreStatus;
@@ -7,6 +8,7 @@ import com.github.zuofengzhang.flake.client.entity.TaskType;
 import com.github.zuofengzhang.flake.client.entity.TimerActionType;
 import com.github.zuofengzhang.flake.client.entity.TimerStatus;
 import com.github.zuofengzhang.flake.client.entity.dto.SingleDailyTaskDto;
+import com.github.zuofengzhang.flake.client.entity.dto.TaskDetailDto;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import com.github.zuofengzhang.flake.client.utils.OSValidator;
@@ -89,7 +91,7 @@ public class DashboardV2Controller implements Initializable {
     public  TitledPane                                 todaySummaryTitledPane;
     public  BorderPane                                 datePickerPane;
     public  Label                                      workContentLabel;
-    public  ListView<SingleDailyTaskDto>               undoneList;
+    public  ListView<TaskDetailDto>                    undoneList;
     public  BorderPane                                 rootPane;
     public  Tab                                        todayTab;
     public  Tab                                        taskTab;
@@ -256,7 +258,7 @@ public class DashboardV2Controller implements Initializable {
         todayPlanList.setCellFactory(t -> new SingleDialyTaskCell());
         todayTomatoList.setCellFactory(t -> new SingleDialyTaskCell());
         summaryList.setCellFactory(t -> new SingleDialyTaskCell());
-        undoneList.setCellFactory(t -> new SingleDialyTaskCell());
+        undoneList.setCellFactory(t -> new TaskDetailCell());
         //
         titledPaneMap = Stream
                 .of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
@@ -320,7 +322,7 @@ public class DashboardV2Controller implements Initializable {
         }
         undeletedMenuItem.setVisible(selectedItem.getStoreStatus() == StoreStatus.NO);
         deleteMenuItem.setVisible(selectedItem.getStoreStatus() == StoreStatus.YES);
-        if (listView == undoneList) {
+        if (tabPane.getSelectionModel().getSelectedItem() == taskTab) {
             moveToMenu.setVisible(false);
         } else {
             TaskType taskType = TaskType.findById(titledPaneId);
@@ -745,18 +747,17 @@ public class DashboardV2Controller implements Initializable {
     private ResourceBundle resourceBundle;
 
     public void onTaskClicked(MouseEvent mouseEvent) {
-        Tab                          selectedItem = tabPane.getSelectionModel().getSelectedItem();
-        ListView<SingleDailyTaskDto> listView     = null;
+        Tab selectedItem = tabPane.getSelectionModel().getSelectedItem();
         if (selectedItem == todayTab) {
-            TitledPane expandedPane = according.getExpandedPane();
-            listView = listViewMap.get(Integer.parseInt(expandedPane.getId()));
+            TitledPane                   expandedPane = according.getExpandedPane();
+            ListView<SingleDailyTaskDto> listView     = listViewMap.get(Integer.parseInt(expandedPane.getId()));
+            if (listView == null) {
+                return;
+            }
+            SingleDailyTaskDto selectedTask = listView.getSelectionModel().getSelectedItem();
         } else if (selectedItem == taskTab) {
-            listView = undoneList;
+            ListView<TaskDetailDto> listView = undoneList;
         }
-        if (listView == null) {
-            return;
-        }
-        SingleDailyTaskDto selectedTask = listView.getSelectionModel().getSelectedItem();
         // if (selectedTask != null) {
         // if (mouseEvent.getClickCount() == 2) {
         // Node node = (Node) mouseEvent.getSource();
@@ -858,11 +859,11 @@ public class DashboardV2Controller implements Initializable {
     private void reloadUndoneList() {
         undoneList.getItems().clear();
         // FIXME:
-        // List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-        // if (!CollectionUtils.isEmpty(undoneTasks)) {
-        // undoneTasks.forEach(this::onTaskDataChange);
-        // undoneList.getItems().addAll(undoneTasks);
-        // }
+        List<TaskDetailDto> undoneTasks = taskService.findAllUndoneTaskDetails();
+        if (!CollectionUtils.isEmpty(undoneTasks)) {
+//            undoneTasks.forEach(this::onTaskDataChange);
+            undoneList.getItems().addAll(undoneTasks);
+        }
     }
 
     public void onShowCompletedTask(ActionEvent actionEvent) {
