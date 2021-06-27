@@ -16,6 +16,9 @@ TODO - app build by JavaFX
 - [x] undone list
 - [x] task edit
 - [x] logic delete
-- [x] sort by priority
+- [x] sort by TASKPRIORITY
 - [ ] db check after launch
 - [x] context menu of LiveView rebuild
+- [ ] lotus-activity
+
+https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java

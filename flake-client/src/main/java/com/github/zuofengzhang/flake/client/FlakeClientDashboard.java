@@ -1,26 +1,21 @@
 package com.github.zuofengzhang.flake.client;
 
-import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
-import com.github.zuofengzhang.flake.client.controller.DashboardController;
 import javafx.application.Application;
 import javafx.application.Platform;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.stage.Stage;
-import net.rgielen.fxweaver.core.FxWeaver;
 import org.slf4j.Logger;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.context.ConfigurableApplicationContext;
 
-import javax.annotation.Resource;
-import java.util.ResourceBundle;
-
 import static org.slf4j.LoggerFactory.getLogger;
 
-public class FlackClientDashboard extends Application {
+/**
+ * @author zhangzuofeng1
+ */
+public class FlakeClientDashboard extends Application {
 
-    private static final Logger logger = getLogger(FlackClientDashboard.class);
-    public static ConfigurableApplicationContext context;
+    private static final Logger                         logger = getLogger(FlakeClientDashboard.class);
+    public static        ConfigurableApplicationContext context;
 
     @Override
     public void init() throws Exception {

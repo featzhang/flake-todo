@@ -2,6 +2,8 @@ package com.github.zuofengzhang.flake.client.service;
 
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
+import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.property.SimpleStringProperty;
 
 import java.util.List;
 
@@ -29,4 +31,19 @@ public interface TaskService {
     void moveOrderUp(TaskDto selectedItem);
 
     void moveOrderDown(TaskDto selectedItem);
+
+
+    SimpleStringProperty totalTaskCntProperty();
+
+    SimpleStringProperty todayTaskCntProperty();
+
+    SimpleStringProperty taskPriorityDistributeProperty();
+
+    SimpleStringProperty tomatoCntProperty();
+
+    SimpleStringProperty maxWorkTimeProperty();
+
+    SimpleStringProperty urgentTaskCntProperty();
+
+    SimpleStringProperty completenessProperty();
 }

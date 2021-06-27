@@ -10,6 +10,8 @@ import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.BooleanProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -59,55 +61,165 @@ public class DashboardController implements Initializable {
 
     public TitledPane titledPane;
 
-    public Accordion according;
-    public Button stopButton;
-    public Label timerStatsLabel;
-    public Label timerCounterLabel;
-    public ComboBox<String> typeComboBox;
-    public TextField newContentTextField;
-    public Button addButton;
-    public ListView<TaskDto> yesterdayList;
-    public ListView<TaskDto> todayPlanList;
-    public ListView<TaskDto> todayTomatoList;
-    public ListView<TaskDto> summaryList;
-    public TitledPane yesterdayTitledPane;
-    public TitledPane todayPlanTitledPane;
-    public TitledPane tomatoPotatoTitledPane;
-    public TitledPane todaySummaryTitledPane;
-    public TextField mottoTextField;
-    public BorderPane datePickerPane;
-    public Label workContentLabel;
-    public TitledPane undoneTitledPane;
-    public ListView<TaskDto> undoneList;
-    public BorderPane rootPane;
+    public  Accordion                       according;
+    public  Button                          stopButton;
+    public  Label                           timerStatsLabel;
+    public  Label                           timerCounterLabel;
+    public  ComboBox<String>                typeComboBox;
+    public  TextField                       newContentTextField;
+    public  ListView<TaskDto>               yesterdayList;
+    public  ListView<TaskDto>               todayPlanList;
+    public  ListView<TaskDto>               todayTomatoList;
+    public  ListView<TaskDto>               summaryList;
+    public  TitledPane                      yesterdayTitledPane;
+    public  TitledPane                      todayPlanTitledPane;
+    public  TitledPane                      tomatoPotatoTitledPane;
+    public  TitledPane                      todaySummaryTitledPane;
+    public  TextField                       mottoTextField;
+    public  BorderPane                      datePickerPane;
+    public  Label                           workContentLabel;
+    public  TitledPane                      undoneTitledPane;
+    public  ListView<TaskDto>               undoneList;
+    public  BorderPane                      rootPane;
+    // stat labels
+    public  Label                           totalTaskCntLbl;
+    public  Label                           todayTaskCntLbl;
+    public  Label                           taskPriorityDistributeLbl;
+    public  Label                           tomatoCntLbl;
+    public  Label                           maxWorkTimeLbl;
+    public  Label                           urgentTaskCntLbl;
+    public  Label                           completenessLbl;
+    //
     @Resource
-    private TaskService taskService;
-    private DatePicker datePicker;
-    private int currentTaskId = -1;
+    private TaskService                     taskService;
+    private DatePicker                      datePicker;
+    private int                             currentTaskId = -1;
     //
     //    private AudioClip mNotify;
     //
-    private Map<Integer, TitledPane> titledPaneMap;
+    private Map<Integer, TitledPane>        titledPaneMap;
     private Map<Integer, ListView<TaskDto>> listViewMap;
-    private Timeline timeline;
-    @Resource
-    private SettingsController settingsController;
-    private Consumer<ActionEvent> o;
+    private Timeline                        timeline;
+    private Consumer<ActionEvent>           o;
 
     @Resource
-    private FxWeaver fxWeaver;
-    private MenuItem moveToYesterdayReviewMenuItem;
-    private MenuItem moveToTodayPlanMenuItem;
-    private MenuItem moveToTomatoPotatoPlanMenuItem;
-    private MenuItem moveToTodaySummaryMenuItem;
+    private FxWeaver      fxWeaver;
+    private MenuItem      moveToYesterdayReviewMenuItem;
+    private MenuItem      moveToTodayPlanMenuItem;
+    private MenuItem      moveToTomatoPotatoPlanMenuItem;
+    private MenuItem      moveToTodaySummaryMenuItem;
     private RadioMenuItem iua1MenuItem;
     private RadioMenuItem iua2MenuItem;
     private RadioMenuItem iua3MenuItem;
     private RadioMenuItem iua4MenuItem;
-    private ContextMenu liveViewContextMenu;
-    private Menu moveToMenu;
-    private MenuItem undeletedMenuItem;
-    private MenuItem deleteMenuItem;
+    private ContextMenu   liveViewContextMenu;
+    private Menu          moveToMenu;
+    private MenuItem      undeletedMenuItem;
+    private MenuItem      deleteMenuItem;
+
+    @Override
+    public void initialize(URL url, ResourceBundle resourceBundle) {
+        // init UI & events
+        // init
+//        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
+
+        // datepicker
+        datePicker = new DatePicker(LocalDate.now());
+        DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
+        Node           popupContent   = datePickerSkin.getPopupContent();
+        datePickerPane.setCenter(popupContent);
+
+        // type
+        List<String> taskTypeNames
+                = Arrays
+                .stream(TaskType.values())
+                .map(TaskType::getCname)
+                .collect(Collectors.toList());
+        typeComboBox.getItems().addAll(taskTypeNames);
+        typeComboBox.getSelectionModel().select(0);
+        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
+            if (!s.equals(t1)) {
+                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId())
+                        .expandedProperty().setValue(true);
+            }
+        });
+        //
+
+
+        //
+        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList, undoneList);
+        listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
+        // listViewCellFactory
+        yesterdayList.setCellFactory(t -> new TaskCell());
+        todayPlanList.setCellFactory(t -> new TaskCell());
+        todayTomatoList.setCellFactory(t -> new TaskCell());
+        summaryList.setCellFactory(t -> new TaskCell());
+        undoneList.setCellFactory(t -> new TaskCell());
+        //
+        titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
+                .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
+        // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
+        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, undoneTitledPane)
+                .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
+                    int tpId = Integer.parseInt(tp.getId());
+                    if (newValue) {
+                        loadTitledPaneData(tpId);
+                    } else {
+                        clearTitledPaneData(tpId);
+                    }
+                }));
+
+        // load data
+//        loadData();
+        // datePick action
+        datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            onDatePickerChanged(oldValue, newValue);
+        });
+
+        // init timer
+        setTimerText(0);
+        setTimerStatus(FlakeLabel.BREAKING);
+        setTimerContent("");
+        stopButton.setVisible(false);
+
+        // init view
+        // expanded undoneTitledPane
+        according.setExpandedPane(undoneTitledPane);
+
+        // loadData
+        loadTitledPaneData(Integer.parseInt(undoneTitledPane.getId()));
+        //
+        buildListViewContextMenu();
+        //
+
+        yesterdayList.setContextMenu(liveViewContextMenu);
+        todayPlanList.setContextMenu(liveViewContextMenu);
+        todayTomatoList.setContextMenu(liveViewContextMenu);
+        summaryList.setContextMenu(liveViewContextMenu);
+        undoneList.setContextMenu(liveViewContextMenu);
+        liveViewContextMenu.setOnShowing(this::onCommonListClick);
+
+        // bindStat
+        doBindStat();
+    }
+
+    private void doBindStat() {
+        totalTaskCntLbl.textProperty().bind(taskService.totalTaskCntProperty());
+        todayTaskCntLbl.textProperty().bind(taskService.todayTaskCntProperty());
+        taskPriorityDistributeLbl.textProperty().bind(taskService.taskPriorityDistributeProperty());
+        tomatoCntLbl.textProperty().bind(taskService.tomatoCntProperty());
+        maxWorkTimeLbl.textProperty().bind(taskService.maxWorkTimeProperty());
+        urgentTaskCntLbl.textProperty().bind(taskService.urgentTaskCntProperty());
+        completenessLbl.textProperty().bind(taskService.completenessProperty());
+    }
+
+
+    /**
+     * 初始化typePie
+     */
+    private void doInitTypePie() {
+
+    }
 
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
@@ -122,7 +234,7 @@ public class DashboardController implements Initializable {
         if (StringUtils.isNotBlank(text)) {
             // get selected dayId
             LocalDate localDate = datePicker.getValue();
-            int dayId = DateUtils.dayId(localDate);
+            int       dayId     = DateUtils.dayId(localDate);
             // get taskType
             TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
             assert taskType != null;
@@ -184,12 +296,12 @@ public class DashboardController implements Initializable {
     }
 
     public void onMoveMenu(ActionEvent actionEvent) {
-        MenuItem eventSource = (MenuItem) actionEvent.getTarget();
-        int targetId = Integer.parseInt(eventSource.getId());
-        ContextMenu popup = eventSource.getParentMenu().getParentPopup();
-        int sourceId = Integer.parseInt(according.getExpandedPane().getId());
-        ListView<TaskDto> listView = listViewMap.get(sourceId);
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        MenuItem          eventSource  = (MenuItem) actionEvent.getTarget();
+        int               targetId     = Integer.parseInt(eventSource.getId());
+        ContextMenu       popup        = eventSource.getParentMenu().getParentPopup();
+        int               sourceId     = Integer.parseInt(according.getExpandedPane().getId());
+        ListView<TaskDto> listView     = listViewMap.get(sourceId);
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
         selectedItem.setTaskType(TaskType.findById(targetId));
         if (taskService.updateById(selectedItem) > 0) {
             listView.getItems().remove(selectedItem);
@@ -198,10 +310,10 @@ public class DashboardController implements Initializable {
     }
 
     public void onDeleteMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        EventTarget       target      = actionEvent.getTarget();
+        MenuItem          menuItem    = (MenuItem) target;
+        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
 
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
@@ -210,96 +322,12 @@ public class DashboardController implements Initializable {
         }
     }
 
-    @Override
-    public void initialize(URL url, ResourceBundle resourceBundle) {
-        // init UI & events
-        // init
-//        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
-
-        // datepicker
-        datePicker = new DatePicker(LocalDate.now());
-        DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
-        Node popupContent = datePickerSkin.getPopupContent();
-        datePickerPane.setCenter(popupContent);
-
-        // type
-        List<String> taskTypeNames
-                = Arrays
-                .stream(TaskType.values())
-                .map(TaskType::getCname)
-                .collect(Collectors.toList());
-        typeComboBox.getItems().addAll(taskTypeNames);
-        typeComboBox.getSelectionModel().select(0);
-        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
-            if (!s.equals(t1)) {
-                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId())
-                        .expandedProperty().setValue(true);
-            }
-        });
-        //
-        addButton.requestFocus();
-
-
-        //
-        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList, undoneList);
-        listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
-        // listViewCellFactory
-        yesterdayList.setCellFactory(t -> new TaskCell());
-        todayPlanList.setCellFactory(t -> new TaskCell());
-        todayTomatoList.setCellFactory(t -> new TaskCell());
-        summaryList.setCellFactory(t -> new TaskCell());
-        undoneList.setCellFactory(t -> new TaskCell());
-        //
-        titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
-                .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
-        // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
-        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, undoneTitledPane)
-                .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
-                    int tpId = Integer.parseInt(tp.getId());
-                    if (newValue) {
-                        loadTitledPaneData(tpId);
-                    } else {
-                        clearTitledPaneData(tpId);
-                    }
-                }));
-
-        // load data
-//        loadData();
-        // datePick action
-        datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            onDatePickerChanged(oldValue, newValue);
-        });
-
-        // init timer
-        setTimerText(0);
-        setTimerStatus(FlakeLabel.BREAKING);
-        setTimerContent("");
-        stopButton.setVisible(false);
-
-        // init view
-        // expanded undoneTitledPane
-        according.setExpandedPane(undoneTitledPane);
-
-        // loadData
-        loadTitledPaneData(Integer.parseInt(undoneTitledPane.getId()));
-        //
-        buildListViewContextMenu();
-        //
-
-        yesterdayList.setContextMenu(liveViewContextMenu);
-        todayPlanList.setContextMenu(liveViewContextMenu);
-        todayTomatoList.setContextMenu(liveViewContextMenu);
-        summaryList.setContextMenu(liveViewContextMenu);
-        undoneList.setContextMenu(liveViewContextMenu);
-        liveViewContextMenu.setOnShowing(this::onCommonListClick);
-    }
-
 
     private void onCommonListClick(WindowEvent mouseEvent) {
         initListContextMenu();
-        int titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
-        ListView<TaskDto> listView = listViewMap.get(titledPaneId);
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        int               titledPaneId = Integer.parseInt(according.getExpandedPane().getId());
+        ListView<TaskDto> listView     = listViewMap.get(titledPaneId);
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
             return;
         }
@@ -322,6 +350,7 @@ public class DashboardController implements Initializable {
                 case YESTERDAY_REVIEW:
                     moveToYesterdayReviewMenuItem.setVisible(false);
                     break;
+                default:
             }
         }
 
@@ -361,14 +390,14 @@ public class DashboardController implements Initializable {
         // move_to
         // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
         //                                                                  text="%label_yesterday_review"/>
-        moveToMenu = new Menu(label("menu_move_to"));
-        moveToYesterdayReviewMenuItem = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
-        moveToTodayPlanMenuItem = createMenuItem("2", "label_today_plan", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
+        moveToMenu                     = new Menu(label("menu_move_to"));
+        moveToYesterdayReviewMenuItem  = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTodayPlanMenuItem        = createMenuItem("2", "label_today_plan", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
         moveToTomatoPotatoPlanMenuItem = createMenuItem("3", "label_tomato_potato", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+3"));
-        moveToTodaySummaryMenuItem = createMenuItem("4", "label_today_summary", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+4"));
+        moveToTodaySummaryMenuItem     = createMenuItem("4", "label_today_summary", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+4"));
         moveToMenu.getItems().addAll(moveToYesterdayReviewMenuItem, moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
         // menu_importance_urgency_axis
-        Menu iuaMenu = new Menu(label("menu_importance_urgency_axis"));
+        Menu        iuaMenu     = new Menu(label("menu_importance_urgency_axis"));
         ToggleGroup toggleGroup = new ToggleGroup();
         iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
         iua2MenuItem = createRadioMenuItem("2", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
@@ -376,15 +405,15 @@ public class DashboardController implements Initializable {
         iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
         iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
         // menu_order
-        Menu orderMenu = new Menu(label("menu_order"));
-        MenuItem moveOrderTopMenuItem = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
-        MenuItem moveOrderUpMenuItem = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
+        Menu     orderMenu             = new Menu(label("menu_order"));
+        MenuItem moveOrderTopMenuItem  = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
+        MenuItem moveOrderUpMenuItem   = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
         MenuItem moveOrderDownMenuItem = createMenuItem("0", "menu_move_down", this::onOrderMoveDownMenu, KeyCombination.keyCombination("Meta+J"));
         orderMenu.getItems().addAll(moveOrderTopMenuItem, moveOrderUpMenuItem, moveOrderDownMenuItem);
 
         // delete or undeleted
         Menu deleteOrUndeletedMenu = new Menu(label("menu_delete_undelete"));
-        deleteMenuItem = createMenuItem("0", "menu_delete", this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
+        deleteMenuItem    = createMenuItem("0", "menu_delete", this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
         undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
@@ -421,8 +450,8 @@ public class DashboardController implements Initializable {
             undoneList.getItems().clear();
         } else {
             // loadDayTask
-            ListView<TaskDto> listView = listViewMap.get(titledPaneId);
-            ObservableList<TaskDto> items = listView.getItems();
+            ListView<TaskDto>       listView = listViewMap.get(titledPaneId);
+            ObservableList<TaskDto> items    = listView.getItems();
             items.forEach(task -> {
                 task.finishedProperty().unbind();
                 task.iuaProperty().unbind();
@@ -433,7 +462,7 @@ public class DashboardController implements Initializable {
 
     private void loadTitledPaneData(int titledPaneId) {
         TaskType taskType = TaskType.findById(titledPaneId);
-        int dayId = DateUtils.dayId(datePicker.getValue());
+        int      dayId    = DateUtils.dayId(datePicker.getValue());
         titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         // undone
         if (taskType == null) {
@@ -450,9 +479,9 @@ public class DashboardController implements Initializable {
         } else {
             // loadDayTask
 
-            List<TaskDto> tasks = taskService.findTasksByDayIdAndType(dayId, taskType);
-            ListView<TaskDto> listView = listViewMap.get(titledPaneId);
-            ObservableList<TaskDto> items = listView.getItems();
+            List<TaskDto>           tasks    = taskService.findTasksByDayIdAndType(dayId, taskType);
+            ListView<TaskDto>       listView = listViewMap.get(titledPaneId);
+            ObservableList<TaskDto> items    = listView.getItems();
 //            items.forEach(task -> {
 //                task.finishedProperty().unbind();
 //                task.iuaProperty().unbind();
@@ -477,7 +506,7 @@ public class DashboardController implements Initializable {
     }
 
     public void setTimerText(long remainingSeconds) {
-        int hours = (int) (remainingSeconds / 60 / 60);
+        int hours   = (int) (remainingSeconds / 60 / 60);
         int minutes = (int) ((remainingSeconds / 60) % 60);
         int seconds = (int) (remainingSeconds % 60);
 
@@ -595,9 +624,9 @@ public class DashboardController implements Initializable {
     }
 
     public void onStartTimer(ActionEvent actionEvent) {
-        ContextMenu parentPopup = ((MenuItem) actionEvent.getTarget()).getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        ContextMenu       parentPopup  = ((MenuItem) actionEvent.getTarget()).getParentPopup();
+        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
             return;
         }
@@ -651,12 +680,12 @@ public class DashboardController implements Initializable {
     }
 
     public void onSettings(ActionEvent actionEvent) {
-        Node node = (Node) actionEvent.getSource();
-        Scene scene1 = node.getScene();
-        Stage primaryStage = (Stage) scene1.getWindow();
-        BorderPane borderPane = fxWeaver.loadView(SettingsController.class, resourceBundle);
-        Scene scene = new Scene(borderPane);
-        Stage stage = new Stage();
+        Node       node         = (Node) actionEvent.getSource();
+        Scene      scene1       = node.getScene();
+        Stage      primaryStage = (Stage) scene1.getWindow();
+        BorderPane borderPane   = fxWeaver.loadView(SettingsController.class, resourceBundle);
+        Scene      scene        = new Scene(borderPane);
+        Stage      stage        = new Stage();
         stage.setResizable(false);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -674,13 +703,13 @@ public class DashboardController implements Initializable {
 
 
     public void onSetIuaMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        RadioMenuItem menuItem = (RadioMenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentPopup();
+        EventTarget   target      = actionEvent.getTarget();
+        RadioMenuItem menuItem    = (RadioMenuItem) target;
+        ContextMenu   parentPopup = menuItem.getParentPopup();
         // undoneListView id is 0
         String id = parentPopup.getId();
         //
-        int targetIuaId = Integer.parseInt(menuItem.getId());
+        int     targetIuaId  = Integer.parseInt(menuItem.getId());
         TaskDto selectedItem = undoneList.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             int iua = selectedItem.getIua();
@@ -696,24 +725,30 @@ public class DashboardController implements Initializable {
     private ResourceBundle resourceBundle;
 
     public void onTaskClicked(MouseEvent mouseEvent) {
-        EventTarget target = mouseEvent.getTarget();
-        TitledPane expandedPane = according.getExpandedPane();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(expandedPane.getId()));
-        TaskDto selectedTask = listView.getSelectionModel().getSelectedItem();
+        EventTarget       target       = mouseEvent.getTarget();
+        TitledPane        expandedPane = according.getExpandedPane();
+        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(expandedPane.getId()));
+        TaskDto           selectedTask = listView.getSelectionModel().getSelectedItem();
         if (selectedTask != null) {
             if (mouseEvent.getClickCount() == 2) {
-                Node node = (Node) mouseEvent.getSource();
-                Scene nodeScene = node.getScene();
-                Stage primaryStage = (Stage) nodeScene.getWindow();
+                Node                                                node              = (Node) mouseEvent.getSource();
+                Scene                                               nodeScene         = node.getScene();
+                Stage                                               primaryStage      = (Stage) nodeScene.getWindow();
                 FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver.load(TaskDetailController.class, resourceBundle);
-                GridPane borderPane = controllerAndView.getView().get();
-                TaskDetailController controller = controllerAndView.getController();
+                GridPane                                            borderPane        = controllerAndView.getView().get();
+                TaskDetailController                                controller        = controllerAndView.getController();
                 controller.setData(selectedTask);
                 Scene scene = new Scene(borderPane);
                 Stage stage = new Stage();
                 stage.setResizable(true);
                 stage.initOwner(primaryStage);
-                stage.setTitle(FlakeLabel.TASK_EDIT);
+                selectedTask.titleProperty().addListener(new ChangeListener<String>() {
+                    @Override
+                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                        stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + newValue);
+                    }
+                });
+                stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + selectedTask.getTitle());
                 stage.setScene(scene);
                 stage.show();
             }
@@ -721,10 +756,10 @@ public class DashboardController implements Initializable {
     }
 
     public void onUndeleteMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        EventTarget       target      = actionEvent.getTarget();
+        MenuItem          menuItem    = (MenuItem) target;
+        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
 
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
@@ -735,11 +770,11 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveTopMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        EventTarget       target       = actionEvent.getTarget();
+        MenuItem          menuItem     = (MenuItem) target;
+        ContextMenu       parentPopup  = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.moveOrderTop(selectedItem);
             reloadCurrentTitlePane();
@@ -748,11 +783,11 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveUpMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        EventTarget       target       = actionEvent.getTarget();
+        MenuItem          menuItem     = (MenuItem) target;
+        ContextMenu       parentPopup  = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
             taskService.moveOrderUp(selectedItem);
             reloadCurrentTitlePane();
@@ -761,10 +796,10 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveDownMenu(ActionEvent actionEvent) {
-        EventTarget target = actionEvent.getTarget();
-        MenuItem menuItem = (MenuItem) target;
-        ContextMenu parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        EventTarget       target      = actionEvent.getTarget();
+        MenuItem          menuItem    = (MenuItem) target;
+        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
+        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
 
         TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
         if (selectedItem != null) {
@@ -772,5 +807,8 @@ public class DashboardController implements Initializable {
             reloadCurrentTitlePane();
 //            listView.getItems().remove(selectedItem);
         }
+    }
+
+    public void onAddMoreButtonAction(ActionEvent actionEvent) {
     }
 }

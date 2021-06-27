@@ -20,7 +20,7 @@ import java.util.ResourceBundle;
 @MapperScan("com.github.zuofengzhang.flake.client.dao")
 public class FlakeClientApplication {
     public static void main(String[] args) {
-        Application.launch(FlackClientDashboard.class, args);
+        Application.launch(FlakeClientDashboard.class, args);
     }
 
     @Bean

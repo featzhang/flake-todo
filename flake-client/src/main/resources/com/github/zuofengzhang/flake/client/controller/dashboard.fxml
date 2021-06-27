@@ -3,22 +3,20 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.text.Font?>
-<BorderPane prefHeight="788.0" prefWidth="932.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/8.0.211"
-            xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController"
-fx:id="rootPane"
->
+<?import javafx.scene.text.*?>
+<BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="932.0" BorderPane.alignment="CENTER"
+            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
     <center>
         <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity"
-                  minWidth="-Infinity" vgap="5.0">
+                  minWidth="-Infinity" prefHeight="749.0" prefWidth="991.0" vgap="5.0">
 
             <columnConstraints>
-                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="260.0" minWidth="10.0"
+                <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="260.0" minWidth="100.0"
                                    prefWidth="260.0"/>
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
-                                   minWidth="10.0" prefWidth="662.0"/>
-                <ColumnConstraints/>
+                                   minWidth="10.0" prefWidth="597.0"/>
+                <ColumnConstraints maxWidth="477.0" minWidth="6.0" prefWidth="171.0"/>
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints/>
@@ -33,8 +31,9 @@ fx:id="rootPane"
             </rowConstraints>
             <children>
                 <Accordion fx:id="according" depthTest="ENABLE" maxHeight="1.7976931348623157E308"
-                           maxWidth="1.7976931348623157E308" GridPane.columnIndex="1" GridPane.columnSpan="2"
-                           GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.rowSpan="5" GridPane.vgrow="ALWAYS">
+                           maxWidth="1.7976931348623157E308" style="-fx-border-color: darkgray;"
+                           GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.rowSpan="5"
+                           GridPane.vgrow="ALWAYS">
                     <panes>
                         <TitledPane id="0" fx:id="undoneTitledPane" animated="false" text="%label_undone">
                             <content>
@@ -111,6 +110,105 @@ fx:id="rootPane"
                         <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
                     </content>
                 </TitledPane>
+                <VBox prefHeight="200.0" prefWidth="100.0" style="-fx-border-width: 1; -fx-border-color: darkgray;"
+                      GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    <children>
+                        <BorderPane prefHeight="43.0" prefWidth="234.0"
+                                    style="-fx-border-width: 0,1px,0,0; -fx-border-color: black;">
+                            <left>
+                                <Label text="总任务数:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="totalTaskCntLbl" text="130" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="20.0" layoutY="10.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="今日任务:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="todayTaskCntLbl" text="10" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="23.0" layoutY="142.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="任务分布:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="taskPriorityDistributeLbl" text="5小时" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="23.0" layoutY="56.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="番茄个数:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="tomatoCntLbl" text="30" textFill="#e90b1a" BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="23.0" layoutY="99.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="持续工作:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="maxWorkTimeLbl" text="5小时" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="23.0" layoutY="142.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="紧急代办:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="urgentTaskCntLbl" text="3个" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                        <BorderPane layoutX="23.0" layoutY="185.0" prefHeight="43.0" prefWidth="234.0">
+                            <left>
+                                <Label text="日完成度:" BorderPane.alignment="CENTER"/>
+                            </left>
+                            <center>
+                                <Label fx:id="completenessLbl" text="20%" textFill="#e90b1a"
+                                       BorderPane.alignment="CENTER">
+                                    <font>
+                                        <Font name="System Bold" size="18.0"/>
+                                    </font>
+                                </Label>
+                            </center>
+                        </BorderPane>
+                    </children>
+                    <padding>
+                        <Insets left="10.0" right="10.0"/>
+                    </padding>
+                </VBox>
             </children>
             <opaqueInsets>
                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0"/>
@@ -129,7 +227,9 @@ fx:id="rootPane"
                 <TextField fx:id="newContentTextField" maxHeight="1.7976931348623157E308"
                            maxWidth="1.7976931348623157E308" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0"
                            prefWidth="590.0" promptText="%label_new_task"/>
-                <Button fx:id="addButton" mnemonicParsing="false" onAction="#onAddButtonAction" text="添加"/>
+                <Button mnemonicParsing="false" onAction="#onAddButtonAction" text="添加"/>
+                <Button layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAddMoreButtonAction"
+                        text="更多"/>
             </items>
         </ToolBar>
     </top>
