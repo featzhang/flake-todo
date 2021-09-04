@@ -64,7 +64,7 @@ public class DashboardController implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
 
-    public TitledPane titledPane;
+    public TitledPane currentDayTitledPane;
 
     public  Accordion                       according;
     public  Button                          stopButton;
@@ -491,7 +491,7 @@ public class DashboardController implements Initializable {
     private void loadTitledPaneData(int titledPaneId) {
         TaskType taskType = TaskType.findById(titledPaneId);
         int      dayId    = DateUtils.dayId(datePicker.getValue());
-        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
+        currentDayTitledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         // undone
         if (taskType == null) {
             List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
