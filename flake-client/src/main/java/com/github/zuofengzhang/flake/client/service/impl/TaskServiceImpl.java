@@ -8,12 +8,16 @@ import com.github.zuofengzhang.flake.client.entity.TaskDo;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
 import com.github.zuofengzhang.flake.client.service.TaskService;
+import com.google.common.base.Joiner;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,7 +31,7 @@ public class TaskServiceImpl implements TaskService {
     private final SimpleStringProperty totalTaskCntProperty           = new SimpleStringProperty();
     private final SimpleStringProperty todayTaskCntProperty           = new SimpleStringProperty();
     private final SimpleStringProperty taskPriorityDistributeProperty = new SimpleStringProperty();
-    private final SimpleStringProperty tomatoCntProperty              = new SimpleStringProperty();
+    private final SimpleStringProperty tomatoCntProperty              = new SimpleStringProperty("0");
     private final SimpleStringProperty maxWorkTimeProperty            = new SimpleStringProperty();
     private final SimpleStringProperty urgentTaskCntProperty          = new SimpleStringProperty();
     private final SimpleStringProperty completenessProperty           = new SimpleStringProperty();
@@ -123,8 +127,24 @@ public class TaskServiceImpl implements TaskService {
     }
 
     private void refreshTaskCnt() {
-        totalTaskCntProperty.set(String.valueOf(findAllTasks().size()));
-        totalTaskCntProperty.set(String.valueOf(findAllTasks().size()));
+        final List<TaskDto> allTasks = findAllTasks();
+        //
+        totalTaskCntProperty.set(String.valueOf(allTasks.size()));
+        //
+        final int dayId = Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        todayTaskCntProperty.set(String.valueOf(findAllTasksByDayId(dayId).size()));
+        //
+        final LinkedHashMap<Integer, Long> taskPriorityMap = new LinkedHashMap<>();
+        taskPriorityMap.put(1, 0L);
+        taskPriorityMap.put(2, 0L);
+        taskPriorityMap.put(3, 0L);
+        taskPriorityMap.put(4, 0L);
+        allTasks.stream().collect(Collectors.groupingBy(TaskDto::getIua, LinkedHashMap::new, Collectors.counting())).forEach(taskPriorityMap::put);
+        final String taskPriorityStat = Joiner.on("/").join(taskPriorityMap.values());
+        taskPriorityDistributeProperty.set(taskPriorityStat);
+        //
+        final Long urgentTaskCnt = taskPriorityMap.get(1);
+        urgentTaskCntProperty.set(String.valueOf(urgentTaskCnt));
     }
 
     @Override
@@ -133,6 +153,7 @@ public class TaskServiceImpl implements TaskService {
         // logic deletes
         task.setStoreStatus(StoreStatus.NO);
         updateById(task);
+        refreshTaskCnt();
     }
 
     @Override
@@ -143,8 +164,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int updateById(TaskDto task) {
-        TaskDo taskDo = task.parse();
-        return dao.updateById(taskDo);
+        TaskDo    taskDo = task.parse();
+        final int update = dao.updateById(taskDo);
+        refreshTaskCnt();
+        return update;
     }
 
     @Override

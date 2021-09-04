@@ -9,6 +9,7 @@ import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.binding.Bindings;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -17,6 +18,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
 import javafx.fxml.Initializable;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -25,8 +27,11 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
+import javafx.scene.paint.CycleMethod;
+import javafx.scene.paint.LinearGradient;
+import javafx.scene.paint.Stop;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -89,6 +94,7 @@ public class DashboardController implements Initializable {
     public  Label                           maxWorkTimeLbl;
     public  Label                           urgentTaskCntLbl;
     public  Label                           completenessLbl;
+    public  HBox                            statusHBox;
     //
     @Resource
     private TaskService                     taskService;
@@ -200,10 +206,10 @@ public class DashboardController implements Initializable {
         liveViewContextMenu.setOnShowing(this::onCommonListClick);
 
         // bindStat
-        doBindStat();
+        doBindTaskStat();
     }
 
-    private void doBindStat() {
+    private void doBindTaskStat() {
         totalTaskCntLbl.textProperty().bind(taskService.totalTaskCntProperty());
         todayTaskCntLbl.textProperty().bind(taskService.todayTaskCntProperty());
         taskPriorityDistributeLbl.textProperty().bind(taskService.taskPriorityDistributeProperty());
@@ -211,8 +217,30 @@ public class DashboardController implements Initializable {
         maxWorkTimeLbl.textProperty().bind(taskService.maxWorkTimeProperty());
         urgentTaskCntLbl.textProperty().bind(taskService.urgentTaskCntProperty());
         completenessLbl.textProperty().bind(taskService.completenessProperty());
+        statusHBox.setOnMouseClicked((e) ->
+        {
+            statusHBox.requestFocus();
+        });
+
+        // use different backgrounds for focused and unfocused states
+        statusHBox.backgroundProperty().bind(Bindings
+                .when(statusHBox.focusedProperty())
+                .then(statusHBoxFocusBackground)
+                .otherwise(statusHBoxUnfocusBackground)
+        );
+
+
     }
 
+    private final Background statusHBoxUnfocusBackground = Background.EMPTY;
+    private final Background statusHBoxFocusBackground   = new Background(
+            new BackgroundFill(
+                    new LinearGradient(0, 0, 0, 1, true,
+                            CycleMethod.NO_CYCLE,
+                            new Stop(0, Color.web("#4568DC")),
+                            new Stop(1, Color.web("#B06AB3"))
+                    ), CornerRadii.EMPTY, Insets.EMPTY
+            ));
 
     /**
      * 初始化typePie

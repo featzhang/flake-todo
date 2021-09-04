@@ -20,5 +20,10 @@ TODO - app build by JavaFX
 - [ ] db check after launch
 - [x] context menu of LiveView rebuild
 - [ ] lotus-activity
+- [ ] 支持番茄钟
+- [ ] 统计列表放到状态栏
+- [ ] 添加统计面板
+- [ ] 编辑框支持markdown
+- [ ] 搜索
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java
