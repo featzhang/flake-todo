@@ -26,5 +26,6 @@ TODO - app build by JavaFX
 - [ ] 编辑框支持markdown
 - [ ] 搜索
 - [ ] task统一列表
+- [ ] tab增加条数
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java
