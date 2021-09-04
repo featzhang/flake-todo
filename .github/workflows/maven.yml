@@ -32,6 +32,6 @@ jobs:
         name: artifact
         # optional, default is artifact
         # A file, directory or wildcard pattern that describes what to upload
-        path: flake-client/flake-client-1.0-SNAPSHOT.jar
+        path: flake-client/target/flake-client-1.0-SNAPSHOT.jar
         # The desired behavior if no files are found using the provided path.
     
