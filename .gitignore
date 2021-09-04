@@ -30,4 +30,4 @@ db
 flake-client/.classpath
 flake-client/.project
 flake-client/.settings
-flake-client/.factorypath
+flake-client/.factorypath.DS_Store

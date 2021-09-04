@@ -8,11 +8,11 @@ import java.util.prefs.Preferences;
  */
 public class FlakeSettings {
 
-    private static final String FOCUS_TIME_IN_SECS = "focus.time.in.secs";
-    private static final String NAP_TIME_IN_SECS = "nap.time.in.secs";
-    private static final long DEFAULT_FOCUS_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
-    private static final long DEFAULT_NAP_TIME_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
-    private static boolean show_deleted_task = false;
+    private static final String  FOCUS_TIME_IN_SECS          = "focus.time.in.secs";
+    private static final String  NAP_TIME_IN_SECS            = "nap.time.in.secs";
+    private static final long    DEFAULT_FOCUS_IN_SECONDS    = TimeUnit.MINUTES.toSeconds(30);
+    private static final long    DEFAULT_NAP_TIME_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
+    private static       boolean show_deleted_task           = false;
 
     private static final FlakeSettings SETTINGS;
 

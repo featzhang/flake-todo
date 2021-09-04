@@ -1,3 +1,4 @@
+drop table if exists task;
 create table task
 (
     task_id                 integer

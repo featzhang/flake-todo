@@ -8,10 +8,16 @@ import com.github.zuofengzhang.flake.client.entity.TaskDo;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
 import com.github.zuofengzhang.flake.client.service.TaskService;
+import com.google.common.base.Joiner;
+import javafx.beans.property.SimpleStringProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,9 +28,24 @@ import java.util.stream.Collectors;
 @Slf4j
 public class TaskServiceImpl implements TaskService {
 
+    private final SimpleStringProperty totalTaskCntProperty           = new SimpleStringProperty();
+    private final SimpleStringProperty todayTaskCntProperty           = new SimpleStringProperty();
+    private final SimpleStringProperty taskPriorityDistributeProperty = new SimpleStringProperty();
+    private final SimpleStringProperty tomatoCntProperty              = new SimpleStringProperty("0");
+    private final SimpleStringProperty maxWorkTimeProperty            = new SimpleStringProperty();
+    private final SimpleStringProperty urgentTaskCntProperty          = new SimpleStringProperty();
+    private final SimpleStringProperty completenessProperty           = new SimpleStringProperty();
+
+
     private final FlakeSettings settings = FlakeSettings.getInstance();
     @Resource
-    private TaskDao dao;
+    private       TaskDao       dao;
+
+    @PostConstruct
+    private void init() {
+        refreshTaskCnt();
+    }
+
 
     @Override
     public List<TaskDto> findAllTasks() {
@@ -58,7 +79,7 @@ public class TaskServiceImpl implements TaskService {
                                 aDo
                         )
                                 .orderByAsc("importance_urgency_axis")
-                                .orderByDesc("priority_order",  "update_time")
+                                .orderByDesc("priority_order", "update_time")
                 )
                 .stream()
                 .map(TaskDto::parse)
@@ -67,17 +88,17 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void moveOrderTop(TaskDto task) {
-        TaskDo taskDo = dao.selectOne(new QueryWrapper<TaskDo>().orderByDesc("priority_order").last("limit 1"));
-        Long priorityOrder = taskDo.getPriorityOrder();
+        TaskDo taskDo        = dao.selectOne(new QueryWrapper<TaskDo>().orderByDesc("priority_order").last("limit 1"));
+        Long   priorityOrder = taskDo.getPriorityOrder();
         task.setPriorityOrder(priorityOrder + 10);
         updateById(task);
     }
 
     @Override
     public void moveOrderUp(TaskDto task) {
-        long priorityOrder = task.getPriorityOrder();
-        TaskDo lastBiggest = dao.selectOne(new QueryWrapper<TaskDo>().gt("priority_order", priorityOrder).orderByAsc("priority_order").last("limit 1"));
-        Long priorityOrder1 = lastBiggest.getPriorityOrder();
+        long   priorityOrder  = task.getPriorityOrder();
+        TaskDo lastBiggest    = dao.selectOne(new QueryWrapper<TaskDo>().gt("priority_order", priorityOrder).orderByAsc("priority_order").last("limit 1"));
+        Long   priorityOrder1 = lastBiggest.getPriorityOrder();
         task.setPriorityOrder(priorityOrder1 + 1);
 
         updateById(task);
@@ -85,9 +106,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public void moveOrderDown(TaskDto task) {
-        long priorityOrder = task.getPriorityOrder();
-        TaskDo lastBiggest = dao.selectOne(new QueryWrapper<TaskDo>().lt("priority_order", priorityOrder).orderByDesc("priority_order").last("limit 1"));
-        Long priorityOrder1 = lastBiggest.getPriorityOrder();
+        long   priorityOrder  = task.getPriorityOrder();
+        TaskDo lastBiggest    = dao.selectOne(new QueryWrapper<TaskDo>().lt("priority_order", priorityOrder).orderByDesc("priority_order").last("limit 1"));
+        Long   priorityOrder1 = lastBiggest.getPriorityOrder();
         task.setPriorityOrder(priorityOrder1 - 1);
         updateById(task);
     }
@@ -101,7 +122,29 @@ public class TaskServiceImpl implements TaskService {
         int insert = dao.insert(taskDo);
         // reset id value to DTO
         task.setTaskId(taskDo.getTaskId());
+        refreshTaskCnt();
         return insert;
+    }
+
+    private void refreshTaskCnt() {
+        final List<TaskDto> allTasks = findAllTasks();
+        //
+        totalTaskCntProperty.set(String.valueOf(allTasks.size()));
+        //
+        final int dayId = Integer.parseInt(LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd")));
+        todayTaskCntProperty.set(String.valueOf(findAllTasksByDayId(dayId).size()));
+        //
+        final LinkedHashMap<Integer, Long> taskPriorityMap = new LinkedHashMap<>();
+        taskPriorityMap.put(1, 0L);
+        taskPriorityMap.put(2, 0L);
+        taskPriorityMap.put(3, 0L);
+        taskPriorityMap.put(4, 0L);
+        allTasks.stream().collect(Collectors.groupingBy(TaskDto::getIua, LinkedHashMap::new, Collectors.counting())).forEach(taskPriorityMap::put);
+        final String taskPriorityStat = Joiner.on("/").join(taskPriorityMap.values());
+        taskPriorityDistributeProperty.set(taskPriorityStat);
+        //
+        final Long urgentTaskCnt = taskPriorityMap.get(1);
+        urgentTaskCntProperty.set(String.valueOf(urgentTaskCnt));
     }
 
     @Override
@@ -110,6 +153,7 @@ public class TaskServiceImpl implements TaskService {
         // logic deletes
         task.setStoreStatus(StoreStatus.NO);
         updateById(task);
+        refreshTaskCnt();
     }
 
     @Override
@@ -120,8 +164,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public int updateById(TaskDto task) {
-        TaskDo taskDo = task.parse();
-        return dao.updateById(taskDo);
+        TaskDo    taskDo = task.parse();
+        final int update = dao.updateById(taskDo);
+        refreshTaskCnt();
+        return update;
     }
 
     @Override
@@ -146,4 +192,41 @@ public class TaskServiceImpl implements TaskService {
                 .map(TaskDto::parse)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public SimpleStringProperty totalTaskCntProperty() {
+        return totalTaskCntProperty;
+    }
+
+    @Override
+    public SimpleStringProperty todayTaskCntProperty() {
+        return todayTaskCntProperty;
+    }
+
+    @Override
+    public SimpleStringProperty taskPriorityDistributeProperty() {
+        return taskPriorityDistributeProperty;
+    }
+
+    @Override
+    public SimpleStringProperty tomatoCntProperty() {
+        return tomatoCntProperty;
+    }
+
+    @Override
+    public SimpleStringProperty maxWorkTimeProperty() {
+        return maxWorkTimeProperty;
+    }
+
+    @Override
+    public SimpleStringProperty urgentTaskCntProperty() {
+        return urgentTaskCntProperty;
+    }
+
+    @Override
+    public SimpleStringProperty completenessProperty() {
+        return completenessProperty;
+    }
+
+
 }
