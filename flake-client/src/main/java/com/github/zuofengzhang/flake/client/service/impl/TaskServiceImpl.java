@@ -11,6 +11,7 @@ import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.google.common.base.Joiner;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -20,6 +21,8 @@ import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.github.zuofengzhang.flake.client.utils.DateUtils.lastDayRangeOfDayId;
 
 /**
  * @author zhangzuofeng1
@@ -68,6 +71,23 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public List<TaskDto> findTasksByDayIdAndType(int dayId, TaskType taskType) {
+        if (taskType == TaskType.YESTERDAY_REVIEW) {
+            Pair<Long, Long>     pair    = lastDayRangeOfDayId(dayId);
+            TaskDo.TaskDoBuilder builder = TaskDo.builder();
+            if (!settings.getShowDeletedTask()) {
+                builder.storeStatus(StoreStatus.YES.getCode());
+            }
+            TaskDo aDo = builder.build();
+            return dao.selectList(
+                            new QueryWrapper<>(aDo)
+                                    .between("update_time", pair.getLeft() - 1, pair.getRight() + 1)
+                                    .orderByAsc("importance_urgency_axis")
+                                    .orderByDesc("priority_order", "update_time")
+                    )
+                    .stream()
+                    .map(TaskDto::parse)
+                    .collect(Collectors.toList());
+        }
         TaskDo.TaskDoBuilder builder = TaskDo.builder().dayId(dayId).typeId(taskType.getCId());
         if (!settings.getShowDeletedTask()) {
             builder.storeStatus(StoreStatus.YES.getCode());

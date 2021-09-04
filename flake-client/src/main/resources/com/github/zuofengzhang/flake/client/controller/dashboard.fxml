@@ -89,7 +89,7 @@
                         </VBox>
                     </content>
                 </TitledPane>
-                <TitledPane fx:id="titledPane" collapsible="false" prefHeight="273.0" prefWidth="273.0" GridPane.rowIndex="1">
+                <TitledPane fx:id="currentDayTitledPane" collapsible="false" prefHeight="273.0" prefWidth="273.0" GridPane.rowIndex="1">
                     <content>
                         <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0" />
                     </content>
