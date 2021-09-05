@@ -18,13 +18,14 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="932.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
+<BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="932.0" BorderPane.alignment="CENTER" xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
     <center>
         <GridPane hgap="5.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="703.0" prefWidth="985.0" vgap="5.0">
 
             <columnConstraints>
                 <ColumnConstraints halignment="CENTER" hgrow="ALWAYS" maxWidth="260.0" minWidth="100.0" prefWidth="260.0" />
                 <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="10.0" prefWidth="597.0" />
+                <ColumnConstraints />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints />
@@ -40,27 +41,27 @@
                     <panes>
                         <TitledPane id="0" fx:id="undoneTitledPane" animated="false" text="%label_undone">
                             <content>
-                                <ListView id="0" fx:id="undoneList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0"></ListView>
+                                <ListView id="0" fx:id="undoneList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0" />
                             </content>
                         </TitledPane>
                         <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false" text="%label_yesterday_review">
                             <content>
-                                <ListView id="1" fx:id="yesterdayList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0"></ListView>
+                                <ListView id="1" fx:id="yesterdayList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0" />
                             </content>
                         </TitledPane>
                         <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false" text="%label_today_plan">
                             <content>
-                                <ListView id="2" fx:id="todayPlanList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0"></ListView>
+                                <ListView id="2" fx:id="todayPlanList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0" />
                             </content>
                         </TitledPane>
                         <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false" text="%label_tomato_potato">
                             <content>
-                                <ListView id="3" fx:id="todayTomatoList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0"></ListView>
+                                <ListView id="3" fx:id="todayTomatoList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0" />
                             </content>
                         </TitledPane>
                         <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false" text="%label_today_summary">
                             <content>
-                                <ListView id="4" fx:id="summaryList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0"></ListView>
+                                <ListView id="4" fx:id="summaryList" onMouseClicked="#onTaskClicked" prefHeight="200.0" prefWidth="200.0" />
                             </content>
                         </TitledPane>
                     </panes>
@@ -94,46 +95,54 @@
                         <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0" />
                     </content>
                 </TitledPane>
-                <BorderPane GridPane.columnSpan="3" GridPane.rowIndex="6">
-                    <center>
-                        <HBox fx:id="statusHBox" prefHeight="100.0" prefWidth="200.0" style="-fx-background-color: red;-fx-font-size: 16;-fx-border-color: white;-fx-border-width: 1;">
-                            <Label style="-fx-graphic: url('/images/todos.png')" />
-                            <Label fx:id="tomatoCntLbl" text="todos" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/tasks.png');" />
-                            <Label fx:id="totalTaskCntLbl" text="tasks" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/today_task.png')"></Label>
-                            <Label fx:id="todayTaskCntLbl" text="todayTaskCnt" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/distribute.png');" />
-                            <Label fx:id="taskPriorityDistributeLbl" text="taskPriorityDistributeLbl" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/urgent.png')" />
-                            <Label fx:id="urgentTaskCntLbl" text="" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/completeness.png')" />
-                            <Label fx:id="completenessLbl" text="completenessLbl" />
-                            <Separator orientation="VERTICAL" />
-                            <Label style="-fx-graphic: url('/images/working.jpg')" />
-                            <Label fx:id="maxWorkTimeLbl" text="maxWorkTimeLbl" />
-                        </HBox>
-                    </center>
-                </BorderPane>
+                <ToolBar GridPane.columnSpan="3" GridPane.rowIndex="6">
+                    <HBox>
+                        <Button mnemonicParsing="false" onAction="#onSettings" style="-fx-graphic: url('/images/settings.png')" text="%label.setting">
+
+                        </Button>
+                        <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0" />
+                    </HBox>
+                    <HBox fx:id="statusHBox" style="-fx-background-color: red;-fx-font-size: 16;-fx-border-color: white;-fx-border-width: 1;">
+                        <Label style="-fx-graphic: url('/images/todos.png')" />
+                        <Label fx:id="tomatoCntLbl" text="todos" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/tasks.png');" />
+                        <Label fx:id="totalTaskCntLbl" text="tasks" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/today_task.png')" />
+                        <Label fx:id="todayTaskCntLbl" text="todayTaskCnt" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/distribute.png');" />
+                        <Label fx:id="taskPriorityDistributeLbl" text="taskPriorityDistributeLbl" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/urgent.png')" />
+                        <Label fx:id="urgentTaskCntLbl" text="" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/completeness.png')" />
+                        <Label fx:id="completenessLbl" text="completenessLbl" />
+                        <Separator orientation="VERTICAL" />
+                        <Label style="-fx-graphic: url('/images/working.jpg')" />
+                        <Label fx:id="maxWorkTimeLbl" text="maxWorkTimeLbl" />
+                    </HBox>
+                </ToolBar>
             </children>
 
         </GridPane>
     </center>
     <top>
         <ToolBar maxWidth="1.7976931348623157E308" prefHeight="39.0" prefWidth="614.0" BorderPane.alignment="CENTER">
-            <items>
-                <Button mnemonicParsing="false" onAction="#onSettings" text="%label.setting" />
-                <Separator orientation="VERTICAL" prefHeight="0.0" prefWidth="11.0" />
-                <ComboBox fx:id="typeComboBox" prefHeight="27.0" prefWidth="154.0" />
-                <TextField fx:id="newContentTextField" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" onKeyPressed="#onNewContentKeyPressed" prefHeight="27.0" prefWidth="590.0" promptText="%label_new_task" />
-                <Button mnemonicParsing="false" onAction="#onAddButtonAction" text="添加" />
-                <Button layoutX="877.0" layoutY="11.0" mnemonicParsing="false" onAction="#onAddMoreButtonAction" text="更多" />
-            </items>
+            <HBox prefWidth="950.0">
+                <children>
+                    <ComboBox fx:id="typeComboBox" HBox.hgrow="NEVER" />
+                    <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed" promptText="%label_new_task" HBox.hgrow="ALWAYS">
+                        <font>
+                            <Font size="16.0" />
+                        </font>
+                    </TextField>
+                    <Button mnemonicParsing="false" onAction="#onAddButtonAction" style="-fx-graphic: url('/images/add.png')" text="添加" />
+                    <Button mnemonicParsing="false" onAction="#onAddMoreButtonAction" style="-fx-graphic: url('/images/more.png')" text="更多" />
+                </children>
+            </HBox>
         </ToolBar>
     </top>
     <padding>
