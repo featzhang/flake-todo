@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.LinkedHashMap;
@@ -39,6 +40,8 @@ public class TaskServiceImpl implements TaskService {
     private final SimpleStringProperty urgentTaskCntProperty          = new SimpleStringProperty();
     private final SimpleStringProperty completenessProperty           = new SimpleStringProperty();
 
+    @Resource
+    private LuceneIndexer indexer;
 
     private final FlakeSettings settings = FlakeSettings.getInstance();
     @Resource
@@ -143,6 +146,11 @@ public class TaskServiceImpl implements TaskService {
         // reset id value to DTO
         task.setTaskId(taskDo.getTaskId());
         refreshTaskCnt();
+        try {
+            indexer.addTask(task);
+        } catch (IOException e) {
+            log.error("", e);
+        }
         return insert;
     }
 
