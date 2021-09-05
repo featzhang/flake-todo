@@ -105,6 +105,10 @@ public class DashboardController implements Initializable {
     public  Label                           urgentTaskCntLbl;
     public  Label                           completenessLbl;
     public  HBox                            statusHBox;
+    public  TextField                       searchTextField;
+    public  ListView<TaskDto>               allTaskListView;
+    public  Tab                             tasksTab;
+    public  Tab                             todayTab;
     //
     @Resource
     private TaskService                     taskService;
@@ -171,6 +175,7 @@ public class DashboardController implements Initializable {
         todayTomatoList.setCellFactory(t -> new TaskCell());
         summaryList.setCellFactory(t -> new TaskCell());
         undoneList.setCellFactory(t -> new TaskCell());
+        allTaskListView.setCellFactory(t -> new TaskCell());
         //
         titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
@@ -185,6 +190,8 @@ public class DashboardController implements Initializable {
                     }
                 }));
 
+        // taskTab action
+        loadTaskTabAction();
         // load data
 //        loadData();
         // datePick action
@@ -213,10 +220,25 @@ public class DashboardController implements Initializable {
         todayTomatoList.setContextMenu(liveViewContextMenu);
         summaryList.setContextMenu(liveViewContextMenu);
         undoneList.setContextMenu(liveViewContextMenu);
+        allTaskListView.setContextMenu(liveViewContextMenu);
+
         liveViewContextMenu.setOnShowing(this::onCommonListClick);
 
         // bindStat
         doBindTaskStat();
+    }
+
+    private void loadTaskTabAction() {
+        tasksTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
+                    if (newValue) {
+                        // loadTasks
+                        List<TaskDto>           allTasks = taskService.findAllTasks();
+                        ObservableList<TaskDto> items    = allTaskListView.getItems();
+                        items.clear();
+                        items.addAll(allTasks);
+                    }
+                }
+        );
     }
 
     private void doBindTaskStat() {
@@ -456,7 +478,7 @@ public class DashboardController implements Initializable {
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
         // tools
-        Menu toolMenu = new Menu(label("menu_tools"));
+        Menu     toolMenu   = new Menu(label("menu_tools"));
         MenuItem menuSearch = createMenuItem("1", "menu_search", this::onSearchTaskMenu, KeyCombination.keyCombination("Meta+Alt+F"));
         toolMenu.getItems().add(menuSearch);
 
@@ -466,10 +488,10 @@ public class DashboardController implements Initializable {
     }
 
     private void onSearchTaskMenu(ActionEvent actionEvent) {
-        ListView<TaskDto> listView = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
-        String title = selectedItem.getTitle();
-        String url = "http://www.bing.com/search?q=" + title;
+        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
+        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
+        String            title        = selectedItem.getTitle();
+        String            url          = "http://www.bing.com/search?q=" + title;
         if (Desktop.isDesktopSupported()) {
             try {
                 URI uri = new URI(url);
@@ -491,7 +513,7 @@ public class DashboardController implements Initializable {
                 processBuilder.command("start", "", url);
                 try {
                     Process start = processBuilder.start();
-                    int i = start.waitFor();
+                    int     i     = start.waitFor();
                     log.info("execute result: {}", i);
                 } catch (IOException | InterruptedException e) {
                     log.error("", e);
@@ -802,16 +824,27 @@ public class DashboardController implements Initializable {
     @Resource
     private ResourceBundle resourceBundle;
 
+    private TaskDto doGetSelectedTask() {
+        if (todayTab.isSelected()) {
+            // today tab is selected
+            TitledPane        expandedPane = according.getExpandedPane();
+            ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(expandedPane.getId()));
+            return listView.getSelectionModel().getSelectedItem();
+        } else if (tasksTab.isSelected()) {
+//            task tab is selected
+            return allTaskListView.getSelectionModel().getSelectedItem();
+        }
+        throw new IllegalStateException("Can not  found selected task.");
+    }
+
     public void onTaskClicked(MouseEvent mouseEvent) {
-        EventTarget       target       = mouseEvent.getTarget();
-        TitledPane        expandedPane = according.getExpandedPane();
-        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(expandedPane.getId()));
-        TaskDto           selectedTask = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedTask = doGetSelectedTask();
         if (selectedTask != null) {
             if (mouseEvent.getClickCount() == 2) {
-                Node                                                node              = (Node) mouseEvent.getSource();
-                Scene                                               nodeScene         = node.getScene();
-                Stage                                               primaryStage      = (Stage) nodeScene.getWindow();
+                Node  node         = (Node) mouseEvent.getSource();
+                Scene nodeScene    = node.getScene();
+                Stage primaryStage = (Stage) nodeScene.getWindow();
+                
                 FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver.load(TaskDetailController.class, resourceBundle);
                 GridPane                                            borderPane        = controllerAndView.getView().get();
                 TaskDetailController                                controller        = controllerAndView.getController();
