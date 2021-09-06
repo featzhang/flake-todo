@@ -4,7 +4,9 @@ import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.github.zuofengzhang.flake.client.entity.TaskType;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleStringProperty;
+import org.apache.lucene.queryparser.classic.ParseException;
 
+import java.io.IOException;
 import java.util.List;
 
 public interface TaskService {
@@ -24,7 +26,7 @@ public interface TaskService {
 
     List<TaskDto> findAllUndoneTasks();
 
-    public List<TaskDto> findTasksByDayIdAndType(int dayId,TaskType taskType);
+    public List<TaskDto> findTasksByDayIdAndType(int dayId, TaskType taskType);
 
     void moveOrderTop(TaskDto selectedItem);
 
@@ -46,4 +48,6 @@ public interface TaskService {
     SimpleStringProperty urgentTaskCntProperty();
 
     SimpleStringProperty completenessProperty();
+
+    List<TaskDto> search(String queryString) throws IOException, ParseException;
 }

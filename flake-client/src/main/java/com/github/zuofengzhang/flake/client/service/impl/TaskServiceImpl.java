@@ -12,6 +12,7 @@ import com.google.common.base.Joiner;
 import javafx.beans.property.SimpleStringProperty;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Pair;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
@@ -19,6 +20,7 @@ import javax.annotation.Resource;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -194,6 +196,11 @@ public class TaskServiceImpl implements TaskService {
     public int updateById(TaskDto task) {
         TaskDo    taskDo = task.parse();
         final int update = dao.updateById(taskDo);
+        try {
+            indexer.updateTask(task);
+        } catch (IOException e) {
+            log.error("", e);
+        }
         refreshTaskCnt();
         return update;
     }
@@ -254,6 +261,15 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public SimpleStringProperty completenessProperty() {
         return completenessProperty;
+    }
+
+    @Override
+    public List<TaskDto> search(String queryString) throws IOException, ParseException {
+        List<Integer> list = indexer.search(queryString, settings.getShowDeletedTask());
+        if (list != null) {
+            return list.stream().map(taskId -> findById(taskId)).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
     }
 
 

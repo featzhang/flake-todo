@@ -24,7 +24,7 @@ TODO - app build by JavaFX
 - [x] 统计列表放到状态栏
 - [ ] 添加统计面板
 - [ ] 编辑框支持markdown
-- [ ] 搜索
+- [ ] full text search
 - [ ] task统一列表
 - [ ] tab增加条数
 
