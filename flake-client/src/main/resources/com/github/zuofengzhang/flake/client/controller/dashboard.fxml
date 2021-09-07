@@ -144,9 +144,11 @@
                 <BorderPane>
                     <top>
                         <ToolBar>
-                            <TextField alignment="CENTER_LEFT" HBox.hgrow="ALWAYS" fx:id="searchTextField"
-                                       promptText="%label_new_task" style="-fx-font-size: 18;"/>
-                            <Button text="%label_search" style="-fx-graphic: url('/images/search.png')"/>
+                            <TextField HBox.hgrow="ALWAYS" fx:id="searchTextField"
+                                       promptText="%label_new_task" style="-fx-font-size: 16;"
+                                       onKeyPressed="#onSearchTextKeyPressed"/>
+                            <Button text="%label_search" style="-fx-graphic: url('/images/search.png')"
+                                    onAction="#onSearchButtonAction"/>
                         </ToolBar>
                     </top>
                     <center>

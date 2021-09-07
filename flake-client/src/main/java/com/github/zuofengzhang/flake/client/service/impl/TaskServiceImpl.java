@@ -148,12 +148,16 @@ public class TaskServiceImpl implements TaskService {
         // reset id value to DTO
         task.setTaskId(taskDo.getTaskId());
         refreshTaskCnt();
+        addIndex(task);
+        return insert;
+    }
+
+    private void addIndex(TaskDto task) {
         try {
             indexer.addTask(task);
         } catch (IOException e) {
             log.error("", e);
         }
-        return insert;
     }
 
     private void refreshTaskCnt() {
@@ -196,11 +200,7 @@ public class TaskServiceImpl implements TaskService {
     public int updateById(TaskDto task) {
         TaskDo    taskDo = task.parse();
         final int update = dao.updateById(taskDo);
-        try {
-            indexer.updateTask(task);
-        } catch (IOException e) {
-            log.error("", e);
-        }
+        updateIndex(task);
         refreshTaskCnt();
         return update;
     }
@@ -270,6 +270,15 @@ public class TaskServiceImpl implements TaskService {
             return list.stream().map(taskId -> findById(taskId)).collect(Collectors.toList());
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public void updateIndex(TaskDto task) {
+        try {
+            indexer.updateTask(task);
+        } catch (IOException e) {
+            log.error("", e);
+        }
     }
 
 

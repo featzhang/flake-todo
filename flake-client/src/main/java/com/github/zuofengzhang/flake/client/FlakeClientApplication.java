@@ -13,11 +13,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.ResourceBundle;
 
 @SpringBootApplication
 @MapperScan("com.github.zuofengzhang.flake.client.dao")
+@EnableScheduling
 public class FlakeClientApplication {
     public static void main(String[] args) {
         Application.launch(FlakeClientDashboard.class, args);

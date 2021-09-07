@@ -46,6 +46,7 @@ import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.lucene.queryparser.classic.ParseException;
 import org.controlsfx.control.Notifications;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -844,7 +845,7 @@ public class DashboardController implements Initializable {
                 Node  node         = (Node) mouseEvent.getSource();
                 Scene nodeScene    = node.getScene();
                 Stage primaryStage = (Stage) nodeScene.getWindow();
-                
+
                 FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver.load(TaskDetailController.class, resourceBundle);
                 GridPane                                            borderPane        = controllerAndView.getView().get();
                 TaskDetailController                                controller        = controllerAndView.getController();
@@ -921,5 +922,28 @@ public class DashboardController implements Initializable {
     }
 
     public void onAddMoreButtonAction(ActionEvent actionEvent) {
+    }
+
+    public void onSearchTextKeyPressed(KeyEvent keyEvent) {
+        if (keyEvent.getCode() == KeyCode.ENTER) {
+            doSearchText();
+        }
+    }
+
+    public void onSearchButtonAction(ActionEvent actionEvent) {
+        doSearchText();
+    }
+
+    private void doSearchText() {
+        String searchText = searchTextField.getText();
+        allTaskListView.getItems().clear();
+        if (!StringUtils.isEmpty(searchText)) {
+            try {
+                List<TaskDto> search = taskService.search(searchText);
+                allTaskListView.getItems().addAll(search);
+            } catch (IOException | ParseException e) {
+                log.error("", e);
+            }
+        }
     }
 }

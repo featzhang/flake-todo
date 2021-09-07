@@ -50,4 +50,6 @@ public interface TaskService {
     SimpleStringProperty completenessProperty();
 
     List<TaskDto> search(String queryString) throws IOException, ParseException;
+
+    void updateIndex(TaskDto taskDto);
 }
