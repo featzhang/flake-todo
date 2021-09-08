@@ -134,18 +134,12 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <!---->
-        <dependency>
-            <groupId>com.jfoenix</groupId>
-            <artifactId>jfoenix</artifactId>
-            <version>8.0.7</version>
-        </dependency>
+        
         <dependency>
             <groupId>org.xerial</groupId>
             <artifactId>sqlite-jdbc</artifactId>
             <version>3.23.1</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.mybatis.spring.boot/mybatis-spring-boot-starter -->
         <dependency>
             <groupId>org.mybatis.spring.boot</groupId>
             <artifactId>mybatis-spring-boot-starter</artifactId>
@@ -189,6 +183,13 @@
             <version>${lucene.version}</version>
         </dependency>
         <!--lucene end-->
+        <!--jfoenix start-->
+        <dependency>
+            <groupId>com.jfoenix</groupId>
+            <artifactId>jfoenix</artifactId>
+            <version>9.0.10</version>
+        </dependency>
+        <!--jfoenix end-->
 
     </dependencies>
     <groupId>org.github.zuofengzhang</groupId>

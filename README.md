@@ -16,16 +16,19 @@ TODO - app build by JavaFX
 - [x] undone list
 - [x] task edit
 - [x] logic delete
-- [x] sort by TASKP_RIORITY
+- [x] sort by TASK PRIORITY
 - [ ] db check after launch
 - [x] context menu of LiveView rebuild
+- [ ] 支持排期
 - [ ] lotus-activity
 - [ ] 支持番茄钟
 - [x] 统计列表放到状态栏
 - [ ] 添加统计面板
 - [ ] 编辑框支持markdown
-- [ ] full text search
+- [x] full text search
 - [ ] task统一列表
 - [ ] tab增加条数
+- [ ] 支持EWS订阅日程
+- [ ] 日程管理
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java

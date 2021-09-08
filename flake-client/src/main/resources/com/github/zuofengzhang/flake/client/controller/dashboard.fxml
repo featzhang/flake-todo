@@ -171,28 +171,32 @@
                 <Button mnemonicParsing="false" onAction="#onSettings" style="-fx-graphic: url('/images/settings.png')"
                         text="%label.setting"/>
             </HBox>
-            <Pane HBox.hgrow="ALWAYS"/>
+            <BorderPane HBox.hgrow="ALWAYS">
+                <center>
+                    <Label text="消息栏"/>
+                </center>
+            </BorderPane>
             <HBox fx:id="statusHBox"
                   style="-fx-background-color: red;-fx-font-size: 16;-fx-border-color: white;-fx-border-width: 1;">
-                <Label style="-fx-graphic: url('/images/todos.png')"/>
+                <Label style="-fx-graphic: url('/images/todos.png')" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="tomatoCntLbl" text="todos"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/tasks.png');"/>
+                <Label style="-fx-graphic: url('/images/tasks.png');" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="totalTaskCntLbl" text="tasks"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/today_task.png')"/>
+                <Label style="-fx-graphic: url('/images/today_task.png')" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="todayTaskCntLbl" text="todayTaskCnt"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/distribute.png');"/>
+                <Label style="-fx-graphic: url('/images/distribute.png');" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="taskPriorityDistributeLbl" text="taskPriorityDistributeLbl"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/urgent.png')"/>
+                <Label style="-fx-graphic: url('/images/urgent.png')" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="urgentTaskCntLbl"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/completeness.png')"/>
+                <Label style="-fx-graphic: url('/images/completeness.png')" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="completenessLbl" text="completenessLbl"/>
                 <Separator orientation="VERTICAL"/>
-                <Label style="-fx-graphic: url('/images/working.jpg')"/>
+                <Label style="-fx-graphic: url('/images/working.jpg')" onMouseEntered="#onAllTodosIconEntered"/>
                 <Label fx:id="maxWorkTimeLbl" text="maxWorkTimeLbl"/>
             </HBox>
         </ToolBar>

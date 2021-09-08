@@ -173,7 +173,7 @@ public class TaskServiceImpl implements TaskService {
         taskPriorityMap.put(2, 0L);
         taskPriorityMap.put(3, 0L);
         taskPriorityMap.put(4, 0L);
-        allTasks.stream().collect(Collectors.groupingBy(TaskDto::getIua, LinkedHashMap::new, Collectors.counting())).forEach(taskPriorityMap::put);
+        taskPriorityMap.putAll(allTasks.stream().collect(Collectors.groupingBy(TaskDto::getIua, LinkedHashMap::new, Collectors.counting())));
         final String taskPriorityStat = Joiner.on("/").join(taskPriorityMap.values());
         taskPriorityDistributeProperty.set(taskPriorityStat);
         //

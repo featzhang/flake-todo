@@ -2,7 +2,7 @@ package com.github.zuofengzhang.flake.client.constraints;
 
 import java.io.Serializable;
 
-import static com.github.zuofengzhang.flake.client.constraints.FlakeLabel.label;
+import static com.github.zuofengzhang.flake.client.constraints.FlakeLabel.*;
 
 /**
  * @author averyzhang
@@ -12,10 +12,10 @@ public enum TASK_PRIORITY implements Serializable {
     /**
      *
      */
-    importance_urgency(1, label("label_importance_urgency")),
-    importance_but_not_urgency(2, label("label_importance_but_not_urgency")),
-    not_importance_but_urgency(3, label("label_not_importance_but_urgency")),
-    not_importance_not_urgency(4, label("label_not_importance_not_urgency")),
+    importance_urgency(1, IMPORTANCE_URGENCY),
+    importance_but_not_urgency(2, IMPORTANCE_BUT_NOT_URGENCY),
+    not_importance_but_urgency(3, NOT_IMPORTANCE_BUT_URGENCY),
+    not_importance_not_urgency(4, NOT_IMPORTANCE_NOT_URGENCY),
     ;
     private final int    id;
     private final String label;
@@ -42,7 +42,5 @@ public enum TASK_PRIORITY implements Serializable {
         return null;
     }
 
-    public static String lbl(int id) {
-        return findById(id).getLabel();
-    }
+    
 }

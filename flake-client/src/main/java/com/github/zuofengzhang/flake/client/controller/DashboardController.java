@@ -48,6 +48,7 @@ import net.rgielen.fxweaver.core.FxmlView;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.controlsfx.control.Notifications;
+import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -154,6 +155,8 @@ public class DashboardController implements Initializable {
         List<String> taskTypeNames
                 = Arrays
                 .stream(TaskType.values())
+                .filter(x -> x != TaskType.YESTERDAY_REVIEW)
+                // 不允许添加昨日回顾
                 .map(TaskType::getCname)
                 .collect(Collectors.toList());
         typeComboBox.getItems().addAll(taskTypeNames);
@@ -317,11 +320,11 @@ public class DashboardController implements Initializable {
             onTaskDataChange(taskDto);
 
             // expand selected TitledPane
+
             BooleanProperty expandedProperty = titledPaneMap.get(taskTypeId).expandedProperty();
-            if (expandedProperty.get()) {
-                reloadCurrentTitlePane();
-            }
             expandedProperty.set(true);
+
+            reloadCurrentTitlePane();
             //
 //            newContentTextField.clear();
         }
@@ -357,26 +360,21 @@ public class DashboardController implements Initializable {
     }
 
     public void onMoveMenu(ActionEvent actionEvent) {
-        MenuItem          eventSource  = (MenuItem) actionEvent.getTarget();
-        int               targetId     = Integer.parseInt(eventSource.getId());
-        ContextMenu       popup        = eventSource.getParentMenu().getParentPopup();
-        int               sourceId     = Integer.parseInt(according.getExpandedPane().getId());
-        ListView<TaskDto> listView     = listViewMap.get(sourceId);
-        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
+        MenuItem eventSource = (MenuItem) actionEvent.getTarget();
+        int      targetId    = Integer.parseInt(eventSource.getId());
+
+        ListView<TaskDto> selectedListView = doGetSelectedListView();
+        TaskDto           selectedItem     = selectedListView.getSelectionModel().getSelectedItem();
+
         selectedItem.setTaskType(TaskType.findById(targetId));
         if (taskService.updateById(selectedItem) > 0) {
-            listView.getItems().remove(selectedItem);
+            selectedListView.getItems().remove(selectedItem);
 //            listViewMap.get(targetId).getItems().add(selectedItem);
         }
     }
 
     public void onDeleteMenu(ActionEvent actionEvent) {
-        EventTarget       target      = actionEvent.getTarget();
-        MenuItem          menuItem    = (MenuItem) target;
-        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
             taskService.deleteById(selectedItem);
             reloadCurrentTitlePane();
@@ -623,34 +621,6 @@ public class DashboardController implements Initializable {
         timerCounterLabel.setText(s);
     }
 
-//    private void loadData() {
-//        // loadDayTask
-//        int dayId = DateUtils.dayId(datePicker.getValue());
-//        titledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
-//        List<TaskDto> list = taskService.findAllTasksByDayId(dayId);
-//
-//        List<TaskDto> needObserver = new ArrayList<>();
-//        if (CollectionUtils.isNotEmpty(list)) {
-//            Map<TaskType, List<TaskDto>> map = list.stream().collect(Collectors.groupingBy(TaskDto::getTaskType));
-//
-//            for (Map.Entry<TaskType, List<TaskDto>> entry : map.entrySet()) {
-//                ObservableList<TaskDto> items = listViewMap.get(entry.getKey().getCId()).getItems();
-//                items.clear();
-//                List<TaskDto> dtos = entry.getValue();
-//                items.addAll(dtos);
-//                needObserver.addAll(dtos);
-//            }
-//        } else {
-//            listViewMap.values().forEach(l -> l.getItems().clear());
-//        }
-//        // load all undone tasks
-//        List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-//        needObserver.addAll(undoneTasks);
-//        undoneList.getItems().addAll(undoneTasks);
-//        //
-//        needObserver.forEach(this::onDataChange);
-////        taskService.findAllTasksByDayId()
-//    }
 
     public void onAddMottoTextField(ActionEvent actionEvent) {
         mottoTextField.setText("");
@@ -826,14 +796,17 @@ public class DashboardController implements Initializable {
     private ResourceBundle resourceBundle;
 
     private TaskDto doGetSelectedTask() {
+        ListView<TaskDto> listView = doGetSelectedListView();
+        return listView.getSelectionModel().getSelectedItem();
+    }
+
+    private ListView<TaskDto> doGetSelectedListView() {
         if (todayTab.isSelected()) {
             // today tab is selected
-            TitledPane        expandedPane = according.getExpandedPane();
-            ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(expandedPane.getId()));
-            return listView.getSelectionModel().getSelectedItem();
+            TitledPane expandedPane = according.getExpandedPane();
+            return listViewMap.get(Integer.parseInt(expandedPane.getId()));
         } else if (tasksTab.isSelected()) {
-//            task tab is selected
-            return allTaskListView.getSelectionModel().getSelectedItem();
+            return allTaskListView;
         }
         throw new IllegalStateException("Can not  found selected task.");
     }
@@ -868,12 +841,7 @@ public class DashboardController implements Initializable {
     }
 
     public void onUndeleteMenu(ActionEvent actionEvent) {
-        EventTarget       target      = actionEvent.getTarget();
-        MenuItem          menuItem    = (MenuItem) target;
-        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
             taskService.restoreById(selectedItem);
             reloadCurrentTitlePane();
@@ -882,11 +850,7 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveTopMenu(ActionEvent actionEvent) {
-        EventTarget       target       = actionEvent.getTarget();
-        MenuItem          menuItem     = (MenuItem) target;
-        ContextMenu       parentPopup  = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
             taskService.moveOrderTop(selectedItem);
             reloadCurrentTitlePane();
@@ -895,11 +859,7 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveUpMenu(ActionEvent actionEvent) {
-        EventTarget       target       = actionEvent.getTarget();
-        MenuItem          menuItem     = (MenuItem) target;
-        ContextMenu       parentPopup  = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView     = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto           selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
             taskService.moveOrderUp(selectedItem);
             reloadCurrentTitlePane();
@@ -908,12 +868,7 @@ public class DashboardController implements Initializable {
     }
 
     public void onOrderMoveDownMenu(ActionEvent actionEvent) {
-        EventTarget       target      = actionEvent.getTarget();
-        MenuItem          menuItem    = (MenuItem) target;
-        ContextMenu       parentPopup = menuItem.getParentMenu().getParentPopup();
-        ListView<TaskDto> listView    = listViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
             taskService.moveOrderDown(selectedItem);
             reloadCurrentTitlePane();
@@ -945,5 +900,19 @@ public class DashboardController implements Initializable {
                 log.error("", e);
             }
         }
+    }
+
+    public void onAllTodosIconEntered(MouseEvent mouseEvent) {
+        Label   button  = (Label) mouseEvent.getTarget();
+        PopOver popOver = new PopOver();
+        GridPane content   = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
+        popOver.setContentNode(content);
+        popOver.setAutoHide(true);
+        popOver.setAutoFix(true);
+        popOver.setHideOnEscape(true);
+        popOver.setDetachable(true);
+        popOver.setDetached(false);
+        popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
+        popOver.show(button);
     }
 }
