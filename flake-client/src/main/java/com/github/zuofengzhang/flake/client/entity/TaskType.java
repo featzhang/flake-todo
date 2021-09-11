@@ -7,10 +7,10 @@ public enum TaskType implements Serializable {
     /**
      *
      */
-    YESTERDAY_REVIEW(1, ResourceBundle.getBundle("flake-client").getString("label_yesterday_review")),
-    TODAY_PLAN(2, ResourceBundle.getBundle("flake-client").getString("label_today_plan")),
-    TOMATO_POTATO(3, ResourceBundle.getBundle("flake-client").getString("label_tomato_potato")),
-    TODAY_SUMMARY(4, ResourceBundle.getBundle("flake-client").getString("label_today_summary"));
+    YESTERDAY_REVIEW(1, ResourceBundle.getBundle("flake-client").getString("yesterday_review")),
+    TODAY_PLAN(2, ResourceBundle.getBundle("flake-client").getString("today_plan")),
+    TOMATO_POTATO(3, ResourceBundle.getBundle("flake-client").getString("tomato_potato")),
+    TODAY_SUMMARY(4, ResourceBundle.getBundle("flake-client").getString("today_summary"));
 
     private final String cname;
     private final int cid;

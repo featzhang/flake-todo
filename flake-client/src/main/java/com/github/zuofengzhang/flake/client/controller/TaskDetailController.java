@@ -45,34 +45,38 @@ import java.util.stream.Collectors;
 @Component
 @FxmlView("task-detail.fxml")
 public class TaskDetailController implements Initializable {
-    private static final Logger logger = LoggerFactory.getLogger(TaskDetailController.class);
+    private static final Logger           logger = LoggerFactory.getLogger(TaskDetailController.class);
     @FXML
-    public TextField titleTextField;
+    public               TextField        titleTextField;
     @FXML
-    public TitledPane contentTitlePane;
+    public               TitledPane       contentTitlePane;
     @FXML
-    public TitledPane attachmentTitlePane;
+    public               TitledPane       attachmentTitlePane;
     @FXML
-    public TitledPane historyTitlePane;
+    public               TitledPane       historyTitlePane;
     @FXML
-    public ListView<String> attachmentListView;
+    public               ListView<String> attachmentListView;
     @FXML
-    public ListView<String> historyListView;
-    public TextArea contentTextArea;
-    public Accordion accordion;
+    public               ListView<String> historyListView;
+    public               TextArea         contentTextArea;
+    public               Accordion        accordion;
 
 
     public void onDeleteAttachmentMenu(ActionEvent actionEvent) {
         String item = attachmentListView.getSelectionModel().getSelectedItem();
-        attachmentListView.getItems().remove(item);
-        taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+        if (item != null) {
+            attachmentListView.getItems().remove(item);
+            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+        } else {
+            logger.warn("Can not delete empty file!");
+        }
     }
 
     public void onAddAttachmentMenu(ActionEvent event) {
-        MenuItem menuItem = (MenuItem) event.getTarget();
-        ContextMenu cm = menuItem.getParentPopup();
-        Scene scene = cm.getScene();
-        Window window = scene.getWindow();
+        MenuItem    menuItem = (MenuItem) event.getTarget();
+        ContextMenu cm       = menuItem.getParentPopup();
+        Scene       scene    = cm.getScene();
+        Window      window   = scene.getWindow();
         logger.info("open file chooser");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
@@ -85,7 +89,11 @@ public class TaskDetailController implements Initializable {
 
     public void onOpenAttachmentMenu(ActionEvent actionEvent) {
         String selectedItem = attachmentListView.getSelectionModel().getSelectedItem();
-        doOpenFile(selectedItem);
+        if (selectedItem != null) {
+            doOpenFile(selectedItem);
+        } else {
+            logger.warn("Can not open empty file!");
+        }
     }
 
 
@@ -109,7 +117,7 @@ public class TaskDetailController implements Initializable {
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 processBuilder.command("open", selectedItem);
                 Process process = processBuilder.start();
-                int waitFor = process.waitFor();
+                int     waitFor = process.waitFor();
                 logger.info("waitFor: {}", waitFor);
             } catch (IOException | InterruptedException ioException) {
                 logger.error("", ioException);
@@ -124,8 +132,8 @@ public class TaskDetailController implements Initializable {
         titleTextField.setText(taskDto.getTitle());
         contentTextArea.setText(taskDto.getContent());
         {
-            List<String> historyList = new ArrayList<>();
-            String createTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getCreatedTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            List<String> historyList         = new ArrayList<>();
+            String       createTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getCreatedTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             historyList.add(FlakeLabel.CREATE + ":\t" + createTimeFormatted);
             String lastUpdatedTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getUpdateTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             historyList.add(FlakeLabel.LAST_UPDATE + ":\t" + lastUpdatedTimeFormatted);
@@ -161,7 +169,7 @@ public class TaskDetailController implements Initializable {
     }
 
     private void saveChangedContentOnExisted() {
-        String text = contentTextArea.getText();
+        String text    = contentTextArea.getText();
         String content = taskDto.getContent();
         if (!Objects.equals(text, content)) {
             taskDto.setContent(text);
@@ -175,10 +183,10 @@ public class TaskDetailController implements Initializable {
                 saveChangedContentOnExisted();
 
                 // close
-                Object source = keyEvent.getSource();
+                Object   source     = keyEvent.getSource();
                 GridPane sourceNode = (GridPane) source;
-                Scene scene = sourceNode.getScene();
-                Window window = scene.getWindow();
+                Scene    scene      = sourceNode.getScene();
+                Window   window     = scene.getWindow();
                 window.hide();
             }
         }
@@ -196,10 +204,11 @@ public class TaskDetailController implements Initializable {
             }
             taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else if (clipboard.hasImage()) {
-            Image image = clipboard.getImage();
-            String url = image.getUrl();
+            Image  image = clipboard.getImage();
+            String url   = image.getUrl();
             attachmentListView.getItems().add(url);
             taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         }
     }
+    
 }

@@ -19,18 +19,18 @@ import java.io.Serializable;
 public class TaskDo implements Serializable {
     @TableId(type = IdType.AUTO)
     private Integer taskId;
-    private String title;
-    private String content;
+    private String  title;
+    private String  content;
     private Integer typeId;
-    private Long createTime;
-    private Long updateTime;
-    private Long startTime;
-    private Long endTime;
+    private Long    createTime;
+    private Long    updateTime;
+    private Long    startTime;
+    private Long    endTime;
     private Boolean finished;
     /**
      *
      */
-    private Long priorityOrder;
+    private Long    priorityOrder;
     /**
      * <url>https://corporatefinanceinstitute.com/resources/uncategorized/eisenhower-matrix/<url/>
      * The Eisenhower Matrix – also known as the Eisenhower Decision Matrix, the Eisenhower Important/Urgent Matrix,
@@ -45,8 +45,10 @@ public class TaskDo implements Serializable {
      */
     private Integer importanceUrgencyAxis;
     private Integer dayId;
-    private String attachment;
+    private String  attachment;
     private Integer storeStatus;
-
-
+    private Integer percent;
+    private Integer expirationDay;
+    private Integer expirationTime;
+    private String  repetition;
 }

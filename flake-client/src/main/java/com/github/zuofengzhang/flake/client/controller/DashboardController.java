@@ -65,7 +65,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.zuofengzhang.flake.client.constraints.FlakeLabel.label;
+import static com.github.zuofengzhang.flake.client.constraints.FlakeLabel.*;
 
 /**
  * @author zhangzuofeng1
@@ -258,33 +258,8 @@ public class DashboardController implements Initializable {
             statusHBox.requestFocus();
         });
 
-        // use different backgrounds for focused and unfocused states
-        statusHBox.backgroundProperty().bind(Bindings
-                .when(statusHBox.focusedProperty())
-                .then(statusHBoxFocusBackground)
-                .otherwise(statusHBoxUnfocusBackground)
-        );
-
 
     }
-
-    private final Background statusHBoxUnfocusBackground = Background.EMPTY;
-    private final Background statusHBoxFocusBackground   = new Background(
-            new BackgroundFill(
-                    new LinearGradient(0, 0, 0, 1, true,
-                            CycleMethod.NO_CYCLE,
-                            new Stop(0, Color.web("#4568DC")),
-                            new Stop(1, Color.web("#B06AB3"))
-                    ), CornerRadii.EMPTY, Insets.EMPTY
-            ));
-
-    /**
-     * 初始化typePie
-     */
-    private void doInitTypePie() {
-
-    }
-
 
     public void onNewContentKeyPressed(KeyEvent keyEvent) {
         if (keyEvent.getCode() == KeyCode.ENTER) {
@@ -326,7 +301,7 @@ public class DashboardController implements Initializable {
 
             reloadCurrentTitlePane();
             //
-//            newContentTextField.clear();
+            newContentTextField.clear();
         }
     }
 
@@ -406,9 +381,9 @@ public class DashboardController implements Initializable {
                 case TOMATO_POTATO:
                     moveToTomatoPotatoPlanMenuItem.setVisible(false);
                     break;
-                case YESTERDAY_REVIEW:
-                    moveToYesterdayReviewMenuItem.setVisible(false);
-                    break;
+//                case YESTERDAY_REVIEW:
+//                    moveToYesterdayReviewMenuItem.setVisible(false);
+//                    break;
                 default:
             }
         }
@@ -435,7 +410,7 @@ public class DashboardController implements Initializable {
     private void initListContextMenu() {
         moveToTodaySummaryMenuItem.setVisible(true);
         moveToTodayPlanMenuItem.setVisible(true);
-        moveToYesterdayReviewMenuItem.setVisible(true);
+//        moveToYesterdayReviewMenuItem.setVisible(true);
         moveToTomatoPotatoPlanMenuItem.setVisible(true);
         moveToMenu.setVisible(true);
     }
@@ -443,42 +418,42 @@ public class DashboardController implements Initializable {
     private void buildListViewContextMenu() {
         liveViewContextMenu = new ContextMenu();
         // focus
-        MenuItem focusMenuItem = new MenuItem(label("label_focus"));
+        MenuItem focusMenuItem = new MenuItem(FOCUS);
         focusMenuItem.setAccelerator(KeyCombination.keyCombination("Meta+F"));
         focusMenuItem.setOnAction(this::onStartTimer);
         // move_to
         // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
         //                                                                  text="%label_yesterday_review"/>
-        moveToMenu                     = new Menu(label("menu_move_to"));
-        moveToYesterdayReviewMenuItem  = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
-        moveToTodayPlanMenuItem        = createMenuItem("2", "label_today_plan", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
-        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", "label_tomato_potato", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+3"));
-        moveToTodaySummaryMenuItem     = createMenuItem("4", "label_today_summary", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+4"));
-        moveToMenu.getItems().addAll(moveToYesterdayReviewMenuItem, moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
+        moveToMenu = new Menu(MENU_MOVE_TO);
+//        moveToYesterdayReviewMenuItem  = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTodayPlanMenuItem        = createMenuItem("2", TODAY_PLAN, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", TOMATO_POTATO, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
+        moveToTodaySummaryMenuItem     = createMenuItem("4", TODAY_SUMMARY, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+3"));
+        moveToMenu.getItems().addAll(/*moveToYesterdayReviewMenuItem,*/ moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
         // menu_importance_urgency_axis
-        Menu        iuaMenu     = new Menu(label("menu_importance_urgency_axis"));
+        Menu        iuaMenu     = new Menu(MENU_IMPORTANCE_URGENCY_AXIS);
         ToggleGroup toggleGroup = new ToggleGroup();
-        iua1MenuItem = createRadioMenuItem("1", "label_importance_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
-        iua2MenuItem = createRadioMenuItem("2", "label_not_importance_but_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
-        iua3MenuItem = createRadioMenuItem("3", "label_importance_but_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
-        iua4MenuItem = createRadioMenuItem("4", "label_not_importance_not_urgency", toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
+        iua1MenuItem = createRadioMenuItem("1", IMPORTANCE_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
+        iua2MenuItem = createRadioMenuItem("2", NOT_IMPORTANCE_BUT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
+        iua3MenuItem = createRadioMenuItem("3", IMPORTANCE_BUT_NOT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
+        iua4MenuItem = createRadioMenuItem("4", NOT_IMPORTANCE_NOT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
         iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
         // menu_order
-        Menu     orderMenu             = new Menu(label("menu_order"));
-        MenuItem moveOrderTopMenuItem  = createMenuItem("0", "menu_move_top", this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
-        MenuItem moveOrderUpMenuItem   = createMenuItem("0", "menu_move_up", this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
-        MenuItem moveOrderDownMenuItem = createMenuItem("0", "menu_move_down", this::onOrderMoveDownMenu, KeyCombination.keyCombination("Meta+J"));
+        Menu     orderMenu             = new Menu(MENU_ORDER);
+        MenuItem moveOrderTopMenuItem  = createMenuItem("0", MENU_MOVE_TOP, this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
+        MenuItem moveOrderUpMenuItem   = createMenuItem("0", MENU_MOVE_UP, this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
+        MenuItem moveOrderDownMenuItem = createMenuItem("0", MENU_MOVE_DOWN, this::onOrderMoveDownMenu, KeyCombination.keyCombination("Meta+J"));
         orderMenu.getItems().addAll(moveOrderTopMenuItem, moveOrderUpMenuItem, moveOrderDownMenuItem);
 
         // delete or undeleted
-        Menu deleteOrUndeletedMenu = new Menu(label("menu_delete_undelete"));
-        deleteMenuItem    = createMenuItem("0", "menu_delete", this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
-        undeletedMenuItem = createMenuItem("0", "menu_undelete", this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
+        Menu deleteOrUndeletedMenu = new Menu(MENU_DELETE_RECOVERY);
+        deleteMenuItem    = createMenuItem("0", MENU_DELETE, this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
+        undeletedMenuItem = createMenuItem("0", MENU_RECOVERY, this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
         // tools
-        Menu     toolMenu   = new Menu(label("menu_tools"));
-        MenuItem menuSearch = createMenuItem("1", "menu_search", this::onSearchTaskMenu, KeyCombination.keyCombination("Meta+Alt+F"));
+        Menu     toolMenu   = new Menu(MENU_TOOLS);
+        MenuItem menuSearch = createMenuItem("1", MENU_SEARCH, this::onSearchTaskMenu, KeyCombination.keyCombination("Meta+Alt+F"));
         toolMenu.getItems().add(menuSearch);
 
 
@@ -522,7 +497,7 @@ public class DashboardController implements Initializable {
     }
 
     private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
-        RadioMenuItem item = new RadioMenuItem(label(label));
+        RadioMenuItem item = new RadioMenuItem(label);
         item.setId(id);
         item.setToggleGroup(toggleGroup);
         item.setOnAction(onMoveMenu);
@@ -530,8 +505,8 @@ public class DashboardController implements Initializable {
         return item;
     }
 
-    private MenuItem createMenuItem(String id, String label_today_plan, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
-        MenuItem moveToTodayPlanMenuItem = new MenuItem(label(label_today_plan));
+    private MenuItem createMenuItem(String id, String label, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
+        MenuItem moveToTodayPlanMenuItem = new MenuItem(label);
         moveToTodayPlanMenuItem.setId(id);
         moveToTodayPlanMenuItem.setOnAction(onMoveMenu);
         moveToTodayPlanMenuItem.setAccelerator(keyCombination);
@@ -757,6 +732,7 @@ public class DashboardController implements Initializable {
         BorderPane borderPane   = fxWeaver.loadView(SettingsController.class, resourceBundle);
         Scene      scene        = new Scene(borderPane);
         Stage      stage        = new Stage();
+        stage.setTitle(SETTING);
         stage.setResizable(false);
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
@@ -781,14 +757,17 @@ public class DashboardController implements Initializable {
         String id = parentPopup.getId();
         //
         int     targetIuaId  = Integer.parseInt(menuItem.getId());
-        TaskDto selectedItem = undoneList.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem != null) {
+            log.info("Set task iua, task: {},uia: {}", selectedItem.getTaskId(), targetIuaId);
             int iua = selectedItem.getIua();
             if (targetIuaId != iua) {
                 selectedItem.setIua(targetIuaId);
                 log.info("set iua : {} -> {} ,{}", iua, targetIuaId, selectedItem);
                 reloadCurrentTitlePane();
             }
+        } else {
+            log.info("Can not find selected task.");
         }
     }
 
@@ -903,9 +882,9 @@ public class DashboardController implements Initializable {
     }
 
     public void onAllTodosIconEntered(MouseEvent mouseEvent) {
-        Label   button  = (Label) mouseEvent.getTarget();
-        PopOver popOver = new PopOver();
-        GridPane content   = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
+        Label    button  = (Label) mouseEvent.getTarget();
+        PopOver  popOver = new PopOver();
+        GridPane content = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
         popOver.setContentNode(content);
         popOver.setAutoHide(true);
         popOver.setAutoFix(true);

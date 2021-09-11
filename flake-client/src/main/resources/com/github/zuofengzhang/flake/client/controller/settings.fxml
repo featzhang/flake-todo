@@ -9,7 +9,7 @@
         <TabPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity"
                  prefHeight="400.0" prefWidth="600.0" tabClosingPolicy="UNAVAILABLE">
             <tabs>
-                <Tab text="%label.common">
+                <Tab text="%common">
                     <content>
                         <GridPane>
                             <columnConstraints>
@@ -26,12 +26,12 @@
                             </padding>
                             <children>
                                 <CheckBox fx:id="showDeletedCheckBox" mnemonicParsing="false"
-                                          text="%label_show_deleted"/>
+                                          text="%show_deleted"/>
                             </children>
                         </GridPane>
                     </content>
                 </Tab>
-                <Tab text="%label_tomato_clock">
+                <Tab text="%tomato_clock">
                     <content>
                         <GridPane>
                             <columnConstraints>
@@ -50,11 +50,11 @@
                                 <RowConstraints maxHeight="245.0" minHeight="10.0" prefHeight="52.0" vgrow="SOMETIMES"/>
                             </rowConstraints>
                             <children>
-                                <Label text="%label_focus_time" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
+                                <Label text="%focus_time" GridPane.columnIndex="1" GridPane.rowIndex="1"/>
                                 <Slider fx:id="focusTimeSlider" blockIncrement="20.0" majorTickUnit="5.0" max="60.0"
                                         min="10.0" showTickLabels="true" showTickMarks="true" snapToTicks="true"
                                         value="30.0" GridPane.columnIndex="2" GridPane.rowIndex="1"/>
-                                <Label text="%label_nap_time" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
+                                <Label text="%nap_time" GridPane.columnIndex="1" GridPane.rowIndex="2"/>
                                 <Slider fx:id="restTimeSlider" majorTickUnit="1.0" max="20.0" min="5.0"
                                         minorTickCount="1" showTickLabels="true" showTickMarks="true" snapToTicks="true"
                                         value="5.0" GridPane.columnIndex="2" GridPane.rowIndex="2"/>
@@ -68,9 +68,9 @@
     <bottom>
         <HBox alignment="CENTER" prefHeight="46.0" prefWidth="600.0" spacing="20.0" BorderPane.alignment="CENTER">
             <children>
-                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onCancel" text="%label_cancel"
+                <Button alignment="CENTER" mnemonicParsing="false" onAction="#onCancel" text="%cancel"
                         textAlignment="CENTER" HBox.hgrow="ALWAYS"/>
-                <Button mnemonicParsing="false" onAction="#onSure" text="%label_sure"/>
+                <Button mnemonicParsing="false" onAction="#onSure" text="%sure"/>
             </children>
         </HBox>
     </bottom>
