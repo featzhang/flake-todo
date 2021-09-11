@@ -1,6 +1,6 @@
 package com.github.zuofengzhang.flake.client.constraints;
 
-import com.github.zuofengzhang.flake.client.utils.ResourceUtil;
+import static com.github.zuofengzhang.flake.client.utils.ResourceUtil.label;
 
 public class FlakeLabel {
     public static final String application_name = label("application_name");
@@ -42,13 +42,13 @@ public class FlakeLabel {
 
     // menu delete or recovery
     public static final String MENU_DELETE_RECOVERY = label("menu_delete_undelete");
-    public static final String MENU_DELETE = label("menu_delete");
-    public static final String MENU_RECOVERY = label("menu_undelete");
+    public static final String MENU_DELETE          = label("menu_delete");
+    public static final String MENU_RECOVERY        = label("menu_undelete");
 
     // menu tools
-    public static final String MENU_TOOLS = label("menu_tools");
+    public static final String MENU_TOOLS  = label("menu_tools");
     public static final String MENU_SEARCH = label("menu_search");
-    
+
 
     // repetition
     public static final String REPETITION_NONE                 = label("repetition_none");
@@ -60,7 +60,5 @@ public class FlakeLabel {
     public static final String REPETITION_LEGAL_WORKDAY        = label("repetition_legal_workday");
     public static final String REPETITION_EBBINGHAUS_MNEMONICS = label("repetition_ebbinghaus_mnemonics");
 
-    private static String label(String s) {
-        return ResourceUtil.label(s);
-    }
+
 }

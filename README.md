@@ -17,7 +17,7 @@ TODO - app build by JavaFX
 - [x] task edit
 - [x] logic delete
 - [x] sort by TASK PRIORITY
-- [ ] db check after launch
+- [x] db check after launch
 - [x] context menu of LiveView rebuild
 - [ ] 支持排期
 - [ ] lotus-activity

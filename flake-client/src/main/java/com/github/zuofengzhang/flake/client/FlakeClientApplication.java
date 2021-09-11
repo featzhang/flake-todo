@@ -1,5 +1,6 @@
 package com.github.zuofengzhang.flake.client;
 
+import com.github.zuofengzhang.flake.client.utils.DbCheck;
 import javafx.application.Application;
 import javafx.scene.Node;
 import net.rgielen.fxweaver.core.FxControllerAndView;
@@ -22,6 +23,8 @@ import java.util.ResourceBundle;
 @EnableScheduling
 public class FlakeClientApplication {
     public static void main(String[] args) {
+        FlakeContext.init();
+        DbCheck.check();
         Application.launch(FlakeClientDashboard.class, args);
     }
 

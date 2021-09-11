@@ -14,11 +14,8 @@ public class FlakeSettings {
     private static final long    DEFAULT_NAP_TIME_IN_SECONDS = TimeUnit.MINUTES.toSeconds(30);
     private static       boolean show_deleted_task           = false;
 
-    private static final FlakeSettings SETTINGS;
+    private static final FlakeSettings SETTINGS = new FlakeSettings();
 
-    static {
-        SETTINGS = new FlakeSettings();
-    }
 
     public static FlakeSettings getInstance() {
         return SETTINGS;
