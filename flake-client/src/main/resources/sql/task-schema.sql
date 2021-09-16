@@ -22,8 +22,8 @@ create table task
     expiration_day          int check (expiration_day >= 0 and expiration_day <= 1231)                      default 0,
     expiration_time         int check ( expiration_time >= 0 and expiration_time <= 5959 )                  default 0,
     repetition              text check ( repetition in
-                                         ('every_day', 'every_week', 'every_month', 'every_year', 'every_lunar_year',
-                                          'legal_workday', 'ebbinghaus_mnemonics'))
+                                         ('NONE','EVERY_DAY', 'EVERY_WEEK', 'EVERY_MONTH', 'EVERY_YEAR', 'EVERY_LUNAR_YEAR',
+                                          'LEGAL_WORKDAY', 'EBBINGHAUS_MNEMONICS'))
 
 );
 

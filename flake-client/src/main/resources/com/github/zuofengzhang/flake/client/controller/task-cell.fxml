@@ -13,7 +13,8 @@
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="111.0" minWidth="17.0" prefWidth="31.0" />
         <ColumnConstraints hgrow="SOMETIMES" maxWidth="1.7976931348623157E308" minWidth="0.0" />
         <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" maxWidth="1.7976931348623157E308" minWidth="265.0" prefWidth="320.0" />
-        <ColumnConstraints halignment="LEFT" hgrow="NEVER" />
+      <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="1.7976931348623157E308" minWidth="69.0" />
+        <ColumnConstraints halignment="LEFT" hgrow="NEVER" maxWidth="282.0" minWidth="35.0" />
     </columnConstraints>
     <rowConstraints>
         <RowConstraints maxHeight="127.0" minHeight="4.0" prefHeight="25.0" vgrow="SOMETIMES" />
@@ -26,11 +27,12 @@
             </font>
         </Label>
         <CheckBox fx:id="checkBox" maxWidth="1.7976931348623157E308" mnemonicParsing="false" GridPane.halignment="CENTER" GridPane.rowSpan="2" GridPane.valignment="CENTER" />
-        <ImageView fx:id="iuaImageView" fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="3" />
-        <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minWidth="1.0" textFill="#e10b0b" GridPane.columnIndex="1">
+        <ImageView fx:id="iuaImageView" fitHeight="31.0" fitWidth="31.0" pickOnBounds="true" preserveRatio="true" GridPane.columnIndex="4" />
+        <Label fx:id="tagLabel" maxWidth="1.7976931348623157E308" minWidth="1.0" text="Tag" textFill="#e10b0b" GridPane.columnIndex="1">
             <font>
                 <Font size="16.0" />
             </font>
         </Label>
+      <Label fx:id="expirationLabel" text="Label" GridPane.columnIndex="3" />
     </children>
 </GridPane>

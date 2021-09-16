@@ -1,5 +1,6 @@
 package com.github.zuofengzhang.flake.client.entity;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import javafx.beans.property.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,13 @@ public class TaskDto {
     private final        SimpleStringProperty              attachmentProperty            = new SimpleStringProperty();
     private final        SimpleObjectProperty<StoreStatus> storeStatusProperty           = new SimpleObjectProperty<>(StoreStatus.YES);
 
-    private final SimpleIntegerProperty                 percent        = new SimpleIntegerProperty(0);
-    private final SimpleIntegerProperty                 expirationDay  = new SimpleIntegerProperty(0);
-    private final SimpleIntegerProperty                 expirationTime = new SimpleIntegerProperty(0);
-    private final SimpleObjectProperty<REPETITION_TYPE> repetition     = new SimpleObjectProperty<>(REPETITION_TYPE.NONE);
+    private final SimpleIntegerProperty percent = new SimpleIntegerProperty(0);
+
+    private final SimpleIntegerProperty expirationDay  = new SimpleIntegerProperty(0);
+    private final SimpleIntegerProperty expirationTime = new SimpleIntegerProperty(0);
+    private final SimpleStringProperty  expiration     = new SimpleStringProperty("");
+
+    private final SimpleObjectProperty<REPETITION_TYPE> repetition = new SimpleObjectProperty<>(REPETITION_TYPE.NONE);
 
 
     public SimpleIntegerProperty taskIdProperty() {
@@ -244,6 +248,10 @@ public class TaskDto {
 
     public SimpleObjectProperty<REPETITION_TYPE> repetitionProperty() {
         return repetition;
+    }
+
+    public SimpleStringProperty expirationProperty() {
+        return expiration;
     }
 
     public static class Builder {

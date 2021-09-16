@@ -1,11 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.collections.FXCollections?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Accordion?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.RadioButton?>
+<?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.SplitPane?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.TitledPane?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-<?import java.lang.String?>
+
 <BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="974.0" BorderPane.alignment="CENTER"
             xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
@@ -21,6 +38,7 @@
                         <ColumnConstraints halignment="CENTER" hgrow="SOMETIMES" maxWidth="1.7976931348623157E308"
                                            minWidth="10.0" prefWidth="597.0"/>
                         <ColumnConstraints/>
+                        <ColumnConstraints/>
                     </columnConstraints>
                     <rowConstraints>
                         <RowConstraints/>
@@ -30,6 +48,7 @@
                         <RowConstraints maxHeight="454.0" minHeight="0.0" prefHeight="234.0" vgrow="SOMETIMES"/>
                         <RowConstraints maxHeight="389.0" minHeight="10.0" prefHeight="65.0" valignment="CENTER"
                                         vgrow="ALWAYS"/>
+                        <RowConstraints/>
                     </rowConstraints>
                     <children>
                         <Accordion fx:id="according" depthTest="ENABLE" maxHeight="1.7976931348623157E308"
@@ -43,6 +62,12 @@
                                                   prefHeight="200.0" prefWidth="200.0"/>
                                     </content>
                                 </TitledPane>
+                                <TitledPane id="5" fx:id="nearWeekTitledPane" animated="false" text="%near_week_review">
+                                    <content>
+                                        <ListView id="5" fx:id="nearWeekList" onMouseClicked="#onTaskClicked"
+                                                  prefHeight="200.0" prefWidth="200.0"/>
+                                    </content>
+                                </TitledPane>
                                 <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false"
                                             text="%yesterday_review">
                                     <content>
@@ -50,8 +75,7 @@
                                                   prefHeight="200.0" prefWidth="200.0"/>
                                     </content>
                                 </TitledPane>
-                                <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false"
-                                            text="%today_plan">
+                                <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false" text="%today_plan">
                                     <content>
                                         <ListView id="2" fx:id="todayPlanList" onMouseClicked="#onTaskClicked"
                                                   prefHeight="200.0" prefWidth="200.0"/>
@@ -98,16 +122,14 @@
                                 </VBox>
                             </content>
                         </TitledPane>
-                        <TitledPane fx:id="currentDayTitledPane" text="today_dayId" collapsible="false"
-                                    prefHeight="273.0"
-                                    prefWidth="273.0" GridPane.rowIndex="1" GridPane.rowSpan="2">
+                        <TitledPane fx:id="currentDayTitledPane" collapsible="false" prefHeight="273.0"
+                                    prefWidth="273.0" text="today_dayId" GridPane.rowIndex="1" GridPane.rowSpan="2">
                             <content>
                                 <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
                             </content>
                         </TitledPane>
                         <ToolBar maxWidth="1.7976931348623157E308" prefHeight="25.0" prefWidth="614.0"
                                  GridPane.columnIndex="1" GridPane.columnSpan="3" GridPane.rowIndex="1">
-                            <ComboBox fx:id="typeComboBox" HBox.hgrow="NEVER"/>
                             <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed"
                                        promptText="%new_task" HBox.hgrow="ALWAYS">
                                 <font>
@@ -136,71 +158,78 @@
                                     text="%search"/>
                         </ToolBar>
                     </top>
-
                     <center>
-                        <SplitPane dividerPositions="0.17,0.83">
+                        <SplitPane dividerPositions="0.2" prefHeight="160.0" prefWidth="200.0"
+                                   BorderPane.alignment="CENTER">
                             <items>
-                                <VBox>
-                                    <TitledPane text="%timer">
-                                        <content>
-                                            <VBox>
-                                                <fx:define>
-                                                    <ToggleGroup fx:id="timeGroup"/>
-                                                </fx:define>
-                                                <ComboBox fx:id="taskTabTimeType">
-                                                    <items>
-                                                        <FXCollections fx:factory="observableArrayList">
-                                                            <String fx:value="到期时间"/>
-                                                            <String fx:value="创建时间"/>
-                                                        </FXCollections>
-                                                    </items>
-                                                </ComboBox>
-                                                <RadioButton fx:id="taskTabShowAll" text="全部.." toggleGroup="$timeGroup"
-                                                             selected="true"/>
-                                                <RadioButton fx:id="taskTabShowToday" text="今日"
-                                                             toggleGroup="$timeGroup"/>
-                                                <RadioButton fx:id="taskTabShowThisWeek" text="本周"
-                                                             toggleGroup="$timeGroup"/>
-                                                <RadioButton fx:id="taskTabShowNearWeek" text="近一周"
-                                                             toggleGroup="$timeGroup"/>
-                                                <RadioButton fx:id="taskTabShowThisMonth" text="本月"
-                                                             toggleGroup="$timeGroup"/>
-                                                <RadioButton fx:id="taskTabShowNearMonth" text="近一月"
-                                                             toggleGroup="$timeGroup"/>
-                                                <RadioButton fx:id="taskTabShowThisYear" text="今年"
-                                                             toggleGroup="$timeGroup"/>
-                                            </VBox>
-                                        </content>
-                                    </TitledPane>
-                                    <TitledPane text="%menu_importance_urgency_axis">
-                                        <content>
-                                            <VBox>
-                                                <fx:define>
-                                                    <ToggleGroup fx:id="iuaGroup"/>
-                                                </fx:define>
-                                                <RadioButton fx:id="taskTabIuaAll" text="全部.." toggleGroup="$iuaGroup"
-                                                             selected="true"/>
-                                                <RadioButton fx:id="taskTabIua1" text="%importance_urgency"
-                                                             toggleGroup="$iuaGroup"/>
-                                                <RadioButton fx:id="taskTabIua2" text="%importance_but_not_urgency"
-                                                             toggleGroup="$iuaGroup"/>
-                                                <RadioButton fx:id="taskTabIua3" text="%not_importance_but_urgency"
-                                                             toggleGroup="$iuaGroup"/>
-                                                <RadioButton fx:id="taskTabIua4" text="%not_importance_not_urgency"
-                                                             toggleGroup="$iuaGroup"/>
-
-                                            </VBox>
-                                        </content>
-                                    </TitledPane>
-
-
+                                <VBox prefHeight="200.0" prefWidth="100.0">
+                                    <children>
+                                        <TitledPane prefWidth="200.0" text="%timer">
+                                            <content>
+                                                <VBox prefWidth="100.0">
+                                                    <children>
+                                                        <RadioButton mnemonicParsing="false" fx:id="taskTabShowAll"
+                                                                     text="%all" toggleGroup="$timeGroup"
+                                                                     selected="true">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="timeGroup"/>
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton mnemonicParsing="false" fx:id="taskTabShowToday"
+                                                                     text="%today"
+                                                                     toggleGroup="$timeGroup"/>
+                                                        <RadioButton mnemonicParsing="false" fx:id="taskTabShowThisWeek"
+                                                                     text="%this_week"
+                                                                     toggleGroup="$timeGroup"/>
+                                                        <RadioButton mnemonicParsing="false" fx:id="taskTabShowNearWeek"
+                                                                     text="%near_week"
+                                                                     toggleGroup="$timeGroup"/>
+                                                        <RadioButton mnemonicParsing="false"
+                                                                     fx:id="taskTabShowThisMonth" text="%this_month"
+                                                                     toggleGroup="$timeGroup"/>
+                                                        <RadioButton mnemonicParsing="false"
+                                                                     fx:id="taskTabShowNearMonth" text="%near_month"
+                                                                     toggleGroup="$timeGroup"/>
+                                                        <RadioButton mnemonicParsing="false" fx:id="taskTabShowThisYear"
+                                                                     text="%this_year"
+                                                                     toggleGroup="$timeGroup"/>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                        <TitledPane text="%menu_importance_urgency_axis">
+                                            <content>
+                                                <VBox prefWidth="100.0">
+                                                    <children>
+                                                        <RadioButton fx:id="taskTabIuaAll" text="%all"
+                                                                     toggleGroup="$iuaGroup"
+                                                                     selected="true">
+                                                            <toggleGroup>
+                                                                <ToggleGroup fx:id="iuaGroup"/>
+                                                            </toggleGroup>
+                                                        </RadioButton>
+                                                        <RadioButton fx:id="taskTabIua1" text="%importance_urgency"
+                                                                     toggleGroup="$iuaGroup"/>
+                                                        <RadioButton fx:id="taskTabIua2"
+                                                                     text="%importance_but_not_urgency"
+                                                                     toggleGroup="$iuaGroup"/>
+                                                        <RadioButton fx:id="taskTabIua3"
+                                                                     text="%not_importance_but_urgency"
+                                                                     toggleGroup="$iuaGroup"/>
+                                                        <RadioButton fx:id="taskTabIua4"
+                                                                     text="%not_importance_not_urgency"
+                                                                     toggleGroup="$iuaGroup"/>
+                                                    </children>
+                                                </VBox>
+                                            </content>
+                                        </TitledPane>
+                                    </children>
                                 </VBox>
                                 <ListView id="0" fx:id="allTaskListView" onMouseClicked="#onTaskClicked"
                                           prefHeight="200.0"
                                           prefWidth="200.0"/>
                             </items>
                         </SplitPane>
-
                     </center>
                 </BorderPane>
             </Tab>

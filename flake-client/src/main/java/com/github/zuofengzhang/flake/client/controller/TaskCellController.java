@@ -11,6 +11,7 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.image.ImageView;
 import javafx.util.Pair;
+import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxmlView;
 import org.springframework.stereotype.Component;
 
@@ -20,9 +21,12 @@ import java.util.ResourceBundle;
 
 @Component
 @FxmlView("task-cell.fxml")
+@Slf4j
 public class TaskCellController implements Initializable {
     @FXML
-    public Label tagLabel;
+    public  Label tagLabel;
+    @FXML
+    public  Label expirationLabel;
     @FXML
     private Label titleLabel;
 
@@ -75,10 +79,19 @@ public class TaskCellController implements Initializable {
                 setIuaValue(t1.intValue());
             });
 
+            task.expirationProperty().addListener((observableValue, oldValue, newValue) -> {
+                log.info("Expiration : {}", newValue);
+                expirationLabel.setText(newValue);
+            });
+            expirationLabel.setText(task.expirationProperty().get());
+
+
         } else {
             checkBox.setVisible(false);
             titleLabel.setText("");
             iuaImageView.setImage(null);
+            tagLabel.setText("");
+            expirationLabel.setText("");
         }
     }
 

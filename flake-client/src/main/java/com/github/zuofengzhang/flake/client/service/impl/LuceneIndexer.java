@@ -30,9 +30,9 @@ import static com.github.zuofengzhang.flake.client.constraints.FlakeConsts.INDEX
 @Component
 public class LuceneIndexer {
 
-    public static final String FIELD_ID           = "id";
-    public static final String FIELD_TITLE        = "title";
-    public static final String FIELD_CONTENT      = "t_content";
+    public static final String FIELD_ID = "id";
+    public static final String FIELD_TITLE = "title";
+    public static final String FIELD_CONTENT = "t_content";
     public static final String FIELD_STORE_STATUS = "store_status";
 
     private static IndexWriter INDEX_WRITER;
@@ -50,13 +50,10 @@ public class LuceneIndexer {
         IndexWriter indexWriter = createIndexWriter();
 
         Document document = taskDtoToDocument(taskDto);
-        Term     idTerm   = new Term(FIELD_ID, String.valueOf(taskDto.getTaskId()));
+        Term idTerm = new Term(FIELD_ID, String.valueOf(taskDto.getTaskId()));
         indexWriter.updateDocument(idTerm, document);
         indexWriter.commit();
         indexWriter.close();
-
-        System.out.println("is open: " + indexWriter.isOpen());
-
         return true;
     }
 
@@ -64,9 +61,9 @@ public class LuceneIndexer {
         if (INDEX_WRITER != null && INDEX_WRITER.isOpen()) {
             return INDEX_WRITER;
         }
-        Directory         directory = FSDirectory.open(Paths.get(INDEX_BASE_PATH));
-        Analyzer          analyzer  = new SmartChineseAnalyzer();
-        IndexWriterConfig config    = new IndexWriterConfig(analyzer);
+        Directory directory = FSDirectory.open(Paths.get(INDEX_BASE_PATH));
+        Analyzer analyzer = new SmartChineseAnalyzer();
+        IndexWriterConfig config = new IndexWriterConfig(analyzer);
 
         INDEX_WRITER = new IndexWriter(directory, config);
         return INDEX_WRITER;
@@ -104,8 +101,8 @@ public class LuceneIndexer {
     }
 
     private IndexSearcher createIndexSearcher() throws IOException {
-        Directory       directory = FSDirectory.open(Paths.get(INDEX_BASE_PATH));
-        DirectoryReader reader    = DirectoryReader.open(directory);
+        Directory directory = FSDirectory.open(Paths.get(INDEX_BASE_PATH));
+        DirectoryReader reader = DirectoryReader.open(directory);
         return new IndexSearcher(reader);
     }
 
@@ -113,15 +110,15 @@ public class LuceneIndexer {
 
         IndexSearcher searcher = createIndexSearcher();
 
-        String[]              fields = {FIELD_TITLE, FIELD_CONTENT};
-        BooleanClause.Occur[] occ    = {BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};
+        String[] fields = {FIELD_TITLE, FIELD_CONTENT};
+        BooleanClause.Occur[] occ = {BooleanClause.Occur.SHOULD, BooleanClause.Occur.SHOULD};
 
         Analyzer analyzer = new SmartChineseAnalyzer();
 
         Query query = MultiFieldQueryParser.parse(queryStr, fields, occ, analyzer);
 
-        long    startTime = System.currentTimeMillis();
-        TopDocs docs      = searcher.search(query, 10);
+        long startTime = System.currentTimeMillis();
+        TopDocs docs = searcher.search(query, 10);
 
         System.out.println("查找" + queryStr + "所用时间：" + (System.currentTimeMillis() - startTime));
         System.out.println("查询到" + docs.totalHits + "条记录");
@@ -135,7 +132,7 @@ public class LuceneIndexer {
         //遍历查询结果
         for (ScoreDoc scoreDoc : docs.scoreDocs) {
             Document doc = searcher.doc(scoreDoc.doc);
-            String   id  = doc.get(FIELD_ID);
+            String id = doc.get(FIELD_ID);
             if (!includeDeleted) {
                 String storeStatus = doc.get(FIELD_STORE_STATUS);
                 if (String.valueOf(StoreStatus.NO.getCode()).equals(storeStatus)) {
