@@ -249,7 +249,11 @@
             </HBox>
             <BorderPane HBox.hgrow="ALWAYS">
                 <center>
-                    <Label text="消息栏"/>
+                    <Label fx:id="messageStatLabel">
+                        <font>
+                            <Font size="18.0"/>
+                        </font>
+                    </Label>
                 </center>
             </BorderPane>
             <HBox fx:id="statusHBox" style="-fx-font-size: 16;-fx-border-color: white;-fx-border-width: 1;">

@@ -4,12 +4,14 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.*;
+import com.github.zuofengzhang.flake.client.service.MessageService;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.DateUtils;
 import com.github.zuofengzhang.flake.client.utils.OSValidator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -31,7 +33,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.*;
+import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -53,8 +57,10 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
-import java.util.*;
+import java.util.Map;
+import java.util.ResourceBundle;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -106,6 +112,7 @@ public class DashboardController implements Initializable {
     public Tab todayTab;
     public ListView<TaskDto> nearWeekList;
     public TitledPane nearWeekTitledPane;
+    public Label messageStatLabel;
     //
     @Resource
     private TaskService taskService;
@@ -133,6 +140,8 @@ public class DashboardController implements Initializable {
     private MenuItem deleteMenuItem;
     @Resource
     private ResourceBundle resourceBundle;
+    @Resource
+    private MessageService messageService;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -146,16 +155,18 @@ public class DashboardController implements Initializable {
         initListViewContextMenu();
         //
         initTimer();
-        // expanded undoneTitledPane
-        according.setExpandedPane(todayPlanTitledPane);
-        // loadData
-        loadTitledPaneData(undoneTitledPane.getId());
-
+        initMessageToolbar();
         // bindStat
         doBindTaskStat();
         // taskTab action
         loadTaskTabAction();
         loadListViewAction();
+        // 切换
+        Platform.runLater(() -> according.setExpandedPane(undoneTitledPane));
+    }
+
+    private void initMessageToolbar() {
+        messageService.addConsumer((message) -> Platform.runLater(() -> messageStatLabel.setText(message)));
     }
 
     private void loadListViewAction() {
