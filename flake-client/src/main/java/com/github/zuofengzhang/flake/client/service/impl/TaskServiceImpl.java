@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.zuofengzhang.flake.client.utils.DateUtils.lastDayRangeOfDayId;
+import static com.github.zuofengzhang.flake.client.utils.DateUtils.*;
 
 /**
  * @author zhangzuofeng1
@@ -279,6 +279,26 @@ public class TaskServiceImpl implements TaskService {
         } catch (IOException e) {
             log.error("", e);
         }
+    }
+
+
+    @Override
+    public List<TaskDto> findNearWeekTasks(int dayId) {
+        Pair<Long, Long>     pair    = nearWeekRangeOfDayId(dayId);
+            TaskDo.TaskDoBuilder builder = TaskDo.builder();
+            if (!settings.getShowDeletedTask()) {
+                builder.storeStatus(StoreStatus.YES.getCode());
+            }
+            TaskDo aDo = builder.build();
+            return dao.selectList(
+                            new QueryWrapper<>(aDo)
+                                    .between("update_time", pair.getLeft() - 1, pair.getRight() + 1)
+                                    .orderByAsc("importance_urgency_axis")
+                                    .orderByDesc("priority_order", "update_time")
+                    )
+                    .stream()
+                    .map(TaskDto::parse)
+                    .collect(Collectors.toList());
     }
 
 

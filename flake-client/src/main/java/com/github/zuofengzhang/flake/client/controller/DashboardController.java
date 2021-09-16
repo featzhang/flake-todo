@@ -119,12 +119,11 @@ public class DashboardController implements Initializable {
     private DatePicker datePicker;
     private int currentTaskId = -1;
     //
-    //    private AudioClip mNotify;
+    // private AudioClip mNotify;
     //
     private Map<Integer, TitledPane> allTodayTitledPaneMap;
     private Map<Integer, ListView<TaskDto>> allListViewMap;
     private Timeline timeline;
-    private Consumer<ActionEvent> o;
 
     @Resource
     private FxWeaver fxWeaver;
@@ -147,7 +146,8 @@ public class DashboardController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // init UI & events
         // init
-//        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
+        // mNotify = new
+        // AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
         // datepicker
         initDataPicker();
         initListView();
@@ -171,10 +171,12 @@ public class DashboardController implements Initializable {
 
     private void loadListViewAction() {
         // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
-        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, nearWeekTitledPane, undoneTitledPane)
+        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane,
+                nearWeekTitledPane, undoneTitledPane)
                 .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
                     String tpId = tp.getId();
-                    log.info("TitledPane expandedProperty changed, id:{}, expanded: {}, titledPane:{} ", tpId, newValue, tp.getText());
+                    log.info("TitledPane expandedProperty changed, id:{}, expanded: {}, titledPane:{} ", tpId, newValue,
+                            tp.getText());
                     if (newValue) {
                         loadTitledPaneData(tpId);
                     } else {
@@ -184,7 +186,8 @@ public class DashboardController implements Initializable {
     }
 
     private void initListView() {
-        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList, nearWeekList, undoneList);
+        List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList,
+                nearWeekList, undoneList);
         allListViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // listViewCellFactory
         nearWeekList.setCellFactory(t -> new TaskCell());
@@ -197,13 +200,14 @@ public class DashboardController implements Initializable {
 
         undoneList.setCellFactory(t -> new TaskCell());
         //
-        allTodayTitledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
+        allTodayTitledPaneMap = Stream
+                .of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
                 .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
     }
 
     private void initDataPicker() {
         datePicker = new DatePicker(LocalDate.now());
-//        datePicker.setShowWeekNumbers(true);
+        // datePicker.setShowWeekNumbers(true);
         DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
         Node popupContent = datePickerSkin.getPopupContent();
         datePickerPane.setCenter(popupContent);
@@ -238,15 +242,14 @@ public class DashboardController implements Initializable {
 
     private void loadTaskTabAction() {
         tasksTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        // loadTasks
-                        List<TaskDto> allTasks = taskService.findAllTasks();
-                        ObservableList<TaskDto> items = allTaskListView.getItems();
-                        items.clear();
-                        items.addAll(allTasks);
-                    }
-                }
-        );
+            if (newValue) {
+                // loadTasks
+                List<TaskDto> allTasks = taskService.findAllTasks();
+                ObservableList<TaskDto> items = allTaskListView.getItems();
+                items.clear();
+                items.addAll(allTasks);
+            }
+        });
     }
 
     private void doBindTaskStat() {
@@ -276,17 +279,9 @@ public class DashboardController implements Initializable {
             // get taskType
             int taskTypeId = TaskType.TODAY_PLAN.getCId();
             //
-            TaskDto taskDto = TaskDto.builder()
-                    .dayId(dayId)
-                    .taskType(TaskType.TODAY_PLAN)
-                    .title(text)
-                    .content("")
-                    .createdTime(System.currentTimeMillis())
-                    .updateTime(System.currentTimeMillis())
-                    .importanceUrgencyAxis(4)
-                    .finished(false)
-                    .storeStatus(StoreStatus.YES)
-                    .build();
+            TaskDto taskDto = TaskDto.builder().dayId(dayId).taskType(TaskType.TODAY_PLAN).title(text).content("")
+                    .createdTime(System.currentTimeMillis()).updateTime(System.currentTimeMillis())
+                    .importanceUrgencyAxis(4).finished(false).storeStatus(StoreStatus.YES).build();
             taskService.insert(taskDto);
             // bind db action
             onTaskDataChange(taskDto);
@@ -340,7 +335,7 @@ public class DashboardController implements Initializable {
         selectedItem.setTaskType(TaskType.findById(targetId));
         if (taskService.updateById(selectedItem) > 0) {
             selectedListView.getItems().remove(selectedItem);
-//            listViewMap.get(targetId).getItems().add(selectedItem);
+            // listViewMap.get(targetId).getItems().add(selectedItem);
         }
     }
 
@@ -376,9 +371,9 @@ public class DashboardController implements Initializable {
                 case TOMATO_POTATO:
                     moveToTomatoPotatoPlanMenuItem.setVisible(false);
                     break;
-//                case YESTERDAY_REVIEW:
-//                    moveToYesterdayReviewMenuItem.setVisible(false);
-//                    break;
+                // case YESTERDAY_REVIEW:
+                // moveToYesterdayReviewMenuItem.setVisible(false);
+                // break;
                 default:
             }
         }
@@ -404,7 +399,7 @@ public class DashboardController implements Initializable {
     private void initListContextMenu() {
         moveToTodaySummaryMenuItem.setVisible(true);
         moveToTodayPlanMenuItem.setVisible(true);
-//        moveToYesterdayReviewMenuItem.setVisible(true);
+        // moveToYesterdayReviewMenuItem.setVisible(true);
         moveToTomatoPotatoPlanMenuItem.setVisible(true);
         moveToMenu.setVisible(true);
     }
@@ -417,41 +412,55 @@ public class DashboardController implements Initializable {
         focusMenuItem.setOnAction(this::onStartTimer);
         // move_to
         // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
-        //                                                                  text="%label_yesterday_review"/>
+        // text="%label_yesterday_review"/>
         moveToMenu = new Menu(MENU_MOVE_TO);
-//        moveToYesterdayReviewMenuItem  = createMenuItem("1", "label_yesterday_review", this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
-        moveToTodayPlanMenuItem = createMenuItem("2", TODAY_PLAN, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
-        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", TOMATO_POTATO, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+2"));
-        moveToTodaySummaryMenuItem = createMenuItem("4", TODAY_SUMMARY, this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+3"));
-        moveToMenu.getItems().addAll(/*moveToYesterdayReviewMenuItem,*/ moveToTodayPlanMenuItem, moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
+        // moveToYesterdayReviewMenuItem = createMenuItem("1", "label_yesterday_review",
+        // this::onMoveMenu, KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTodayPlanMenuItem = createMenuItem("2", TODAY_PLAN, this::onMoveMenu,
+                KeyCombination.keyCombination("Meta+Ctrl+1"));
+        moveToTomatoPotatoPlanMenuItem = createMenuItem("3", TOMATO_POTATO, this::onMoveMenu,
+                KeyCombination.keyCombination("Meta+Ctrl+2"));
+        moveToTodaySummaryMenuItem = createMenuItem("4", TODAY_SUMMARY, this::onMoveMenu,
+                KeyCombination.keyCombination("Meta+Ctrl+3"));
+        moveToMenu.getItems().addAll(/* moveToYesterdayReviewMenuItem, */ moveToTodayPlanMenuItem,
+                moveToTomatoPotatoPlanMenuItem, moveToTodaySummaryMenuItem);
         // menu_importance_urgency_axis
         Menu iuaMenu = new Menu(MENU_IMPORTANCE_URGENCY_AXIS);
         ToggleGroup toggleGroup = new ToggleGroup();
-        iua1MenuItem = createRadioMenuItem("1", IMPORTANCE_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+1"));
-        iua2MenuItem = createRadioMenuItem("2", NOT_IMPORTANCE_BUT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+2"));
-        iua3MenuItem = createRadioMenuItem("3", IMPORTANCE_BUT_NOT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+3"));
-        iua4MenuItem = createRadioMenuItem("4", NOT_IMPORTANCE_NOT_URGENCY, toggleGroup, this::onSetIuaMenu, KeyCombination.keyCombination("Meta+Alt+4"));
+        iua1MenuItem = createRadioMenuItem("1", IMPORTANCE_URGENCY, toggleGroup, this::onSetIuaMenu,
+                KeyCombination.keyCombination("Meta+Alt+1"));
+        iua2MenuItem = createRadioMenuItem("2", NOT_IMPORTANCE_BUT_URGENCY, toggleGroup, this::onSetIuaMenu,
+                KeyCombination.keyCombination("Meta+Alt+2"));
+        iua3MenuItem = createRadioMenuItem("3", IMPORTANCE_BUT_NOT_URGENCY, toggleGroup, this::onSetIuaMenu,
+                KeyCombination.keyCombination("Meta+Alt+3"));
+        iua4MenuItem = createRadioMenuItem("4", NOT_IMPORTANCE_NOT_URGENCY, toggleGroup, this::onSetIuaMenu,
+                KeyCombination.keyCombination("Meta+Alt+4"));
         iuaMenu.getItems().addAll(iua1MenuItem, iua2MenuItem, iua3MenuItem, iua4MenuItem);
         // menu_order
         Menu orderMenu = new Menu(MENU_ORDER);
-        MenuItem moveOrderTopMenuItem = createMenuItem("0", MENU_MOVE_TOP, this::onOrderMoveTopMenu, KeyCombination.keyCombination("Meta+T"));
-        MenuItem moveOrderUpMenuItem = createMenuItem("0", MENU_MOVE_UP, this::onOrderMoveUpMenu, KeyCombination.keyCombination("Meta+K"));
-        MenuItem moveOrderDownMenuItem = createMenuItem("0", MENU_MOVE_DOWN, this::onOrderMoveDownMenu, KeyCombination.keyCombination("Meta+J"));
+        MenuItem moveOrderTopMenuItem = createMenuItem("0", MENU_MOVE_TOP, this::onOrderMoveTopMenu,
+                KeyCombination.keyCombination("Meta+T"));
+        MenuItem moveOrderUpMenuItem = createMenuItem("0", MENU_MOVE_UP, this::onOrderMoveUpMenu,
+                KeyCombination.keyCombination("Meta+K"));
+        MenuItem moveOrderDownMenuItem = createMenuItem("0", MENU_MOVE_DOWN, this::onOrderMoveDownMenu,
+                KeyCombination.keyCombination("Meta+J"));
         orderMenu.getItems().addAll(moveOrderTopMenuItem, moveOrderUpMenuItem, moveOrderDownMenuItem);
 
         // delete or undeleted
         Menu deleteOrUndeletedMenu = new Menu(MENU_DELETE_RECOVERY);
         deleteMenuItem = createMenuItem("0", MENU_DELETE, this::onDeleteMenu, KeyCombination.keyCombination("Meta+X"));
-        undeletedMenuItem = createMenuItem("0", MENU_RECOVERY, this::onUndeleteMenu, KeyCombination.keyCombination("Meta+Z"));
+        undeletedMenuItem = createMenuItem("0", MENU_RECOVERY, this::onUndeleteMenu,
+                KeyCombination.keyCombination("Meta+Z"));
         deleteOrUndeletedMenu.getItems().addAll(deleteMenuItem, undeletedMenuItem);
 
         // tools
         Menu toolMenu = new Menu(MENU_TOOLS);
-        MenuItem menuSearch = createMenuItem("1", MENU_SEARCH, this::onSearchTaskMenu, KeyCombination.keyCombination("Meta+Alt+F"));
+        MenuItem menuSearch = createMenuItem("1", MENU_SEARCH, this::onSearchTaskMenu,
+                KeyCombination.keyCombination("Meta+Alt+F"));
         toolMenu.getItems().add(menuSearch);
 
-
-        liveViewContextMenu.getItems().addAll(focusMenuItem, moveToMenu, iuaMenu, orderMenu, deleteOrUndeletedMenu, new SeparatorMenuItem(), toolMenu);
+        liveViewContextMenu.getItems().addAll(focusMenuItem, moveToMenu, iuaMenu, orderMenu, deleteOrUndeletedMenu,
+                new SeparatorMenuItem(), toolMenu);
         return liveViewContextMenu;
     }
 
@@ -490,7 +499,8 @@ public class DashboardController implements Initializable {
         }
     }
 
-    private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
+    private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup,
+            EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
         RadioMenuItem item = new RadioMenuItem(label);
         item.setId(id);
         item.setToggleGroup(toggleGroup);
@@ -499,7 +509,8 @@ public class DashboardController implements Initializable {
         return item;
     }
 
-    private MenuItem createMenuItem(String id, String label, EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
+    private MenuItem createMenuItem(String id, String label, EventHandler<ActionEvent> onMoveMenu,
+            KeyCombination keyCombination) {
         MenuItem moveToTodayPlanMenuItem = new MenuItem(label);
         moveToTodayPlanMenuItem.setId(id);
         moveToTodayPlanMenuItem.setOnAction(onMoveMenu);
@@ -536,18 +547,19 @@ public class DashboardController implements Initializable {
         int dayId = setDayTitle(localDate);
         // undone
         if (taskType == null) {
-            log.info("Load all undone tasks.");
-            List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
-            // remove undoneList task bind
-            undoneList.getItems().forEach(task -> {
+            ListView<TaskDto> listView=titledPaneId==0?undoneList:nearWeekList;
+            List<TaskDto> newTasks=titledPaneId==0?taskService.findAllTasks():taskService.findNearWeekTasks(dayId);
+
+            // remove task bind
+            listView.getItems().forEach(task->{
                 task.finishedProperty().unbind();
-                task.iuaProperty().unbind();
+                    task.iuaProperty().unbind();
             });
-            undoneList.getItems().clear();
-            // add new task
-            if (!CollectionUtils.isEmpty(undoneTasks)) {
-                undoneTasks.forEach(this::onTaskDataChange);
-                undoneList.getItems().addAll(undoneTasks);
+            listView.getItems().clear();
+            // add new tasks
+            if (!CollectionUtils.isEmpty(newTasks)) {
+                newTasks.forEach(this::onTaskDataChange);
+                listView.getItems().addAll(newTasks);
             }
         } else {
             // loadDayTask
@@ -577,7 +589,7 @@ public class DashboardController implements Initializable {
         }
 
         reloadCurrentTitlePane();
-//        loadData();
+        // loadData();
     }
 
     private void setTimerContent(String s) {
@@ -589,7 +601,7 @@ public class DashboardController implements Initializable {
         int minutes = (int) ((remainingSeconds / 60) % 60);
         int seconds = (int) (remainingSeconds % 60);
 
-        //Show only minute and second if hour is not available
+        // Show only minute and second if hour is not available
         if (hours <= 0) {
             setTimerText(String.format("%02d:%02d", minutes, seconds));
         } else {
@@ -623,15 +635,15 @@ public class DashboardController implements Initializable {
         }));
 
         timeline.setOnFinished(event -> {
-//            mNotify.play();
+            // mNotify.play();
             Notifications.create().title(FlakeLabel.TIME_TO_WEAK).text("").hideAfter(Duration.minutes(5)).showWarning();
             doAddNewWorkLog(timerStatus);
             currentTaskId = -1;
             if (timerStatus.getType() == TimerActionType.FOCUS) {
                 takeBreakNotification();
             }
-            initTimerAction(timerStatus.getType() == TimerActionType.FOCUS ?
-                    TimerActionType.BREAK : TimerActionType.FOCUS);
+            initTimerAction(
+                    timerStatus.getType() == TimerActionType.FOCUS ? TimerActionType.BREAK : TimerActionType.FOCUS);
             stopButton.setVisible(false);
         });
     }
@@ -640,15 +652,9 @@ public class DashboardController implements Initializable {
         int taskId = currentTaskId;
         log.info("add work log : {}", taskId);
         TaskDto taskDto = taskService.findById(taskId);
-        TaskDto newTask = TaskDto.builder()
-                .title(taskDto.getTitle())
-                .content(taskDto.getContent())
-                .taskType(TaskType.TOMATO_POTATO)
-                .endTime(System.currentTimeMillis())
-                .startTime(timerStatus.getStartTime())
-                .dayId(taskDto.getDayId())
-                .fullTomato(true)
-                .build();
+        TaskDto newTask = TaskDto.builder().title(taskDto.getTitle()).content(taskDto.getContent())
+                .taskType(TaskType.TOMATO_POTATO).endTime(System.currentTimeMillis())
+                .startTime(timerStatus.getStartTime()).dayId(taskDto.getDayId()).fullTomato(true).build();
         taskService.insert(newTask);
         // how get the newest id
         allListViewMap.get(TaskType.TOMATO_POTATO.getCId()).getItems().add(newTask);
@@ -663,13 +669,15 @@ public class DashboardController implements Initializable {
         // Get the Stage.
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         // Add a custom icon.
-//        stage.getIcons().add(new Image(this.getClass().getResource("/images/icon.png").toString()));
+        // stage.getIcons().add(new
+        // Image(this.getClass().getResource("/images/icon.png").toString()));
         alert.setTitle("Information Dialog");
         alert.setHeaderText("Great! Now Take a Break");
-        alert.setContentText("You have worked 30 min long. Now you should take a at least 5 minutes break to relax yourself.");
+        alert.setContentText(
+                "You have worked 30 min long. Now you should take a at least 5 minutes break to relax yourself.");
 
         alert.show();
-        //alert.showAndWait();
+        // alert.showAndWait();
         System.out.println("take a break notification");
     }
 
@@ -707,7 +715,7 @@ public class DashboardController implements Initializable {
         setTimerContent(selectedItem.getTitle());
     }
 
-    //debugging purpose
+    // debugging purpose
     private Animation.Status getTimerStatus() {
         Animation.Status mStatus = timeline.getStatus();
         System.out.println(mStatus);
@@ -798,7 +806,8 @@ public class DashboardController implements Initializable {
                 Scene nodeScene = node.getScene();
                 Stage primaryStage = (Stage) nodeScene.getWindow();
 
-                FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver.load(TaskDetailController.class, resourceBundle);
+                FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver
+                        .load(TaskDetailController.class, resourceBundle);
                 GridPane borderPane = controllerAndView.getView().get();
                 TaskDetailController controller = controllerAndView.getController();
                 controller.setData(selectedTask);
@@ -808,7 +817,8 @@ public class DashboardController implements Initializable {
                 stage.initOwner(primaryStage);
                 selectedTask.titleProperty().addListener(new ChangeListener<String>() {
                     @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue, String newValue) {
+                    public void changed(ObservableValue<? extends String> observable, String oldValue,
+                            String newValue) {
                         stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + newValue);
                     }
                 });
@@ -824,7 +834,7 @@ public class DashboardController implements Initializable {
         if (selectedItem != null) {
             taskService.restoreById(selectedItem);
             reloadCurrentTitlePane();
-//            listView.getItems().remove(selectedItem);
+            // listView.getItems().remove(selectedItem);
         }
     }
 
@@ -833,7 +843,7 @@ public class DashboardController implements Initializable {
         if (selectedItem != null) {
             taskService.moveOrderTop(selectedItem);
             reloadCurrentTitlePane();
-//            listView.getItems().remove(selectedItem);
+            // listView.getItems().remove(selectedItem);
         }
     }
 
@@ -842,7 +852,7 @@ public class DashboardController implements Initializable {
         if (selectedItem != null) {
             taskService.moveOrderUp(selectedItem);
             reloadCurrentTitlePane();
-//            listView.getItems().remove(selectedItem);
+            // listView.getItems().remove(selectedItem);
         }
     }
 
@@ -851,7 +861,7 @@ public class DashboardController implements Initializable {
         if (selectedItem != null) {
             taskService.moveOrderDown(selectedItem);
             reloadCurrentTitlePane();
-//            listView.getItems().remove(selectedItem);
+            // listView.getItems().remove(selectedItem);
         }
     }
 

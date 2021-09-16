@@ -32,6 +32,6 @@ public class IndexSchedulingComponent {
                 taskService.updateIndex(taskDto);
             }
         }
-        messageService.sendMessage("update index finished.");
+        messageService.sendMessage("Update index finished: " + (allTasks == null ? 0 : allTasks.size()));
     }
 }

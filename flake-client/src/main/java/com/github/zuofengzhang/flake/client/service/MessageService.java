@@ -7,4 +7,6 @@ public interface MessageService {
     void addConsumer(Consumer<String> consumer);
 
     void sendMessage(String message);
+
+    void sendMessage(String message, Object... args);
 }

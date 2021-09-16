@@ -52,4 +52,6 @@ public interface TaskService {
     List<TaskDto> search(String queryString) throws IOException, ParseException;
 
     void updateIndex(TaskDto taskDto);
+
+    List<TaskDto> findNearWeekTasks(int dayId);
 }

@@ -19,5 +19,13 @@ public class DateUtils {
         long startTimeInMillis = LocalDateTime.of(localDate, LocalTime.MIN).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         long endTimeInMillis   = LocalDateTime.of(localDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         return Pair.of(startTimeInMillis, endTimeInMillis);
+    } 
+    public static Pair<Long, Long> nearWeekRangeOfDayId(int dayId) {
+        LocalDate localDate = LocalDate.parse(String.valueOf(dayId), DAY_ID_FORMATTER);
+        long endTimeInMillis   = LocalDateTime.of(localDate, LocalTime.MAX).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        localDate = localDate.minusDays(7);
+        long startTimeInMillis = LocalDateTime.of(localDate, LocalTime.MIN).atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        
+        return Pair.of(startTimeInMillis, endTimeInMillis);
     }
 }
