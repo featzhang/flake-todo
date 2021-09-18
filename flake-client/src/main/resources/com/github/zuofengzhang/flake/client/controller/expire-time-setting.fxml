@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<VBox prefHeight="429.0" prefWidth="360.0" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.github.zuofengzhang.flake.client.controller.ExpireTimeSettingController">
+
+    <children>
+        <TitledPane collapsible="false" text="%set_date">
+            <content>
+                <BorderPane fx:id="datePane" prefHeight="205.0" prefWidth="300.0"/>
+            </content>
+        </TitledPane>
+        <TitledPane collapsible="false" text="%set_time">
+            <HBox alignment="CENTER">
+                <Spinner fx:id="hourSpinner" prefHeight="20.0" min="0" max="23"/>
+                <Label text=" : "/>
+                <Spinner fx:id="minuteSpinner" prefHeight="20.0" min="0" max="59"/>
+                <Separator orientation="VERTICAL"/>
+                <Label onMouseClicked="#onClearTimeButtonAction" style="-fx-graphic: url('/images/clear.jpg')"/>
+            </HBox>
+        </TitledPane>
+        <HBox alignment="CENTER">
+            <Button mnemonicParsing="false" onAction="#onSureButtonClicked" text="%sure"/>
+            <Button mnemonicParsing="false" onAction="#onClearButtonClicked" text="%clear"/>
+        </HBox>
+    </children>
+    <padding>
+        <Insets bottom="2.0" left="2.0" right="2.0" top="2.0"/>
+    </padding>
+</VBox>

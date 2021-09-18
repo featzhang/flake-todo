@@ -10,5 +10,6 @@
     <version>1.0-SNAPSHOT</version>
     <modules>
         <module>flake-client</module>
+        <module>demo</module>
     </modules>
 </project>

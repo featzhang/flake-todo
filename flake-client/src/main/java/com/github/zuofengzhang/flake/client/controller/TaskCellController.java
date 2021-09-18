@@ -2,6 +2,7 @@ package com.github.zuofengzhang.flake.client.controller;
 
 import com.github.zuofengzhang.flake.client.entity.StoreStatus;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
+import com.github.zuofengzhang.flake.client.utils.ExpirationUtil;
 import com.github.zuofengzhang.flake.client.utils.ImageHolder;
 import com.github.zuofengzhang.flake.client.utils.TextUtils;
 import com.google.common.base.Joiner;
@@ -17,16 +18,18 @@ import org.springframework.stereotype.Component;
 
 import java.net.URL;
 import java.util.List;
+import java.util.Objects;
 import java.util.ResourceBundle;
+import java.util.function.Consumer;
 
 @Component
 @FxmlView("task-cell.fxml")
 @Slf4j
 public class TaskCellController implements Initializable {
     @FXML
-    public  Label tagLabel;
+    public Label tagLabel;
     @FXML
-    public  Label expirationLabel;
+    public Label expirationLabel;
     @FXML
     private Label titleLabel;
 
@@ -79,11 +82,25 @@ public class TaskCellController implements Initializable {
                 setIuaValue(t1.intValue());
             });
 
-            task.expirationProperty().addListener((observableValue, oldValue, newValue) -> {
-                log.info("Expiration : {}", newValue);
-                expirationLabel.setText(newValue);
+//            task.expirationProperty().addListener((observableValue, oldValue, newValue) -> {
+//                log.info("Expiration : {}", newValue);
+//                expirationLabel.setText(newValue);
+//            });
+            Consumer<TaskDto> consumer = (TaskDto t) -> {
+                String label = ExpirationUtil.label(t.getExpirationDay(), t.getExpirationTime());
+                expirationLabel.setText(label);
+            };
+            task.expirationDayProperty().addListener((observableValue, s, t1) -> {
+                if (!Objects.equals(s, t1)) {
+                    consumer.accept(task);
+                }
             });
-            expirationLabel.setText(task.expirationProperty().get());
+            task.expirationTimeProperty().addListener((observableValue, s, t1) -> {
+                if (!Objects.equals(s, t1)) {
+                    consumer.accept(task);
+                }
+            });
+            consumer.accept(task);
 
 
         } else {

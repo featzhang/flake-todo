@@ -6,7 +6,7 @@ import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.*;
 import com.github.zuofengzhang.flake.client.service.MessageService;
 import com.github.zuofengzhang.flake.client.service.TaskService;
-import com.github.zuofengzhang.flake.client.utils.DateUtils;
+import com.github.zuofengzhang.flake.client.utils.FlakeDateUtil;
 import com.github.zuofengzhang.flake.client.utils.OSValidator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -19,6 +19,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -57,11 +58,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -76,42 +74,76 @@ public class DashboardController implements Initializable {
 
     private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
 
+    @FXML
     public TitledPane currentDayTitledPane;
-
+    @FXML
     public Accordion according;
+    @FXML
     public Button stopButton;
+    @FXML
     public Label timerStatsLabel;
+    @FXML
     public Label timerCounterLabel;
+    @FXML
     public TextField newContentTextField;
+    @FXML
     public ListView<TaskDto> yesterdayList;
+    @FXML
     public ListView<TaskDto> todayPlanList;
+    @FXML
     public ListView<TaskDto> todayTomatoList;
+    @FXML
     public ListView<TaskDto> summaryList;
+    @FXML
     public TitledPane yesterdayTitledPane;
+    @FXML
     public TitledPane todayPlanTitledPane;
+    @FXML
     public TitledPane tomatoPotatoTitledPane;
+    @FXML
     public TitledPane todaySummaryTitledPane;
+    @FXML
     public TextField mottoTextField;
+    @FXML
     public BorderPane datePickerPane;
+    @FXML
     public Label workContentLabel;
+    @FXML
     public TitledPane undoneTitledPane;
+    @FXML
     public ListView<TaskDto> undoneList;
+    @FXML
     public BorderPane rootPane;
     // stat labels
+    @FXML
     public Label totalTaskCntLbl;
+    @FXML
     public Label todayTaskCntLbl;
+    @FXML
     public Label taskPriorityDistributeLbl;
+    @FXML
     public Label tomatoCntLbl;
+    @FXML
     public Label maxWorkTimeLbl;
+    @FXML
     public Label urgentTaskCntLbl;
+    @FXML
     public Label completenessLbl;
+    @FXML
     public HBox statusHBox;
+    @FXML
     public TextField searchTextField;
+    @FXML
     public ListView<TaskDto> allTaskListView;
+    @FXML
     public Tab tasksTab;
+    @FXML
     public Tab todayTab;
+    @FXML
     public ListView<TaskDto> nearWeekList;
+    @FXML
     public TitledPane nearWeekTitledPane;
+    @FXML
     public Label messageStatLabel;
     //
     @Resource
@@ -172,7 +204,7 @@ public class DashboardController implements Initializable {
     private void loadListViewAction() {
         // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
         Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane,
-                nearWeekTitledPane, undoneTitledPane)
+                        nearWeekTitledPane, undoneTitledPane)
                 .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
                     String tpId = tp.getId();
                     log.info("TitledPane expandedProperty changed, id:{}, expanded: {}, titledPane:{} ", tpId, newValue,
@@ -275,7 +307,7 @@ public class DashboardController implements Initializable {
         if (StringUtils.isNotBlank(text)) {
             // get selected dayId
             LocalDate localDate = datePicker.getValue();
-            int dayId = DateUtils.dayId(localDate);
+            int dayId = FlakeDateUtil.dayId(localDate);
             // get taskType
             int taskTypeId = TaskType.TODAY_PLAN.getCId();
             //
@@ -317,6 +349,14 @@ public class DashboardController implements Initializable {
         });
         taskDto.contentProperty().addListener((observableValue, s, t1) -> {
             log.info("update content: @{},{}->{}", taskDto.getTaskId(), s, t1);
+            taskService.updateById(taskDto);
+        });
+        taskDto.expirationDayProperty().addListener((observableValue, s, t1) -> {
+            log.info("update expirationDay: @{},{}->{}", taskDto.getTaskId(), s, t1);
+            taskService.updateById(taskDto);
+        });
+        taskDto.expirationTimeProperty().addListener((observableValue, s, t1) -> {
+            log.info("update expirationTime: @{},{}->{}", taskDto.getTaskId(), s, t1);
             taskService.updateById(taskDto);
         });
     }
@@ -500,7 +540,7 @@ public class DashboardController implements Initializable {
     }
 
     private RadioMenuItem createRadioMenuItem(String id, String label, ToggleGroup toggleGroup,
-            EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
+                                              EventHandler<ActionEvent> onMoveMenu, KeyCombination keyCombination) {
         RadioMenuItem item = new RadioMenuItem(label);
         item.setId(id);
         item.setToggleGroup(toggleGroup);
@@ -510,7 +550,7 @@ public class DashboardController implements Initializable {
     }
 
     private MenuItem createMenuItem(String id, String label, EventHandler<ActionEvent> onMoveMenu,
-            KeyCombination keyCombination) {
+                                    KeyCombination keyCombination) {
         MenuItem moveToTodayPlanMenuItem = new MenuItem(label);
         moveToTodayPlanMenuItem.setId(id);
         moveToTodayPlanMenuItem.setOnAction(onMoveMenu);
@@ -547,13 +587,13 @@ public class DashboardController implements Initializable {
         int dayId = setDayTitle(localDate);
         // undone
         if (taskType == null) {
-            ListView<TaskDto> listView=titledPaneId==0?undoneList:nearWeekList;
-            List<TaskDto> newTasks=titledPaneId==0?taskService.findAllTasks():taskService.findNearWeekTasks(dayId);
+            ListView<TaskDto> listView = titledPaneId == 0 ? undoneList : nearWeekList;
+            List<TaskDto> newTasks = titledPaneId == 0 ? taskService.findAllTasks() : taskService.findNearWeekTasks(dayId);
 
             // remove task bind
-            listView.getItems().forEach(task->{
+            listView.getItems().forEach(task -> {
                 task.finishedProperty().unbind();
-                    task.iuaProperty().unbind();
+                task.iuaProperty().unbind();
             });
             listView.getItems().clear();
             // add new tasks
@@ -578,7 +618,7 @@ public class DashboardController implements Initializable {
     }
 
     private int setDayTitle(LocalDate localDate) {
-        int dayId = DateUtils.dayId(localDate);
+        int dayId = FlakeDateUtil.dayId(localDate);
         currentDayTitledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         return dayId;
     }
@@ -806,25 +846,34 @@ public class DashboardController implements Initializable {
                 Scene nodeScene = node.getScene();
                 Stage primaryStage = (Stage) nodeScene.getWindow();
 
-                FxControllerAndView<TaskDetailController, GridPane> controllerAndView = fxWeaver
+                FxControllerAndView<TaskDetailController, GridPane> cv = fxWeaver
                         .load(TaskDetailController.class, resourceBundle);
-                GridPane borderPane = controllerAndView.getView().get();
-                TaskDetailController controller = controllerAndView.getController();
-                controller.setData(selectedTask);
+                GridPane borderPane = cv.getView().get();
+                TaskDetailController controller = cv.getController();
+                TaskDto detailViewTaskDto = selectedTask.clone();
+                controller.setData(detailViewTaskDto);
                 Scene scene = new Scene(borderPane);
                 Stage stage = new Stage();
                 stage.setResizable(true);
                 stage.initOwner(primaryStage);
-                selectedTask.titleProperty().addListener(new ChangeListener<String>() {
-                    @Override
-                    public void changed(ObservableValue<? extends String> observable, String oldValue,
-                            String newValue) {
+                detailViewTaskDto.titleProperty().addListener((observable, oldValue, newValue) -> {
+                    if (!Objects.equals(newValue, oldValue)) {
                         stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + newValue);
                     }
                 });
-                stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + selectedTask.getTitle());
+                stage.setTitle("[" + FlakeLabel.TASK_EDIT + "] - " + detailViewTaskDto.getTitle());
                 stage.setScene(scene);
                 stage.show();
+                // fetch new value as stage closing.
+                stage.setOnHidden(event -> {
+                    log.info("stage hide");
+                    if (!Objects.equals(selectedTask, detailViewTaskDto)) {
+                        log.info("task has changed, update oldTask from detailView, newTask: {}", detailViewTaskDto);
+                        selectedTask.copy(detailViewTaskDto);
+                        taskService.updateById(selectedTask);
+                    }
+                });
+
             }
         }
     }
@@ -892,7 +941,7 @@ public class DashboardController implements Initializable {
     }
 
     public void onAllTodosIconEntered(MouseEvent mouseEvent) {
-        Label button = (Label) mouseEvent.getTarget();
+        Label label = (Label) mouseEvent.getTarget();
         PopOver popOver = new PopOver();
         GridPane content = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
         popOver.setContentNode(content);
@@ -902,6 +951,6 @@ public class DashboardController implements Initializable {
         popOver.setDetachable(true);
         popOver.setDetached(false);
         popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
-        popOver.show(button);
+        popOver.show(label);
     }
 }

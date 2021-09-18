@@ -32,3 +32,9 @@ TODO - app build by JavaFX
 - [ ] 日程管理
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java
+
+## references
+
+1. jfxtras
+2. JFoenix
+3. GemsFX

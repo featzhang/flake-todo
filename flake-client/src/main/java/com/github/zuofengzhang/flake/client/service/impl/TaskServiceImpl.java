@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.zuofengzhang.flake.client.utils.DateUtils.*;
+import static com.github.zuofengzhang.flake.client.utils.FlakeDateUtil.*;
 
 /**
  * @author zhangzuofeng1

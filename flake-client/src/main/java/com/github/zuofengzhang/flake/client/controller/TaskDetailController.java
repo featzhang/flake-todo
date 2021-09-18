@@ -4,10 +4,13 @@ import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventTarget;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -18,14 +21,18 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
+import org.controlsfx.control.PopOver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.Resource;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
@@ -45,38 +52,40 @@ import java.util.stream.Collectors;
 @Component
 @FxmlView("task-detail.fxml")
 public class TaskDetailController implements Initializable {
-    private static final Logger           logger = LoggerFactory.getLogger(TaskDetailController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TaskDetailController.class);
     @FXML
-    public               TextField        titleTextField;
+    public TextField titleTextField;
     @FXML
-    public               TitledPane       contentTitlePane;
+    public TitledPane contentTitlePane;
     @FXML
-    public               TitledPane       attachmentTitlePane;
+    public TitledPane attachmentTitlePane;
     @FXML
-    public               TitledPane       historyTitlePane;
+    public TitledPane historyTitlePane;
     @FXML
-    public               ListView<String> attachmentListView;
+    public ListView<String> attachmentListView;
     @FXML
-    public               ListView<String> historyListView;
-    public               TextArea         contentTextArea;
-    public               Accordion        accordion;
-
+    public ListView<String> historyListView;
+    @FXML
+    public TextArea contentTextArea;
+    @FXML
+    public Accordion accordion;
 
     public void onDeleteAttachmentMenu(ActionEvent actionEvent) {
         String item = attachmentListView.getSelectionModel().getSelectedItem();
         if (item != null) {
             attachmentListView.getItems().remove(item);
-            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+            taskDto.attachmentProperty()
+                    .set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else {
             logger.warn("Can not delete empty file!");
         }
     }
 
     public void onAddAttachmentMenu(ActionEvent event) {
-        MenuItem    menuItem = (MenuItem) event.getTarget();
-        ContextMenu cm       = menuItem.getParentPopup();
-        Scene       scene    = cm.getScene();
-        Window      window   = scene.getWindow();
+        MenuItem menuItem = (MenuItem) event.getTarget();
+        ContextMenu cm = menuItem.getParentPopup();
+        Scene scene = cm.getScene();
+        Window window = scene.getWindow();
         logger.info("open file chooser");
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
@@ -84,7 +93,8 @@ public class TaskDetailController implements Initializable {
         if (file1 != null) {
             attachmentListView.getItems().add(file1.getAbsolutePath());
         }
-        taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+        taskDto.attachmentProperty()
+                .set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
     }
 
     public void onOpenAttachmentMenu(ActionEvent actionEvent) {
@@ -95,7 +105,6 @@ public class TaskDetailController implements Initializable {
             logger.warn("Can not open empty file!");
         }
     }
-
 
     /**
      * open attachments
@@ -117,7 +126,7 @@ public class TaskDetailController implements Initializable {
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 processBuilder.command("open", selectedItem);
                 Process process = processBuilder.start();
-                int     waitFor = process.waitFor();
+                int waitFor = process.waitFor();
                 logger.info("waitFor: {}", waitFor);
             } catch (IOException | InterruptedException ioException) {
                 logger.error("", ioException);
@@ -132,14 +141,20 @@ public class TaskDetailController implements Initializable {
         titleTextField.setText(taskDto.getTitle());
         contentTextArea.setText(taskDto.getContent());
         {
-            List<String> historyList         = new ArrayList<>();
-            String       createTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getCreatedTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            List<String> historyList = new ArrayList<>();
+            String createTimeFormatted = LocalDateTime
+                    .ofInstant(Instant.ofEpochMilli(taskDto.getCreatedTime()), ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             historyList.add(FlakeLabel.CREATE + ":\t" + createTimeFormatted);
-            String lastUpdatedTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getUpdateTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+            String lastUpdatedTimeFormatted = LocalDateTime
+                    .ofInstant(Instant.ofEpochMilli(taskDto.getUpdateTime()), ZoneId.systemDefault())
+                    .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
             historyList.add(FlakeLabel.LAST_UPDATE + ":\t" + lastUpdatedTimeFormatted);
 
             if (taskDto.isFinished()) {
-                String endTimeFormatted = LocalDateTime.ofInstant(Instant.ofEpochMilli(taskDto.getEndTime()), ZoneId.systemDefault()).format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+                String endTimeFormatted = LocalDateTime
+                        .ofInstant(Instant.ofEpochMilli(taskDto.getEndTime()), ZoneId.systemDefault())
+                        .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
                 historyList.add(FlakeLabel.FINISH + ":\t" + endTimeFormatted);
             }
             historyListView.getItems().clear();
@@ -156,7 +171,7 @@ public class TaskDetailController implements Initializable {
 
         taskDto.titleProperty().bind(titleTextField.textProperty());
 
-//        taskDto.contentProperty().bind(contentTextArea.textProperty());
+        // taskDto.contentProperty().bind(contentTextArea.textProperty());
     }
 
     @Override
@@ -169,7 +184,7 @@ public class TaskDetailController implements Initializable {
     }
 
     private void saveChangedContentOnExisted() {
-        String text    = contentTextArea.getText();
+        String text = contentTextArea.getText();
         String content = taskDto.getContent();
         if (!Objects.equals(text, content)) {
             taskDto.setContent(text);
@@ -183,10 +198,10 @@ public class TaskDetailController implements Initializable {
                 saveChangedContentOnExisted();
 
                 // close
-                Object   source     = keyEvent.getSource();
+                Object source = keyEvent.getSource();
                 GridPane sourceNode = (GridPane) source;
-                Scene    scene      = sourceNode.getScene();
-                Window   window     = scene.getWindow();
+                Scene scene = sourceNode.getScene();
+                Window window = scene.getWindow();
                 window.hide();
             }
         }
@@ -197,18 +212,65 @@ public class TaskDetailController implements Initializable {
         if (clipboard.hasUrl() || clipboard.hasString()) {
             String url = clipboard.getString();
             attachmentListView.getItems().add(url);
-            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+            taskDto.attachmentProperty()
+                    .set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else if (clipboard.hasFiles()) {
             for (File file : clipboard.getFiles()) {
                 attachmentListView.getItems().add(file.getAbsolutePath());
             }
-            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+            taskDto.attachmentProperty()
+                    .set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         } else if (clipboard.hasImage()) {
-            Image  image = clipboard.getImage();
-            String url   = image.getUrl();
+            Image image = clipboard.getImage();
+            String url = image.getUrl();
             attachmentListView.getItems().add(url);
-            taskDto.attachmentProperty().set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
+            taskDto.attachmentProperty()
+                    .set(attachmentListView.getItems().stream().sorted().collect(Collectors.joining(";")));
         }
     }
-    
+
+    @Resource
+    private ResourceBundle resourceBundle;
+    @Resource
+    private FxWeaver fxWeaver;
+
+    public void onExpireTimeLabelClicked(MouseEvent mouseEvent) {
+        EventTarget target = mouseEvent.getTarget();
+        Node button = (Node) target;
+        PopOver popOver = new PopOver();
+        VBox content = fxWeaver.loadView(ExpireTimeSettingController.class, resourceBundle);
+        // Must special ResourceBundle when loadControl, if need load Resource in fxml.
+        ExpireTimeSettingController control = fxWeaver
+                .loadController(ExpireTimeSettingController.class, resourceBundle);
+        int oldExpirationDay = taskDto.getExpirationDay();
+        int oldExpirationTime = taskDto.getExpirationTime();
+        ExpireTimeSettingEntity entity = ExpireTimeSettingEntity.builder().expirationDay(oldExpirationDay)
+                .expirationTime(oldExpirationTime).repetition(taskDto.getRepetition()).build();
+
+        entity.expirationDay().addListener((observableValue, s, t1) -> {
+            if (!Objects.equals(s, t1)) {
+                taskDto.setExpirationDay(t1.intValue());
+            }
+        });
+        control.setEntity(entity);
+        popOver.setContentNode(content);
+        popOver.setAutoHide(true);
+        popOver.setAutoFix(true);
+        popOver.setHideOnEscape(true);
+        popOver.setDetachable(true);
+        popOver.setDetached(false);
+        popOver.setArrowLocation(PopOver.ArrowLocation.TOP_CENTER);
+        popOver.show(button);
+
+        Integer newExpirationDay = entity.getExpirationDay();
+        Integer newExpirationTime = entity.getExpirationTime();
+        if (!Objects.equals(oldExpirationDay, newExpirationDay)) {
+            taskDto.setExpirationDay(newExpirationDay);
+        }
+        if (!Objects.equals(oldExpirationTime, newExpirationTime)) {
+            taskDto.setExpirationTime(newExpirationTime);
+        }
+
+
+    }
 }
