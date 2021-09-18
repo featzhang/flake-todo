@@ -124,8 +124,8 @@ public class ExpireTimeSettingController implements Initializable {
     }
 
     public void onClearTimeButtonAction() {
-        hourSpinner.getValueFactory().setValue(null);
-        minuteSpinner.getValueFactory().setValue(null);
+        hourSpinner.getValueFactory().setValue(0);
+        minuteSpinner.getValueFactory().setValue(0);
         currentHour = null;
         currentMinute = null;
     }

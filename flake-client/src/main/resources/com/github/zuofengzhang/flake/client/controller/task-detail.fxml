@@ -97,7 +97,7 @@
                 </TitledPane>
             </panes>
         </Accordion>
-        <Label prefHeight="27.0" prefWidth="136.0" text="2021-09-16" onMouseClicked="#onExpireTimeLabelClicked"/>
+        <Label fx:id="expirationLabel" prefHeight="27.0" prefWidth="136.0" text="2021-09-16" onMouseClicked="#onExpireTimeLabelClicked"/>
 
     </children>
     <padding>

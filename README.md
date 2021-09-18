@@ -19,17 +19,18 @@ TODO - app build by JavaFX
 - [x] sort by TASK PRIORITY
 - [x] db check after launch
 - [x] context menu of LiveView rebuild
-- [ ] 支持排期
-- [ ] lotus-activity
-- [ ] 支持番茄钟
-- [x] 统计列表放到状态栏
-- [ ] 添加统计面板
-- [ ] 编辑框支持markdown
+- [x] show statistics icons in stateBar
 - [x] full text search
-- [ ] task统一列表
-- [ ] tab增加条数
-- [ ] 支持EWS订阅日程
-- [ ] 日程管理
+- [x] expire date time(deadline)
+- [ ] anti-addiction: Break REMINDER, REMINDER
+- [ ] lotus-activity
+- [ ] flight records
+- [ ] support tomato clock
+- [ ] statistics tab
+- [ ] editor support markdown
+- [ ] show rows in titledPane
+- [ ] support EWS calendar
+- [ ] calendar
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java
 

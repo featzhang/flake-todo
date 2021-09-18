@@ -2,6 +2,7 @@ package com.github.zuofengzhang.flake.client.controller;
 
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
+import com.github.zuofengzhang.flake.client.utils.ExpirationUtil;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventTarget;
@@ -69,6 +70,7 @@ public class TaskDetailController implements Initializable {
     public TextArea contentTextArea;
     @FXML
     public Accordion accordion;
+    public Label expirationLabel;
 
     public void onDeleteAttachmentMenu(ActionEvent actionEvent) {
         String item = attachmentListView.getSelectionModel().getSelectedItem();
@@ -136,8 +138,12 @@ public class TaskDetailController implements Initializable {
 
     private TaskDto taskDto;
 
-    public void setData(TaskDto taskDto) {
+    public void setEntity(TaskDto taskDto) {
         this.taskDto = taskDto;
+        //  show expire time
+        String label = ExpirationUtil.label(taskDto.getExpirationDay(), taskDto.getExpirationTime());
+        expirationLabel.setText(label);
+
         titleTextField.setText(taskDto.getTitle());
         contentTextArea.setText(taskDto.getContent());
         {

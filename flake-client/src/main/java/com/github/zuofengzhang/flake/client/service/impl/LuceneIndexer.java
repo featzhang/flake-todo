@@ -3,6 +3,7 @@ package com.github.zuofengzhang.flake.client.service.impl;
 import com.github.zuofengzhang.flake.client.entity.StoreStatus;
 import com.github.zuofengzhang.flake.client.entity.TaskDto;
 import com.google.common.collect.Lists;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer;
@@ -28,6 +29,7 @@ import java.util.List;
 import static com.github.zuofengzhang.flake.client.constraints.FlakeConsts.INDEX_BASE_PATH;
 
 @Component
+@Slf4j
 public class LuceneIndexer {
 
     public static final String FIELD_ID = "id";
@@ -120,8 +122,8 @@ public class LuceneIndexer {
         long startTime = System.currentTimeMillis();
         TopDocs docs = searcher.search(query, 10);
 
-        System.out.println("查找" + queryStr + "所用时间：" + (System.currentTimeMillis() - startTime));
-        System.out.println("查询到" + docs.totalHits + "条记录");
+        log.info("查找" + queryStr + "所用时间：" + (System.currentTimeMillis() - startTime));
+        log.info("查询到" + docs.totalHits + "条记录");
 
         //加入高亮显示的
 //        QueryScorer         scorer              = new QueryScorer(query);

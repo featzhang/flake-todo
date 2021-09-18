@@ -78,7 +78,6 @@ public class TaskCellController implements Initializable {
             setIuaValue(iua);
 
             task.iuaProperty().addListener((observableValue, number, t1) -> {
-                System.out.println();
                 setIuaValue(t1.intValue());
             });
 
@@ -88,7 +87,7 @@ public class TaskCellController implements Initializable {
 //            });
             Consumer<TaskDto> consumer = (TaskDto t) -> {
                 String label = ExpirationUtil.label(t.getExpirationDay(), t.getExpirationTime());
-                expirationLabel.setText(label);
+                setExpirationLabel(label);
             };
             task.expirationDayProperty().addListener((observableValue, s, t1) -> {
                 if (!Objects.equals(s, t1)) {
@@ -108,6 +107,16 @@ public class TaskCellController implements Initializable {
             titleLabel.setText("");
             iuaImageView.setImage(null);
             tagLabel.setText("");
+            expirationLabel.setText("");
+        }
+    }
+
+    private void setExpirationLabel(String label) {
+        if (label != null && !label.equals("")) {
+            expirationLabel.setStyle("-fx-border-color: amber;-fx-border-radius: 5%");
+            expirationLabel.setText(label);
+        } else {
+            expirationLabel.setStyle("-fx-border-width: 0");
             expirationLabel.setText("");
         }
     }

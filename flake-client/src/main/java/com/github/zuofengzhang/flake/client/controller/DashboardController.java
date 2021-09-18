@@ -13,8 +13,6 @@ import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -718,7 +716,7 @@ public class DashboardController implements Initializable {
 
         alert.show();
         // alert.showAndWait();
-        System.out.println("take a break notification");
+        log.info("take a break notification");
     }
 
     public void onStartTimer(ActionEvent actionEvent) {
@@ -758,7 +756,7 @@ public class DashboardController implements Initializable {
     // debugging purpose
     private Animation.Status getTimerStatus() {
         Animation.Status mStatus = timeline.getStatus();
-        System.out.println(mStatus);
+        log.info("mStatus: {}", mStatus);
         return mStatus;
     }
 
@@ -782,7 +780,7 @@ public class DashboardController implements Initializable {
         Scene scene1 = node.getScene();
         Stage primaryStage = (Stage) scene1.getWindow();
         BorderPane borderPane = fxWeaver.loadView(SettingsController.class, resourceBundle);
-        Scene scene = new Scene(borderPane);
+        Scene scene = new FlakeScene(borderPane);
         Stage stage = new Stage();
         stage.setTitle(SETTING);
         stage.setResizable(false);
@@ -842,8 +840,8 @@ public class DashboardController implements Initializable {
         TaskDto selectedTask = doGetSelectedTask();
         if (selectedTask != null) {
             if (mouseEvent.getClickCount() == 2) {
-                Node node = (Node) mouseEvent.getSource();
-                Scene nodeScene = node.getScene();
+                Node clickedNode = (Node) mouseEvent.getSource();
+                Scene nodeScene = clickedNode.getScene();
                 Stage primaryStage = (Stage) nodeScene.getWindow();
 
                 FxControllerAndView<TaskDetailController, GridPane> cv = fxWeaver
@@ -851,8 +849,8 @@ public class DashboardController implements Initializable {
                 GridPane borderPane = cv.getView().get();
                 TaskDetailController controller = cv.getController();
                 TaskDto detailViewTaskDto = selectedTask.clone();
-                controller.setData(detailViewTaskDto);
-                Scene scene = new Scene(borderPane);
+                controller.setEntity(detailViewTaskDto);
+                Scene scene = new FlakeScene(borderPane);
                 Stage stage = new Stage();
                 stage.setResizable(true);
                 stage.initOwner(primaryStage);
@@ -873,7 +871,6 @@ public class DashboardController implements Initializable {
                         taskService.updateById(selectedTask);
                     }
                 });
-
             }
         }
     }
