@@ -7,6 +7,7 @@ TODO - app build by JavaFX
 - MyBatis 3.5.6
 - MyBatis-plus 3.4.1
 - Sqlite 3
+- fxweaver
 
 ![中文界面展示](docs/images/perview.png)
 
@@ -31,6 +32,10 @@ TODO - app build by JavaFX
 - [ ] show rows in titledPane
 - [ ] support EWS calendar
 - [ ] calendar
+- [ ] collect: like edge collect
+- [ ] 四象限清单视图
+- [ ] 时间轴视图
+- [ ] 应用打包-native
 
 https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/donutchart/DonutChart.java
 
@@ -39,3 +44,5 @@ https://github.com/HanSolo/donutchart/blob/master/src/main/java/eu/hansolo/fx/do
 1. jfxtras
 2. JFoenix
 3. GemsFX
+4. FxLauncher
+5. controlsfx

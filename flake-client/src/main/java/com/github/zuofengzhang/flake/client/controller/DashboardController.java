@@ -1,9 +1,13 @@
 package com.github.zuofengzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.github.zuofengzhang.flake.client.components.ItemChoiceData;
+import com.github.zuofengzhang.flake.client.components.ItemChoiceDialog;
 import com.github.zuofengzhang.flake.client.constraints.FlakeLabel;
 import com.github.zuofengzhang.flake.client.constraints.FlakeSettings;
 import com.github.zuofengzhang.flake.client.entity.*;
+import com.github.zuofengzhang.flake.client.focus.components.FocusPane;
+import com.github.zuofengzhang.flake.client.service.CommonItemService;
 import com.github.zuofengzhang.flake.client.service.MessageService;
 import com.github.zuofengzhang.flake.client.service.TaskService;
 import com.github.zuofengzhang.flake.client.utils.FlakeDateUtil;
@@ -37,6 +41,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
 import net.rgielen.fxweaver.core.FxControllerAndView;
@@ -77,11 +82,11 @@ public class DashboardController implements Initializable {
     @FXML
     public Accordion according;
     @FXML
-    public Button stopButton;
+    public Button interruptButton;
     @FXML
-    public Label timerStatsLabel;
+    public Label timeStatLabel;
     @FXML
-    public Label timerCounterLabel;
+    public Label timeClockLabel;
     @FXML
     public TextField newContentTextField;
     @FXML
@@ -143,6 +148,8 @@ public class DashboardController implements Initializable {
     public TitledPane nearWeekTitledPane;
     @FXML
     public Label messageStatLabel;
+    @FXML
+    public TitledPane focusTitledPane;
     //
     @Resource
     private TaskService taskService;
@@ -171,20 +178,20 @@ public class DashboardController implements Initializable {
     private ResourceBundle resourceBundle;
     @Resource
     private MessageService messageService;
+    private FocusPane focusPane;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-        // init UI & events
-        // init
         // mNotify = new
         // AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
-        // datepicker
         initDataPicker();
         initListView();
         //
         initListViewContextMenu();
         //
         initTimer();
+        initFocusPane();
         initMessageToolbar();
         // bindStat
         doBindTaskStat();
@@ -193,6 +200,11 @@ public class DashboardController implements Initializable {
         loadListViewAction();
         // 切换
         Platform.runLater(() -> according.setExpandedPane(undoneTitledPane));
+    }
+
+    private void initFocusPane() {
+        focusPane = new FocusPane();
+        this.focusTitledPane.setContent(focusPane);
     }
 
     private void initMessageToolbar() {
@@ -249,11 +261,10 @@ public class DashboardController implements Initializable {
     }
 
     private void initTimer() {
-        // init timer
-        setTimerText(0);
-        setTimerStatus(FlakeLabel.BREAKING);
-        setTimerContent("");
-        stopButton.setVisible(false);
+        doSetTimerText(0);
+        setTimerStatusName(FlakeLabel.BREAKING);
+        doSetTimerContent("");
+        interruptButton.setVisible(true);
     }
 
     private void initListViewContextMenu() {
@@ -399,7 +410,7 @@ public class DashboardController implements Initializable {
             moveToMenu.setVisible(false);
         } else {
             TaskType taskType = TaskType.findById(titledPaneId);
-            switch (taskType) {
+            switch (Objects.requireNonNull(taskType)) {
                 case TODAY_PLAN:
                     moveToTodayPlanMenuItem.setVisible(false);
                     break;
@@ -447,7 +458,7 @@ public class DashboardController implements Initializable {
         // focus
         MenuItem focusMenuItem = new MenuItem(FOCUS);
         focusMenuItem.setAccelerator(KeyCombination.keyCombination("Meta+F"));
-        focusMenuItem.setOnAction(this::onStartTimer);
+        focusMenuItem.setOnAction(this::onFocusTask);
         // move_to
         // <MenuItem id="1" mnemonicParsing="false" onAction="#onMoveMenu"
         // text="%label_yesterday_review"/>
@@ -502,9 +513,13 @@ public class DashboardController implements Initializable {
         return liveViewContextMenu;
     }
 
+    private void onFocusTask(ActionEvent actionEvent) {
+        TaskDto taskDto = doGetSelectedTask();
+        focusPane.focusTask(taskDto);
+    }
+
     private void onSearchTaskMenu(ActionEvent actionEvent) {
-        ListView<TaskDto> listView = allListViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         String title = selectedItem.getTitle();
         String url = "http://www.bing.com/search?q=" + title;
         if (Desktop.isDesktopSupported()) {
@@ -630,11 +645,11 @@ public class DashboardController implements Initializable {
         // loadData();
     }
 
-    private void setTimerContent(String s) {
+    private void doSetTimerContent(String s) {
         this.workContentLabel.setText(s);
     }
 
-    public void setTimerText(long remainingSeconds) {
+    public void doSetTimerText(long remainingSeconds) {
         int hours = (int) (remainingSeconds / 60 / 60);
         int minutes = (int) ((remainingSeconds / 60) % 60);
         int seconds = (int) (remainingSeconds % 60);
@@ -648,33 +663,32 @@ public class DashboardController implements Initializable {
     }
 
     private void setTimerText(String s) {
-        timerCounterLabel.setText(s);
+        timeClockLabel.setText(s);
     }
 
-    public void onAddMottoTextField(ActionEvent actionEvent) {
-        mottoTextField.setText("");
-    }
 
     public void initTimerAction(TimerActionType type) {
 
         TimerStatus timerStatus = new TimerStatus(type, System.currentTimeMillis());
 
-        setTimerStatus(timerStatus.getType().getDisplayName());
+        setTimerStatusName(timerStatus.getType().getDisplayName());
         if (timerStatus.getType() == TimerActionType.FOCUS) {
             timerStatus.setRemainingSeconds(FlakeSettings.getInstance().getFocusTimeInSeconds());
         } else if (timerStatus.getType() == TimerActionType.BREAK) {
         }
-        setTimerText(timerStatus.getRemainingSeconds());
+        doSetTimerText(timerStatus.getRemainingSeconds());
         timeline = new Timeline();
         timeline.setCycleCount((int) timerStatus.getRemainingSeconds());
         timeline.getKeyFrames().add(new KeyFrame(Duration.seconds(1), event -> {
             timerStatus.countDown();
-            setTimerText(timerStatus.getRemainingSeconds());
+            doSetTimerText(timerStatus.getRemainingSeconds());
         }));
 
         timeline.setOnFinished(event -> {
             // mNotify.play();
-            Notifications.create().title(FlakeLabel.TIME_TO_WEAK).text("").hideAfter(Duration.minutes(5)).showWarning();
+            EventTarget target = event.getTarget();
+            Node node = (Node) target;
+            Notifications.create().owner(node.getScene().getWindow()).title(FlakeLabel.TIME_TO_WEAK).text("").hideAfter(Duration.minutes(5)).showWarning();
             doAddNewWorkLog(timerStatus);
             currentTaskId = -1;
             if (timerStatus.getType() == TimerActionType.FOCUS) {
@@ -682,7 +696,7 @@ public class DashboardController implements Initializable {
             }
             initTimerAction(
                     timerStatus.getType() == TimerActionType.FOCUS ? TimerActionType.BREAK : TimerActionType.FOCUS);
-            stopButton.setVisible(false);
+            interruptButton.setVisible(false);
         });
     }
 
@@ -719,17 +733,17 @@ public class DashboardController implements Initializable {
         log.info("take a break notification");
     }
 
-    public void onStartTimer(ActionEvent actionEvent) {
+
+    private void onStartTimer(ActionEvent actionEvent) {
         ContextMenu parentPopup = ((MenuItem) actionEvent.getTarget()).getParentPopup();
-        ListView<TaskDto> listView = allListViewMap.get(Integer.parseInt(according.getExpandedPane().getId()));
-        TaskDto selectedItem = listView.getSelectionModel().getSelectedItem();
+        TaskDto selectedItem = doGetSelectedTask();
         if (selectedItem == null) {
             return;
         }
         //
         int newTaskId = selectedItem.getTaskId();
         //
-        stopButton.setVisible(true);
+        interruptButton.setVisible(true);
         //
         if (currentTaskId == newTaskId) {
             log.info("the same task is running");
@@ -748,9 +762,9 @@ public class DashboardController implements Initializable {
 
         this.currentTaskId = newTaskId;
         timeline.play();
-        stopButton.setVisible(true);
+        interruptButton.setVisible(true);
         getTimerStatus();
-        setTimerContent(selectedItem.getTitle());
+        doSetTimerContent(selectedItem.getTitle());
     }
 
     // debugging purpose
@@ -760,19 +774,19 @@ public class DashboardController implements Initializable {
         return mStatus;
     }
 
-    private void setTimerStatus(String timeForABreak) {
-        timerStatsLabel.setText(timeForABreak);
+    private void setTimerStatusName(String timeForABreak) {
+        timeStatLabel.setText(timeForABreak);
     }
 
     public void onStopTimer(ActionEvent actionEvent) {
         log.info("stop timer");
         currentTaskId = -1;
         timeline.stop();
-        stopButton.setVisible(false);
-        setTimerText(0);
+        interruptButton.setVisible(false);
+        doSetTimerText(0);
         getTimerStatus();
-        setTimerStatus(FlakeLabel.BREAKING);
-        setTimerContent("");
+        setTimerStatusName(FlakeLabel.BREAKING);
+        doSetTimerContent("");
     }
 
     public void onSettings(ActionEvent actionEvent) {
@@ -940,7 +954,7 @@ public class DashboardController implements Initializable {
     public void onAllTodosIconEntered(MouseEvent mouseEvent) {
         Label label = (Label) mouseEvent.getTarget();
         PopOver popOver = new PopOver();
-        GridPane content = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
+        BorderPane content = fxWeaver.loadView(StatPopOverViewController.class, resourceBundle);
         popOver.setContentNode(content);
         popOver.setAutoHide(true);
         popOver.setAutoFix(true);
@@ -949,5 +963,34 @@ public class DashboardController implements Initializable {
         popOver.setDetached(false);
         popOver.setArrowLocation(PopOver.ArrowLocation.BOTTOM_CENTER);
         popOver.show(label);
+    }
+
+    public void onInterrupt(ActionEvent actionEvent) {
+        showInterruptDialog(actionEvent);
+    }
+
+    @Resource
+    private CommonItemService commonItemService;
+
+    private void showInterruptDialog(ActionEvent actionEvent) {
+        EventTarget target = actionEvent.getTarget();
+        Node node = (Node) target;
+        Window window = node.getScene().getWindow();
+
+
+        List<ItemChoiceData> itemChoiceData = commonItemService.queryItemDataList();
+
+
+        ItemChoiceDialog dlg = new ItemChoiceDialog("启动新任务", "请选择新任务", itemChoiceData);
+        dlg.initModality(Modality.APPLICATION_MODAL);
+        dlg.initOwner(window);
+        Optional<ItemChoiceData> optional = dlg.showAndWait();
+        if (optional.isPresent()) {
+            ItemChoiceData choiceData = optional.get();
+            log.info("start new interrupt: {}", choiceData);
+
+        } else {
+            log.info("not select any interrupt event.");
+        }
     }
 }

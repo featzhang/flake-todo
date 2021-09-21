@@ -6,10 +6,8 @@ import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-import org.controlsfx.control.PopOver;
 
 /**
- *
  * @author Sedrick
  */
 public class JavaFXApplication35 extends Application {
@@ -21,21 +19,18 @@ public class JavaFXApplication35 extends Application {
         //Build PopOver look and feel
         Label lblName = new Label("John Doe");
         Label lblStreet = new Label("123 Hello Street");
-        Label lblCityStateZip = new Label("MadeUpCity, XX 55555");   
+        Label lblCityStateZip = new Label("MadeUpCity, XX 55555");
         VBox vBox = new VBox(lblName, lblStreet, lblCityStateZip);
         //Create PopOver and add look and feel
-        PopOver popOver = new PopOver(vBox);
 
 
         Label label = new Label("Mouse mouse over me");
         label.setOnMouseEntered(mouseEvent -> {
             //Show PopOver when mouse enters label
-            popOver.show(label);
         });
 
         label.setOnMouseExited(mouseEvent -> {
             //Hide PopOver when mouse exits label
-            popOver.hide();
         });
 
 
@@ -54,5 +49,5 @@ public class JavaFXApplication35 extends Application {
      */
     public static void main(String[] args) {
         launch(args);
-    }    
+    }
 }

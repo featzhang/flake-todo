@@ -1,5 +1,5 @@
 drop table if exists task;
-create table task
+create table if not exists task
 (
     task_id                 integer
         constraint task_pk
@@ -30,3 +30,14 @@ create table task
 
 create unique index task_task_id_uindex
     on task (task_id);
+
+create  table  if  not  exists common_item(
+    id INTEGER constraint task_pk
+            primary key autoincrement,
+    name varchar not null,
+sit int check(sit in ('0','1')),
+    create_time             long                                                                            default current_timestamp,
+    update_time             long                                                                            default current_timestamp,
+    store_status            int check ( store_status in ('0', '1') )                                        default 1 not null
+
+);

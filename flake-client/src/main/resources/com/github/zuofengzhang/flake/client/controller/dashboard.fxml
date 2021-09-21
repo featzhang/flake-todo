@@ -15,13 +15,15 @@
 <?import javafx.scene.control.TitledPane?>
 <?import javafx.scene.control.ToggleGroup?>
 <?import javafx.scene.control.ToolBar?>
+<?import javafx.scene.control.Tooltip?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.FlowPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
 <BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="974.0" BorderPane.alignment="CENTER"
-            xmlns="http://javafx.com/javafx/13" xmlns:fx="http://javafx.com/fxml/1"
+            xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.zuofengzhang.flake.client.controller.DashboardController">
     <center>
         <TabPane>
@@ -36,37 +38,27 @@
                                             <BorderPane fx:id="datePickerPane" prefHeight="247.0" prefWidth="271.0"/>
                                         </content>
                                     </TitledPane>
-                                    <TitledPane text="%tomato_clock">
-                                        <content>
-                                            <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0"
-                                                  spacing="30.0">
-                                                <children>
-                                                    <Label fx:id="timerStatsLabel" text="timer status">
-                                                        <font>
-                                                            <Font size="18.0"/>
-                                                        </font>
-                                                    </Label>
-                                                    <Label fx:id="timerCounterLabel" text="Label" textFill="#2fa105">
-                                                        <font>
-                                                            <Font size="48.0"/>
-                                                        </font>
-                                                    </Label>
-                                                    <Label fx:id="workContentLabel" text="Label" underline="true"/>
-                                                    <HBox alignment="CENTER" prefWidth="200.0" style="-fx-spacing: 20;">
-                                                        <children>
-                                                            <Button fx:id="stopButton" mnemonicParsing="false"
-                                                                    onAction="#onStopTimer" text="%stop"/>
-                                                        </children>
-                                                    </HBox>
-                                                </children>
-                                            </VBox>
-                                        </content>
+                                    <TitledPane text="%focus">
+                                        <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="200.0"
+                                              spacing="30.0">
+                                            <Label fx:id="timeStatLabel" text="timer status">
+                                                <font>
+                                                    <Font size="18.0"/>
+                                                </font>
+                                            </Label>
+                                            <Label fx:id="timeClockLabel" text="time_clock" textFill="#2fa105">
+                                                <font>
+                                                    <Font size="48.0"/>
+                                                </font>
+                                            </Label>
+                                            <Label fx:id="workContentLabel" text="item_content" underline="true"/>
+                                            <HBox alignment="CENTER" prefHeight="26.0" prefWidth="175.0">
+                                                <Button fx:id="interruptButton" mnemonicParsing="false"
+                                                        onAction="#onInterrupt" text="%interrupt"/>
+                                            </HBox>
+                                        </VBox>
                                     </TitledPane>
-                                    <TitledPane collapsible="false" text="%doing">
-                                        <HBox>
-                                            <Button text="休息"/>
-                                            <Button text="防沉迷：提醒休息、喝水"/>
-                                        </HBox>
+                                    <TitledPane fx:id="focusTitledPane" collapsible="false" text="%focus">
                                     </TitledPane>
                                 </children>
                             </VBox>
@@ -90,53 +82,58 @@
                                 </ToolBar>
                             </top>
                             <center>
-                                <Accordion fx:id="according" depthTest="ENABLE" maxHeight="1.7976931348623157E308"
-                                           maxWidth="1.7976931348623157E308" style="-fx-border-color: darkgray;"
-                                           BorderPane.alignment="CENTER">
-                                    <panes>
-                                        <TitledPane id="0" fx:id="undoneTitledPane" animated="false" text="%undone">
-                                            <content>
-                                                <ListView id="0" fx:id="undoneList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane id="5" fx:id="nearWeekTitledPane" animated="false"
-                                                    text="%near_week_review">
-                                            <content>
-                                                <ListView id="5" fx:id="nearWeekList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false"
-                                                    text="%yesterday_review">
-                                            <content>
-                                                <ListView id="1" fx:id="yesterdayList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false"
-                                                    text="%today_plan">
-                                            <content>
-                                                <ListView id="2" fx:id="todayPlanList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false"
-                                                    text="%tomato_potato">
-                                            <content>
-                                                <ListView id="3" fx:id="todayTomatoList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                        <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false"
-                                                    text="%today_summary">
-                                            <content>
-                                                <ListView id="4" fx:id="summaryList" onMouseClicked="#onTaskClicked"
-                                                          prefHeight="200.0" prefWidth="200.0"/>
-                                            </content>
-                                        </TitledPane>
-                                    </panes>
-                                </Accordion>
+                                <TabPane side="BOTTOM" BorderPane.alignment="CENTER">
+                                    <Tab closable="false" text="%time_view">
+                                        <Accordion fx:id="according" depthTest="ENABLE"
+                                                   maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308"
+                                                   style="-fx-border-color: darkgray;">
+                                            <panes>
+                                                <TitledPane id="0" fx:id="undoneTitledPane" animated="false"
+                                                            text="%undone">
+                                                    <ListView id="0" fx:id="undoneList" onMouseClicked="#onTaskClicked"
+                                                              prefHeight="200.0" prefWidth="200.0"/>
+                                                </TitledPane>
+                                                <TitledPane id="5" fx:id="nearWeekTitledPane" animated="false"
+                                                            text="%near_week_review">
+                                                    <ListView id="5" fx:id="nearWeekList"
+                                                              onMouseClicked="#onTaskClicked" prefHeight="200.0"
+                                                              prefWidth="200.0"/>
+                                                </TitledPane>
+                                                <TitledPane id="1" fx:id="yesterdayTitledPane" animated="false"
+                                                            text="%yesterday_review">
+                                                    <ListView id="1" fx:id="yesterdayList"
+                                                              onMouseClicked="#onTaskClicked" prefHeight="200.0"
+                                                              prefWidth="200.0"/>
+                                                </TitledPane>
+                                                <TitledPane id="2" fx:id="todayPlanTitledPane" animated="false"
+                                                            text="%today_plan">
+                                                    <ListView id="2" fx:id="todayPlanList"
+                                                              onMouseClicked="#onTaskClicked" prefHeight="200.0"
+                                                              prefWidth="200.0"/>
+                                                </TitledPane>
+                                                <TitledPane id="3" fx:id="tomatoPotatoTitledPane" animated="false"
+                                                            text="%tomato_potato">
+                                                    <ListView id="3" fx:id="todayTomatoList"
+                                                              onMouseClicked="#onTaskClicked" prefHeight="200.0"
+                                                              prefWidth="200.0"/>
+                                                </TitledPane>
+                                                <TitledPane id="4" fx:id="todaySummaryTitledPane" animated="false"
+                                                            text="%today_summary">
+                                                    <ListView id="4" fx:id="summaryList" onMouseClicked="#onTaskClicked"
+                                                              prefHeight="200.0" prefWidth="200.0"/>
+                                                </TitledPane>
+                                            </panes>
+                                        </Accordion>
+                                    </Tab>
+                                    <Tab closable="false" text="%today"/>
+                                    <Tab closable="false" text="%all"/>
+                                    <Tab closable="false" text="%undone"/>
+                                    <Tab closable="false" text="%yesterday_review"/>
+                                    <Tab closable="false" text="%near_week_review"/>
+                                    <Tab closable="false" text="%four_quadrant_view"/>
+                                    <Tab closable="false" text="%timeline_view"/>
+                                    <Tab closable="false" text="%search_view"/>
+                                </TabPane>
                             </center>
                         </BorderPane>
                     </center>

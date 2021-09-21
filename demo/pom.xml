@@ -2,11 +2,9 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>flake-todo</artifactId>
-        <groupId>org.github.zuofengzhang</groupId>
-        <version>1.0-SNAPSHOT</version>
-    </parent>
+
+    <groupId>org.github.zuofengzhang</groupId>
+    <version>1.0-SNAPSHOT</version>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>demo</artifactId>
@@ -18,14 +16,14 @@
     <build>
         <plugins>
             <plugin>
+                <groupId>org.openjfx</groupId>
                 <artifactId>javafx-maven-plugin</artifactId>
+                <version>0.0.7</version>
                 <configuration>
                     <mainClass>com.zuofengzhang.flake.demo.JavaFXApplication35</mainClass>
                     <source>13</source>
                     <target>13</target>
                 </configuration>
-                <groupId>org.openjfx</groupId>
-                <version>0.0.5</version>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -41,58 +39,17 @@
     </build>
     <dependencies>
         <dependency>
-            <artifactId>javafx-controls</artifactId>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx-controls</artifactId>
             <version>13.0.1</version>
         </dependency>
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>RELEASE</version>
-            <scope>compile</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
             <version>13.0.1</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javafx-controls</artifactId>
-                    <groupId>org.openjfx</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-lang3</artifactId>
-            <version>3.3.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.google.guava</groupId>
-            <artifactId>guava</artifactId>
-            <version>11.0.2</version>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.controlsfx</groupId>
-            <artifactId>controlsfx</artifactId>
-            <version>11.0.3</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javafx-controls</artifactId>
-                    <groupId>org.openjfx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javafx-graphics</artifactId>
-                    <groupId>org.openjfx</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javafx-base</artifactId>
-                    <groupId>org.openjfx</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+
 
     </dependencies>
 </project>
