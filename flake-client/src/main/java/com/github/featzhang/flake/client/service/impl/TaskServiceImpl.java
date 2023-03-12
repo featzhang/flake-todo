@@ -1,7 +1,7 @@
 package com.github.featzhang.flake.client.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.github.featzhang.flake.client.constraints.FlakeSettings;
+import com.github.featzhang.flake.client.consts.FlakeSettings;
 import com.github.featzhang.flake.client.dao.TaskDao;
 import com.github.featzhang.flake.client.entity.StoreStatus;
 import com.github.featzhang.flake.client.entity.TaskDo;
@@ -25,7 +25,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static com.github.featzhang.flake.client.utils.DateUtils.lastDayRangeOfDayId;
+import static com.github.featzhang.flake.client.utils.DateUtil.lastDayRangeOfDayId;
 
 /**
  * @author zhangzuofeng1

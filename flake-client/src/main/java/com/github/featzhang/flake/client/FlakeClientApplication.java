@@ -26,9 +26,9 @@ public class FlakeClientApplication {
     }
 
     @Bean
-    public FxWeaver fxWeaver(ConfigurableApplicationContext applicationContext) {
+    public FxWeaver fxWeaver(ConfigurableApplicationContext context) {
         System.out.println("init fxWeaver");
-        return new SpringFxWeaver(applicationContext);
+        return new SpringFxWeaver(context);
     }
 
     @Bean

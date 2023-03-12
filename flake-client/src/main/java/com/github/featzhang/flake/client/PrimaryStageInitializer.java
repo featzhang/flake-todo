@@ -1,6 +1,6 @@
 package com.github.featzhang.flake.client;
 
-import com.github.featzhang.flake.client.constraints.FlakeLabel;
+import com.github.featzhang.flake.client.consts.FlakeLabel;
 import com.github.featzhang.flake.client.controller.DashboardController;
 import javafx.scene.Scene;
 import javafx.stage.Stage;

@@ -1,6 +1,6 @@
 package com.github.featzhang.flake.client.controller;
 
-import com.github.featzhang.flake.client.constraints.FlakeLabel;
+import com.github.featzhang.flake.client.consts.FlakeLabel;
 import com.github.featzhang.flake.client.entity.TaskDto;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;

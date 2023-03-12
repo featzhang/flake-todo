@@ -1,6 +1,6 @@
 package com.github.featzhang.flake.client.controller;
 
-import com.github.featzhang.flake.client.constraints.FlakeSettings;
+import com.github.featzhang.flake.client.consts.FlakeSettings;
 import javafx.event.ActionEvent;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
