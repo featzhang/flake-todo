@@ -205,7 +205,7 @@ public class DashboardController implements Initializable {
 
         // init timer
         setTimerText(0);
-        setTimerStatus(FlakeLabel.BREAKING);
+        setTimerStatus(FlakeLabel.BREAKING.value());
         setTimerContent("");
         stopButton.setVisible(false);
 
@@ -645,7 +645,7 @@ public class DashboardController implements Initializable {
 
         timeline.setOnFinished(event -> {
 //            mNotify.play();
-            Notifications.create().title(FlakeLabel.TIME_TO_WEAK).text("").hideAfter(Duration.minutes(5)).showWarning();
+            Notifications.create().title(FlakeLabel.TIME_TO_WEAK.value()).text("").hideAfter(Duration.minutes(5)).showWarning();
             doAddNewWorkLog(timerStatus);
             currentTaskId = -1;
             if (timerStatus.getType() == TimerActionType.FOCUS) {
@@ -746,7 +746,7 @@ public class DashboardController implements Initializable {
         stopButton.setVisible(false);
         setTimerText(0);
         getTimerStatus();
-        setTimerStatus(FlakeLabel.BREAKING);
+        setTimerStatus(FlakeLabel.BREAKING.value());
         setTimerContent("");
     }
 
@@ -761,6 +761,7 @@ public class DashboardController implements Initializable {
         stage.initOwner(primaryStage);
         stage.initModality(Modality.WINDOW_MODAL);
         stage.setScene(scene);
+        stage.setTitle(FlakeLabel.SETTINGS.value());
         stage.showAndWait();
 
         reloadCurrentTitlePane();
