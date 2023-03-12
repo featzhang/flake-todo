@@ -32,3 +32,4 @@ flake-client/.project
 flake-client/.settings
 flake-client/.factorypath.DS_Store
 idx
+dependency-reduced-pom.xml

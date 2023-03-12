@@ -7,7 +7,7 @@
             <plugin>
                 <artifactId>javafx-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass>com.github.zuofengzhang.flake.client.FlakeClientApplication</mainClass>
+                    <mainClass>com.github.featzhang.flake.client.FlakeClientApplication</mainClass>
                     <source>13</source>
                     <target>13</target>
                 </configuration>
