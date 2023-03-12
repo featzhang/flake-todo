@@ -55,10 +55,10 @@ public class StatPopOverViewController implements Initializable {
         String        pdp  = taskService.taskPriorityDistributeProperty().getValue();
         List<Integer> list = Arrays.stream(pdp.split("/")).map(Integer::parseInt).collect(Collectors.toList());
         ObservableList<PieChart.Data> pieChartData = FXCollections.observableArrayList(
-                new PieChart.Data(IMPORTANCE_URGENCY, list.get(0)),
-                new PieChart.Data(IMPORTANCE_BUT_NOT_URGENCY, list.get(1)),
-                new PieChart.Data(NOT_IMPORTANCE_BUT_URGENCY, list.get(2)),
-                new PieChart.Data(NOT_IMPORTANCE_NOT_URGENCY, list.get(3))
+                new PieChart.Data(IMPORTANCE_URGENCY.value(), list.get(0)),
+                new PieChart.Data(IMPORTANCE_BUT_NOT_URGENCY.value(), list.get(1)),
+                new PieChart.Data(NOT_IMPORTANCE_BUT_URGENCY.value(), list.get(2)),
+                new PieChart.Data(NOT_IMPORTANCE_NOT_URGENCY.value(), list.get(3))
         );
         taskDistributePie.setData(pieChartData);
 

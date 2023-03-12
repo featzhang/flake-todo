@@ -3,8 +3,8 @@ package com.github.featzhang.flake.client.entity;
 import com.github.featzhang.flake.client.consts.FlakeLabel;
 
 public enum TimerActionType {
-    FOCUS(30 * 60, FlakeLabel.FOCUS),
-    BREAK(5 * 60, FlakeLabel.BREAKING);
+    FOCUS(30 * 60, FlakeLabel.FOCUS.value()),
+    BREAK(5 * 60, FlakeLabel.BREAKING.value());
 
     private final int totalSeconds;
     private final String displayName;

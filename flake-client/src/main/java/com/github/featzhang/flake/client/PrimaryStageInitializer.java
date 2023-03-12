@@ -33,7 +33,7 @@ public class PrimaryStageInitializer implements ApplicationListener<StageReadyEv
     @Override
     public void onApplicationEvent(StageReadyEvent event) {
         Stage stage = event.stage;
-        stage.setTitle(FlakeLabel.application_name);
+        stage.setTitle(FlakeLabel.application_name.value());
         Scene scene = new Scene(fxWeaver.loadView(DashboardController.class, resourceBundle), 1100, 850);
         String externalForm = this.getClass().getClassLoader().getResource("css/flake-default.css").toExternalForm();
         logger.info("load css: {}", externalForm);
