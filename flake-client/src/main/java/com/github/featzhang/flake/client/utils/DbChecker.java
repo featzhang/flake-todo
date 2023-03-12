@@ -17,7 +17,7 @@ import static com.github.featzhang.flake.client.consts.FlakeConst.DB_PATH;
 
 @Slf4j
 public class DbChecker {
-    private static final String SCHEMA_SQL_FILE_NAME = "/sql/schema.sql";
+    private static final String SCHEMA_SQL_FILE_NAME = "sql/schema.sql";
     private static final String DB_URL = "jdbc:sqlite:" + DB_PATH;
     private static final String DRIVER_NAME = "org.sqlite.JDBC";
 
@@ -27,6 +27,7 @@ public class DbChecker {
         createDatabasePathIfAbsent();
         // check table if exist
         if (!tableExists("task")) {
+            log.info("Table not exist, creat it ...");
             executeInitStatement();
         }
         log.info("Check finished.");
@@ -37,7 +38,8 @@ public class DbChecker {
             log.info("Init db ...");
             sqlExecute((connection, statement) -> {
                 try {
-                    statement.execute(sql);
+                    statement.executeUpdate(sql);
+                    log.info("Init db success.");
                 } catch (SQLException e) {
                     log.error("Can not properly execute init statement.", e);
                 }
@@ -53,7 +55,6 @@ public class DbChecker {
             } catch (SQLException e) {
                 log.error("Can not properly query table meta!", e);
             }
-
         });
         return flag[0];
     }

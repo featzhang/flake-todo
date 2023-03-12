@@ -12,8 +12,9 @@ import java.util.Optional;
 @Slf4j
 public class ResourceUtil {
     public static Optional<String> loadFile(String fileName) {
-        InputStream inputStream = DbChecker.class.getClassLoader().getResourceAsStream(fileName);
+        InputStream inputStream = ResourceUtil.class.getClassLoader().getResourceAsStream(fileName);
         if (inputStream == null) {
+            log.error("file absent :{}", fileName);
             return Optional.empty();
         }
         StringBuilder stringBuilder = new StringBuilder();
@@ -26,6 +27,8 @@ public class ResourceUtil {
             log.error("Can not properly read resource: " + fileName, e);
             return Optional.empty();
         }
-        return Optional.of(stringBuilder.toString());
+        String value = stringBuilder.toString();
+        log.info("load file: {}, length: {}", fileName, value.length());
+        return Optional.of(value);
     }
 }
