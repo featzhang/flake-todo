@@ -14,6 +14,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.EnableScheduling;
+import com.github.featzhang.flake.client.utils.DbChecker;
 
 import java.util.ResourceBundle;
 
@@ -22,6 +23,7 @@ import java.util.ResourceBundle;
 @EnableScheduling
 public class FlakeClientApplication {
     public static void main(String[] args) {
+        DbChecker.checkAndCreate();
         Application.launch(FlakeClientDashboard.class, args);
     }
 
