@@ -4,7 +4,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;
 
 /**
- * @author zhangzuofeng1
  */
 public class FlakeSettings {
 
