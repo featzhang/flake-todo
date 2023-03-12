@@ -1,4 +1,4 @@
-package com.github.featzhang.flake.client.constraints;
+package com.github.featzhang.flake.client.consts;
 
 import java.util.concurrent.TimeUnit;
 import java.util.prefs.Preferences;

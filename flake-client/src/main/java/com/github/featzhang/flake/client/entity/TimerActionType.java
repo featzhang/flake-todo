@@ -1,6 +1,6 @@
 package com.github.featzhang.flake.client.entity;
 
-import com.github.featzhang.flake.client.constraints.FlakeLabel;
+import com.github.featzhang.flake.client.consts.FlakeLabel;
 
 public enum TimerActionType {
     FOCUS(30 * 60, FlakeLabel.FOCUS),

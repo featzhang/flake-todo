@@ -1,8 +1,8 @@
-package com.github.featzhang.flake.client.constraints;
+package com.github.featzhang.flake.client.consts;
 
 import java.io.Serializable;
 
-import static com.github.featzhang.flake.client.constraints.FlakeLabel.*;
+import static com.github.featzhang.flake.client.consts.FlakeLabel.*;
 
 /**
  */

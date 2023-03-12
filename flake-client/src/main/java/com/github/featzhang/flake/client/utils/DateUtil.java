@@ -5,7 +5,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
 
-public class DateUtils {
+public class DateUtil {
 
     private static final DateTimeFormatter DAY_ID_FORMATTER = DateTimeFormatter.ofPattern("yyyyMMdd");
 

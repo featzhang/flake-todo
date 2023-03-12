@@ -1,12 +1,12 @@
 package com.github.featzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.github.featzhang.flake.client.constraints.FlakeLabel;
-import com.github.featzhang.flake.client.constraints.FlakeSettings;
+import com.github.featzhang.flake.client.consts.FlakeLabel;
+import com.github.featzhang.flake.client.consts.FlakeSettings;
 import com.github.featzhang.flake.client.entity.*;
 import com.github.featzhang.flake.client.service.TaskService;
-import com.github.featzhang.flake.client.utils.DateUtils;
-import com.github.featzhang.flake.client.utils.OSValidator;
+import com.github.featzhang.flake.client.utils.DateUtil;
+import com.github.featzhang.flake.client.utils.OsValidator;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -65,7 +65,7 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static com.github.featzhang.flake.client.constraints.FlakeLabel.label;
+import static com.github.featzhang.flake.client.consts.FlakeLabel.label;
 
 /**
  * @author zhangzuofeng1
@@ -298,7 +298,7 @@ public class DashboardController implements Initializable {
         if (StringUtils.isNotBlank(text)) {
             // get selected dayId
             LocalDate localDate = datePicker.getValue();
-            int       dayId     = DateUtils.dayId(localDate);
+            int       dayId     = DateUtil.dayId(localDate);
             // get taskType
             TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
             assert taskType != null;
@@ -499,7 +499,7 @@ public class DashboardController implements Initializable {
                 log.error("", e);
             }
         } else {
-            if (OSValidator.IS_MAC) {
+            if (OsValidator.IS_MAC) {
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 processBuilder.command("open", url);
                 try {
@@ -507,7 +507,7 @@ public class DashboardController implements Initializable {
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
-            } else if (OSValidator.IS_WINDOWS) {
+            } else if (OsValidator.IS_WINDOWS) {
                 ProcessBuilder processBuilder = new ProcessBuilder();
                 processBuilder.command("start", "", url);
                 try {
@@ -561,7 +561,7 @@ public class DashboardController implements Initializable {
 
     private void loadTitledPaneData(int titledPaneId) {
         TaskType taskType = TaskType.findById(titledPaneId);
-        int      dayId    = DateUtils.dayId(datePicker.getValue());
+        int      dayId    = DateUtil.dayId(datePicker.getValue());
         currentDayTitledPane.setText(FlakeLabel.CURRENT_DAY + " " + dayId);
         // undone
         if (taskType == null) {

@@ -1,6 +1,6 @@
-package com.github.featzhang.flake.client.constraints;
+package com.github.featzhang.flake.client.consts;
 
-import com.github.featzhang.flake.client.utils.ResourceUtil;
+import com.github.featzhang.flake.client.utils.FlakeResource;
 
 public class FlakeLabel {
     public static final String application_name           = label("application_name");
@@ -19,6 +19,6 @@ public class FlakeLabel {
     public static final String NOT_IMPORTANCE_NOT_URGENCY = label("label_not_importance_not_urgency");
 
     public static String label(String s) {
-        return ResourceUtil.label(s);
+        return FlakeResource.label(s);
     }
 }

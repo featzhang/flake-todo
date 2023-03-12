@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.stream.Collectors;
 
-import static com.github.featzhang.flake.client.constraints.FlakeLabel.*;
+import static com.github.featzhang.flake.client.consts.FlakeLabel.*;
 
 @Component
 @FxmlView("stat-popover-view.fxml")

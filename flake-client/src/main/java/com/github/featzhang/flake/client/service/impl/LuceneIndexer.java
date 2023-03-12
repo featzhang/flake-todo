@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static com.github.featzhang.flake.client.constraints.FlakeConsts.INDEX_BASE_PATH;
+import static com.github.featzhang.flake.client.consts.FlakeConst.INDEX_BASE_PATH;
 
 @Component
 public class LuceneIndexer {
