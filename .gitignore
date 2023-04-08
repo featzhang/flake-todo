@@ -25,11 +25,16 @@ target
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
 db
+idx
 .project
 .settings
+.DS_Store
+.factorypath
+dependency-reduced-pom.xml
+## flake-client
 flake-client/.classpath
 flake-client/.project
 flake-client/.settings
 flake-client/.factorypath.DS_Store
-idx
-dependency-reduced-pom.xml
+flake-client/.DS_Store
+
