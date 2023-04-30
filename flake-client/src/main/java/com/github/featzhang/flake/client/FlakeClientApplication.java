@@ -40,8 +40,9 @@ public class FlakeClientApplication {
 
     @Bean
     @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
-    public <C, V extends Node> FxControllerAndView<C, V> controllerAndView(FxWeaver fxWeaver,
-                                                                           InjectionPoint injectionPoint) {
+    public <C, V extends Node> FxControllerAndView<C, V> controllerAndView(
+            FxWeaver fxWeaver,
+            InjectionPoint injectionPoint) {
         return new InjectionPointLazyFxControllerAndViewResolver(fxWeaver)
                 .resolve(injectionPoint);
     }

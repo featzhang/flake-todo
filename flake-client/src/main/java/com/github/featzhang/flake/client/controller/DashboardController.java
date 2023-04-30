@@ -651,7 +651,7 @@ public class DashboardController implements Initializable {
 
         timeline.setOnFinished(event -> {
 //            mNotify.play();
-            Notifications.create().title(TIME_TO_WEAK.value()).text("").hideAfter(Duration.minutes(5)).showWarning();
+            Notifications.create().owner(this).title(TIME_TO_WEAK.value()).text("").hideAfter(Duration.minutes(5)).showWarning();
             doAddNewWorkLog(timerStatus);
             currentTaskId = -1;
             if (timerStatus.getType() == TimerActionType.FOCUS) {

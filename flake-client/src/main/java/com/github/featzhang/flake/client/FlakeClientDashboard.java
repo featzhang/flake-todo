@@ -10,12 +10,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * @author zhangzuofeng1
+ * The dashboard application entry
  */
 public class FlakeClientDashboard extends Application {
 
-    private static final Logger                         logger = getLogger(FlakeClientDashboard.class);
-    public static        ConfigurableApplicationContext context;
+    private static final Logger logger = getLogger(FlakeClientDashboard.class);
+    public static ConfigurableApplicationContext context;
 
     @Override
     public void init() throws Exception {
@@ -29,23 +29,6 @@ public class FlakeClientDashboard extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         context.publishEvent(new StageReadyEvent(stage));
-//        this.primaryStage = stage;
-////        fxWeaver = context.getBean(FxWeaver.class);
-//
-//        Parent gridPane = fxWeaver.loadView(DashboardController.class, resourceBundle);
-////        DashboardController controller = fxWeaver.loadController(DashboardController.class, resourceBundle);
-////        controller.setOnSetting(actionEvent -> onShowSetting());
-//        logger.info("start FlackClientDashboard...");
-//        if (gridPane == null) {
-//            logger.error("root is null");
-//            return;
-//        }
-//        Scene scene = new Scene(gridPane);
-//        stage.setTitle(FlakeLabel.application_name);
-//        stage.setScene(scene);
-//        stage.setWidth(950);
-//        stage.setHeight(850);
-//        stage.show();
     }
 
     @Override

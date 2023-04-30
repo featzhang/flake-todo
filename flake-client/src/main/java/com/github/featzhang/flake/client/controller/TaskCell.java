@@ -15,9 +15,9 @@ public class TaskCell extends ListCell<TaskDto> {
     @Override
     protected void updateItem(TaskDto taskDtoListCell, boolean b) {
         FXMLLoader loader = new FXMLLoader();
-        InputStream resource = this.getClass().getClassLoader().getResourceAsStream("com/github/featzhang/flake/client/controller/task-cell.fxml");
+        InputStream inputStream = TaskCell.class.getClassLoader().getResourceAsStream("com/github/featzhang/flake/client/controller/task-cell.fxml");
         try {
-            GridPane gridBagLayout = loader.load(resource);
+            GridPane gridBagLayout = loader.load(inputStream);
             TaskCellController controller = loader.getController();
             controller.setData(taskDtoListCell);
             setGraphic(gridBagLayout);

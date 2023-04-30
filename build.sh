@@ -25,11 +25,18 @@ help_action=(
   'welcome'
 )
 
-build_action=(
+pkg_action=(
   'build'
   'b'
   'build manager local debugging environment'
-  'build'
+  'pkg'
+)
+
+launch_action=(
+  'l'
+  'launch'
+  'build manager local debugging environment'
+  'launch'
 )
 
 run_action=(
@@ -41,8 +48,9 @@ run_action=(
 
 actions=(
   help_action
-  build_action
+  pkg_action
   run_action
+  launch_action
 )
 
 function welcome() {
@@ -68,13 +76,22 @@ function welcome() {
   echo ''
 }
 
-function build() {
-  echo '# start build...'
+function pkg() {
+  echo '# start pkg...'
 
   init_java_env
   mvn clean package
 
-  echo 'build finished .'
+  echo 'pkg finished .'
+}
+function launch() {
+  echo '# start launch...'
+
+  init_java_env
+  mvn clean package
+  java -jar flake-client/target/flake-client-1.0-SNAPSHOT.jar
+
+  echo 'launch finished .'
 }
 
 function run() {
