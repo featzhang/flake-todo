@@ -18,6 +18,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.event.EventTarget;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -42,6 +43,8 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import javafx.util.Duration;
+import javafx.util.StringConverter;
+import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.core.FxmlView;
@@ -59,6 +62,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
@@ -74,15 +78,12 @@ import static com.github.featzhang.flake.client.consts.FlakeLabel.label;
 
 
 /**
- * @author zhangzuofeng1
+ *
  */
 @Component
 @FxmlView("dashboard.fxml")
+@Slf4j
 public class DashboardController implements Initializable {
-
-    private static final Logger log = LoggerFactory.getLogger(DashboardController.class);
-
-    public TitledPane currentDayTitledPane;
 
     public Accordion according;
     public Button stopButton;
@@ -117,10 +118,12 @@ public class DashboardController implements Initializable {
     public ListView<TaskDto> allTaskListView;
     public Tab tasksTab;
     public Tab todayTab;
+    public DatePicker currentDatePicker;
+    public ListView<TaskDto> timeLineList;
+    public ListView<TaskDto> incomeEventList;
     //
     @Resource
     private TaskService taskService;
-    private DatePicker datePicker;
     private int currentTaskId = -1;
     //
     //    private AudioClip mNotify;
@@ -150,27 +153,41 @@ public class DashboardController implements Initializable {
         // init UI & events
         // init
 //        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
+        currentDatePicker.setValue(LocalDate.now());
+        // 创建一个StringConverter对象，使用指定的日期格式
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        StringConverter<LocalDate> stringConverter = new StringConverter<LocalDate>() {
+            @Override
+            public String toString(LocalDate date) {
+                return (date != null) ? dateFormatter.format(date) : "";
+            }
 
-        // datepicker
-        datePicker = new DatePicker(LocalDate.now());
-        DatePickerSkin datePickerSkin = new DatePickerSkin(datePicker);
-        Node popupContent = datePickerSkin.getPopupContent();
-        datePickerPane.setCenter(popupContent);
+            @Override
+            public LocalDate fromString(String string) {
+                return (string != null && !string.trim().isEmpty()) ? LocalDate.parse(string, dateFormatter) : null;
+            }
+        };
 
+        // 将Converter对象分配到DatePicker上
+        currentDatePicker.setConverter(stringConverter);
+        currentDatePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
+            onDatePickerChanged(oldValue, newValue);
+        });
+
+        // incomeListView settings
+        incomeEventList.setCellFactory(t -> new TaskCell());
+        incomeEventList.setContextMenu(liveViewContextMenu);
+        List<TaskDto> allTasks = taskService.findAllTasks();
+        incomeEventList.getItems().addAll(allTasks);
         // type
-        List<String> taskTypeNames
-                = Arrays
-                .stream(TaskType.values())
-                .filter(x -> x != TaskType.YESTERDAY_REVIEW)
+        List<String> taskTypeNames = Arrays.stream(TaskType.values()).filter(x -> x != TaskType.YESTERDAY_REVIEW)
                 // 不允许添加昨日回顾
-                .map(TaskType::getCname)
-                .collect(Collectors.toList());
+                .map(TaskType::getCname).collect(Collectors.toList());
         typeComboBox.getItems().addAll(taskTypeNames);
         typeComboBox.getSelectionModel().select(0);
         typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
             if (!s.equals(t1)) {
-                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId())
-                        .expandedProperty().setValue(true);
+                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId()).expandedProperty().setValue(true);
             }
         });
         //
@@ -180,6 +197,7 @@ public class DashboardController implements Initializable {
         List<ListView<TaskDto>> listViewList = Arrays.asList(yesterdayList, todayPlanList, todayTomatoList, summaryList, undoneList);
         listViewMap = listViewList.stream().collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // listViewCellFactory
+
         yesterdayList.setCellFactory(t -> new TaskCell());
         todayPlanList.setCellFactory(t -> new TaskCell());
         todayTomatoList.setCellFactory(t -> new TaskCell());
@@ -187,27 +205,20 @@ public class DashboardController implements Initializable {
         undoneList.setCellFactory(t -> new TaskCell());
         allTaskListView.setCellFactory(t -> new TaskCell());
         //
-        titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane)
-                .collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
+        titledPaneMap = Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane).collect(Collectors.toMap(s -> Integer.parseInt(s.getId()), s -> s));
         // 修改为: 点击展开时，重新加载；如何清理掉事件绑定?
-        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, undoneTitledPane)
-                .forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
-                    int tpId = Integer.parseInt(tp.getId());
-                    if (newValue) {
-                        loadTitledPaneData(tpId);
-                    } else {
-                        clearTitledPaneData(tpId);
-                    }
-                }));
+        Stream.of(yesterdayTitledPane, todayPlanTitledPane, tomatoPotatoTitledPane, todaySummaryTitledPane, undoneTitledPane).forEach(tp -> tp.expandedProperty().addListener((observableValue, aBoolean, newValue) -> {
+            int tpId = Integer.parseInt(tp.getId());
+            if (newValue) {
+                loadTitledPaneData(tpId);
+            } else {
+                clearTitledPaneData(tpId);
+            }
+        }));
 
         // taskTab action
         loadTaskTabAction();
         // load data
-//        loadData();
-        // datePick action
-        datePicker.valueProperty().addListener((observable, oldValue, newValue) -> {
-            onDatePickerChanged(oldValue, newValue);
-        });
 
         // init timer
         setTimerText(0);
@@ -240,15 +251,14 @@ public class DashboardController implements Initializable {
 
     private void loadTaskTabAction() {
         tasksTab.selectedProperty().addListener((observable, oldValue, newValue) -> {
-                    if (newValue) {
-                        // loadTasks
-                        List<TaskDto> allTasks = taskService.findAllTasks();
-                        ObservableList<TaskDto> items = allTaskListView.getItems();
-                        items.clear();
-                        items.addAll(allTasks);
-                    }
-                }
-        );
+            if (newValue) {
+                // loadTasks
+                List<TaskDto> allTasks = taskService.findAllTasks();
+                ObservableList<TaskDto> items = allTaskListView.getItems();
+                items.clear();
+                items.addAll(allTasks);
+            }
+        });
     }
 
     private void doBindTaskStat() {
@@ -259,30 +269,18 @@ public class DashboardController implements Initializable {
         maxWorkTimeLbl.textProperty().bind(taskService.maxWorkTimeProperty());
         urgentTaskCntLbl.textProperty().bind(taskService.urgentTaskCntProperty());
         completenessLbl.textProperty().bind(taskService.completenessProperty());
-        statusHBox.setOnMouseClicked((e) ->
-        {
+        statusHBox.setOnMouseClicked((e) -> {
             statusHBox.requestFocus();
         });
 
         // use different backgrounds for focused and unfocused states
-        statusHBox.backgroundProperty().bind(Bindings
-                .when(statusHBox.focusedProperty())
-                .then(statusHBoxFocusBackground)
-                .otherwise(statusHBoxUnfocusBackground)
-        );
+        statusHBox.backgroundProperty().bind(Bindings.when(statusHBox.focusedProperty()).then(statusHBoxFocusBackground).otherwise(statusHBoxUnfocusBackground));
 
 
     }
 
     private final Background statusHBoxUnfocusBackground = Background.EMPTY;
-    private final Background statusHBoxFocusBackground = new Background(
-            new BackgroundFill(
-                    new LinearGradient(0, 0, 0, 1, true,
-                            CycleMethod.NO_CYCLE,
-                            new Stop(0, Color.web("#4568DC")),
-                            new Stop(1, Color.web("#B06AB3"))
-                    ), CornerRadii.EMPTY, Insets.EMPTY
-            ));
+    private final Background statusHBoxFocusBackground = new Background(new BackgroundFill(new LinearGradient(0, 0, 0, 1, true, CycleMethod.NO_CYCLE, new Stop(0, Color.web("#4568DC")), new Stop(1, Color.web("#B06AB3"))), CornerRadii.EMPTY, Insets.EMPTY));
 
     /**
      * 初始化typePie
@@ -303,24 +301,14 @@ public class DashboardController implements Initializable {
         log.info("newContentTextField: {}", text);
         if (StringUtils.isNotBlank(text)) {
             // get selected dayId
-            LocalDate localDate = datePicker.getValue();
+            LocalDate localDate = currentDatePicker.getValue();
             int dayId = DateUtil.dayId(localDate);
             // get taskType
             TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
             assert taskType != null;
             int taskTypeId = taskType.getCId();
             //
-            TaskDto taskDto = TaskDto.builder()
-                    .dayId(dayId)
-                    .taskType(taskType)
-                    .title(text)
-                    .content("")
-                    .createdTime(System.currentTimeMillis())
-                    .updateTime(System.currentTimeMillis())
-                    .importanceUrgencyAxis(4)
-                    .finished(false)
-                    .storeStatus(StoreStatus.YES)
-                    .build();
+            TaskDto taskDto = TaskDto.builder().dayId(dayId).taskType(taskType).title(text).content("").createdTime(System.currentTimeMillis()).updateTime(System.currentTimeMillis()).importanceUrgencyAxis(4).finished(false).storeStatus(StoreStatus.YES).build();
             taskService.insert(taskDto);
             // bind db action
             onTaskDataChange(taskDto);
@@ -567,8 +555,7 @@ public class DashboardController implements Initializable {
 
     private void loadTitledPaneData(int titledPaneId) {
         TaskType taskType = TaskType.findById(titledPaneId);
-        int dayId = DateUtil.dayId(datePicker.getValue());
-        currentDayTitledPane.setText(CURRENT_DAY.value() + " " + dayId);
+        int dayId = DateUtil.dayId(currentDatePicker.getValue());
         // undone
         if (taskType == null) {
             List<TaskDto> undoneTasks = taskService.findAllUndoneTasks();
@@ -657,8 +644,7 @@ public class DashboardController implements Initializable {
             if (timerStatus.getType() == TimerActionType.FOCUS) {
                 takeBreakNotification();
             }
-            initTimerAction(timerStatus.getType() == TimerActionType.FOCUS ?
-                    TimerActionType.BREAK : TimerActionType.FOCUS);
+            initTimerAction(timerStatus.getType() == TimerActionType.FOCUS ? TimerActionType.BREAK : TimerActionType.FOCUS);
             stopButton.setVisible(false);
         });
     }
@@ -667,15 +653,7 @@ public class DashboardController implements Initializable {
         int taskId = currentTaskId;
         log.info("add work log : {}", taskId);
         TaskDto taskDto = taskService.findById(taskId);
-        TaskDto newTask = TaskDto.builder()
-                .title(taskDto.getTitle())
-                .content(taskDto.getContent())
-                .taskType(TaskType.TOMATO_POTATO)
-                .endTime(System.currentTimeMillis())
-                .startTime(timerStatus.getStartTime())
-                .dayId(taskDto.getDayId())
-                .fullTomato(true)
-                .build();
+        TaskDto newTask = TaskDto.builder().title(taskDto.getTitle()).content(taskDto.getContent()).taskType(TaskType.TOMATO_POTATO).endTime(System.currentTimeMillis()).startTime(timerStatus.getStartTime()).dayId(taskDto.getDayId()).fullTomato(true).build();
         taskService.insert(newTask);
         // how get the newest id
         listViewMap.get(TaskType.TOMATO_POTATO.getCId()).getItems().add(newTask);
@@ -898,8 +876,8 @@ public class DashboardController implements Initializable {
 
     private void doSearchText() {
         String searchText = searchTextField.getText();
-        allTaskListView.getItems().clear();
         if (!StringUtils.isEmpty(searchText)) {
+            allTaskListView.getItems().clear();
             try {
                 List<TaskDto> search = taskService.search(searchText);
                 allTaskListView.getItems().addAll(search);
