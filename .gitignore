@@ -38,3 +38,4 @@ flake-client/.settings
 flake-client/.factorypath.DS_Store
 flake-client/.DS_Store
 
+.vscode
