@@ -21,7 +21,6 @@ public class DbChecker {
     private static final String DB_URL = "jdbc:sqlite:" + DB_PATH;
     private static final String DRIVER_NAME = "org.sqlite.JDBC";
 
-
     public static void checkAndCreate() {
         // check database if exist
         createDatabasePathIfAbsent();
@@ -48,7 +47,7 @@ public class DbChecker {
     }
 
     private static boolean tableExists(String tableName) {
-        boolean[] flag = {false};
+        boolean[] flag = { false };
         sqlExecute((connection, statement) -> {
             try (ResultSet resultSet = connection.getMetaData().getTables(null, null, tableName, null)) {
                 flag[0] = resultSet.next();
@@ -76,13 +75,16 @@ public class DbChecker {
             log.error("Can not properly execute !", se);
         } finally {
             try {
-                if (stmt != null) stmt.close();
-                if (conn != null) conn.close();
+                if (stmt != null) {
+                    stmt.close();
+                }
+                if (conn != null) {
+                    conn.close();
+                }
             } catch (SQLException ignored) {
             }
         }
     }
-
 
     private static void createDatabasePathIfAbsent() {
         log.info("Check database if exist ...");
@@ -100,4 +102,3 @@ public class DbChecker {
         }
     }
 }
-

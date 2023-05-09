@@ -1,6 +1,8 @@
 package com.github.featzhang.flake.client.controller;
 
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
+import com.calendarfx.model.CalendarSource;
+import com.calendarfx.view.CalendarView;
 import com.github.featzhang.flake.client.consts.FlakeLabel;
 import com.github.featzhang.flake.client.consts.FlakeSettings;
 import com.github.featzhang.flake.client.entity.*;
@@ -121,6 +123,7 @@ public class DashboardController implements Initializable {
     public DatePicker currentDatePicker;
     public ListView<TaskDto> timeLineList;
     public ListView<TaskDto> incomeEventList;
+    public CalendarView calendarView;
     //
     @Resource
     private TaskService taskService;
@@ -152,6 +155,9 @@ public class DashboardController implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         // init UI & events
         // init
+//
+        calendarView.getCalendarSources().addAll(new CalendarSource("MyCalendar"));
+
 //        mNotify = new AudioClip(getClass().getResource("/sounds/notify.mp3").toExternalForm());
         currentDatePicker.setValue(LocalDate.now());
         // 创建一个StringConverter对象，使用指定的日期格式

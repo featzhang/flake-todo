@@ -10,11 +10,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import static org.slf4j.LoggerFactory.getLogger;
 
 /**
- * @author zhangzuofeng1
  */
 public class FlakeClientDashboard extends Application {
 
-    private static final Logger                         logger = getLogger(FlakeClientDashboard.class);
     public static        ConfigurableApplicationContext context;
 
     @Override
