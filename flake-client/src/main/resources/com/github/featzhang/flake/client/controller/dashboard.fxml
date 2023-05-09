@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import com.calendarfx.view.DetailedDayView?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Accordion?>
 <?import javafx.scene.control.Button?>
@@ -17,12 +18,9 @@
 <?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
-<?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
-
-<?import com.calendarfx.view.CalendarView?>
 <BorderPane fx:id="rootPane" prefHeight="788.0" prefWidth="974.0" BorderPane.alignment="CENTER"
             xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.github.featzhang.flake.client.controller.DashboardController">
@@ -105,7 +103,7 @@
                              GridPane.columnSpan="3" GridPane.rowIndex="1">
                         <DatePicker fx:id="currentDatePicker" editable="false" prefHeight="26.0" prefWidth="113.0"
                                     showWeekNumbers="true"/>
-                        <ComboBox fx:id="typeComboBox" HBox.hgrow="NEVER"/>
+<!--                        <ComboBox fx:id="typeComboBox" HBox.hgrow="NEVER"/>-->
                         <TextField fx:id="newContentTextField" onKeyPressed="#onNewContentKeyPressed"
                                    promptText="%label_new_task" HBox.hgrow="ALWAYS">
                             <font>
@@ -132,23 +130,14 @@
                             </BorderPane>
                         </top>
                     </BorderPane>
-                    <CalendarView fx:id="calendarView"
-                                  prefHeight="200.0"
-                                  prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2" GridPane.rowSpan="4"
-                                  showNoonMarker="false"
-                                  showSearchField="false"
-                                  showAddCalendarButton="false"
-                                  showPrintButton="false"
-                                  showToday="false"
-                                  showPageSwitcher="false"
-                                  showDeveloperConsole="false"
-                                  showDetailsUponEntryCreation="false"
-                                  showPageToolBarControls="false"
-                                  showSearchResultsTray="false"
-                                  showSourceTray="false"
-                                  showSourceTrayButton="false"
-                                  showToolBar="false"
-                    />
+                    <DetailedDayView fx:id="calendarView"
+                                     prefHeight="200.0"
+                                     prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2"
+                                     GridPane.rowSpan="4"
+                                     showNoonMarker="false"
+                                     showToday="false"
+                                     showScrollBar="false"
+                                     showDetailsUponEntryCreation="false"/>
                 </GridPane>
             </Tab>
 

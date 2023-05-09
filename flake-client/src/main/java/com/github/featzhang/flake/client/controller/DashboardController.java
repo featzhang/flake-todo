@@ -3,6 +3,7 @@ package com.github.featzhang.flake.client.controller;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.calendarfx.model.CalendarSource;
 import com.calendarfx.view.CalendarView;
+import com.calendarfx.view.DetailedDayView;
 import com.github.featzhang.flake.client.consts.FlakeLabel;
 import com.github.featzhang.flake.client.consts.FlakeSettings;
 import com.github.featzhang.flake.client.entity.*;
@@ -91,7 +92,6 @@ public class DashboardController implements Initializable {
     public Button stopButton;
     public Label timerStatsLabel;
     public Label timerCounterLabel;
-    public ComboBox<String> typeComboBox;
     public TextField newContentTextField;
     public ListView<TaskDto> yesterdayList;
     public ListView<TaskDto> todayPlanList;
@@ -123,7 +123,7 @@ public class DashboardController implements Initializable {
     public DatePicker currentDatePicker;
     public ListView<TaskDto> timeLineList;
     public ListView<TaskDto> incomeEventList;
-    public CalendarView calendarView;
+    public DetailedDayView calendarView;
     //
     @Resource
     private TaskService taskService;
@@ -185,17 +185,6 @@ public class DashboardController implements Initializable {
         incomeEventList.setContextMenu(liveViewContextMenu);
         List<TaskDto> allTasks = taskService.findAllTasks();
         incomeEventList.getItems().addAll(allTasks);
-        // type
-        List<String> taskTypeNames = Arrays.stream(TaskType.values()).filter(x -> x != TaskType.YESTERDAY_REVIEW)
-                // 不允许添加昨日回顾
-                .map(TaskType::getCname).collect(Collectors.toList());
-        typeComboBox.getItems().addAll(taskTypeNames);
-        typeComboBox.getSelectionModel().select(0);
-        typeComboBox.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
-            if (!s.equals(t1)) {
-                titledPaneMap.get(Objects.requireNonNull(TaskType.findByCName(t1)).getCId()).expandedProperty().setValue(true);
-            }
-        });
         //
 
 
@@ -310,8 +299,7 @@ public class DashboardController implements Initializable {
             LocalDate localDate = currentDatePicker.getValue();
             int dayId = DateUtil.dayId(localDate);
             // get taskType
-            TaskType taskType = TaskType.findByCName(typeComboBox.getSelectionModel().getSelectedItem());
-            assert taskType != null;
+            TaskType taskType = TaskType.TODAY_PLAN;
             int taskTypeId = taskType.getCId();
             //
             TaskDto taskDto = TaskDto.builder().dayId(dayId).taskType(taskType).title(text).content("").createdTime(System.currentTimeMillis()).updateTime(System.currentTimeMillis()).importanceUrgencyAxis(4).finished(false).storeStatus(StoreStatus.YES).build();
@@ -326,7 +314,6 @@ public class DashboardController implements Initializable {
 
             reloadCurrentTitlePane();
             //
-//            newContentTextField.clear();
         }
     }
 

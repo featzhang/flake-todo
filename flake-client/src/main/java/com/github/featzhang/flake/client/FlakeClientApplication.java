@@ -2,6 +2,7 @@ package com.github.featzhang.flake.client;
 
 import javafx.application.Application;
 import javafx.scene.Node;
+import lombok.extern.slf4j.Slf4j;
 import net.rgielen.fxweaver.core.FxControllerAndView;
 import net.rgielen.fxweaver.core.FxWeaver;
 import net.rgielen.fxweaver.spring.InjectionPointLazyFxControllerAndViewResolver;
@@ -21,6 +22,7 @@ import java.util.ResourceBundle;
 @SpringBootApplication
 @MapperScan("com.github.featzhang.flake.client.dao")
 @EnableScheduling
+@Slf4j
 public class FlakeClientApplication {
     public static void main(String[] args) {
         DbChecker.checkAndCreate();
@@ -29,7 +31,7 @@ public class FlakeClientApplication {
 
     @Bean
     public FxWeaver fxWeaver(ConfigurableApplicationContext context) {
-        System.out.println("init fxWeaver");
+        log.info("init fxWeaver");
         return new SpringFxWeaver(context);
     }
 
